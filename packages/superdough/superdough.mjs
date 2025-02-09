@@ -17,11 +17,72 @@ import { loadBuffer } from './sampler.mjs';
 export const soundMap = map();
 
 export function registerSound(key, onTrigger, data = {}) {
-  soundMap.setKey(key, { onTrigger, data });
+  soundMap.setKey(key.toLowerCase(), { onTrigger, data });
+}
+
+function aliasBankMap(aliasMap) {
+  // Make all bank keys lower case for case insensitivity
+  for (const key in aliasMap) {
+    aliasMap[key.toLowerCase()] = aliasMap[key];
+  }
+
+  // Look through every sound...
+  const soundDictionary = soundMap.get();
+  for (const key in soundDictionary) {
+    // Check if the sound is part of a bank...
+    const [bank, suffix] = key.split('_');
+    if (!suffix) continue;
+
+    // Check if the bank is aliased...
+    const aliasValue = aliasMap[bank];
+    if (aliasValue) {
+      if (typeof aliasValue === 'string') {
+        // Alias a single alias
+        soundDictionary[`${aliasValue}_${suffix}`.toLowerCase()] = soundDictionary[key];
+      } else if (Array.isArray(aliasValue)) {
+        // Alias multiple aliases
+        for (const alias of aliasValue) {
+          soundDictionary[`${alias}_${suffix}`.toLowerCase()] = soundDictionary[key];
+        }
+      }
+    }
+  }
+
+  // Update the sound map!
+  // We need to destructure here to trigger the update
+  soundMap.set({ ...soundDictionary });
+}
+
+async function aliasBankPath(path) {
+  const response = await fetch(path);
+  const aliasMap = await response.json();
+  aliasBankMap(aliasMap);
+}
+
+/**
+ * Register an alias for a bank of sounds.
+ * Optionally accepts a single argument map of bank aliases.
+ * Optionally accepts a single argument string of a path to a JSON file containing bank aliases.
+ * @param {string} bank - The bank to alias
+ * @param {string} alias - The alias to use for the bank
+ */
+export async function aliasBank(...args) {
+  switch (args.length) {
+    case 1:
+      if (typeof args[0] === 'string') {
+        return aliasBankPath(args[0]);
+      } else {
+        return aliasBankMap(args[0]);
+      }
+    case 2:
+      return aliasBankMap({ [args[0]]: args[1] });
+    default:
+      throw new Error('aliasMap expects 1 or 2 arguments, received ' + args.length);
+  }
 }
 
 export function getSound(s) {
-  return soundMap.get()[s];
+  return soundMap.get()[s.toLowerCase()];
 }
 
 const defaultDefaultValues = {
@@ -314,6 +375,7 @@ export function resetGlobalEffects() {
 }
 
 export const superdough = async (value, t, hapDuration) => {
+  const ac = getAudioContext();
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   let { stretch } = value;
   if (stretch != null) {
@@ -321,7 +383,6 @@ export const superdough = async (value, t, hapDuration) => {
     const latency = 0.04;
     t = t - latency;
   }
-  const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
       `expected hap.value to be an object, but got "${value}". Hint: append .note() or .s() to the end`,

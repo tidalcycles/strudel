@@ -70,6 +70,16 @@ But you can also control cc messages separately like this:
 $: ccv(sine.segment(16).slow(4)).ccn(74).midi()`}
 />
 
+Instead of setting `ccn` and `ccv` directly, you can also create mappings with `midimaps`:
+
+## midimaps
+
+<JsDoc client:idle name="midimaps" h={0} />
+
+## defaultmidimap
+
+<JsDoc client:idle name="defaultmidimap" h={0} />
+
 ## progNum (Program Change)
 
 `progNum` sends MIDI program change messages to switch between different presets/patches on your MIDI device.
@@ -111,6 +121,7 @@ Consult your device's MIDI implementation guide for details on supported SysEx m
 <MiniRepl client:idle tune={`note("c d e f e d c").midibend(sine.slow(4).range(-0.4,0.4)).midi()`} />
 
 <MiniRepl client:idle tune={`note("c d e f e d c").miditouch(sine.slow(4).range(0,1)).midi()`} />
+
 
 # OSC/SuperDirt/StrudelDirt
 

@@ -47,12 +47,16 @@ export function createParam(names) {
   return func;
 }
 
+// maps control alias names to the "main" control name
+const controlAlias = new Map();
+
 export function registerControl(names, ...aliases) {
   const name = Array.isArray(names) ? names[0] : names;
   let bag = {};
   bag[name] = createParam(names);
   aliases.forEach((alias) => {
     bag[alias] = bag[name];
+    controlAlias.set(alias, name);
     Pattern.prototype[alias] = Pattern.prototype[name];
   });
   return bag;
@@ -1509,6 +1513,9 @@ export const { scram } = registerControl('scram');
 export const { binshift } = registerControl('binshift');
 export const { hbrick } = registerControl('hbrick');
 export const { lbrick } = registerControl('lbrick');
+
+
+
 export const { frameRate } = registerControl('frameRate');
 export const { frames } = registerControl('frames');
 export const { hours } = registerControl('hours');
@@ -1616,6 +1623,22 @@ export const ar = register('ar', (t, pat) => {
  * note("c4").midichan(1).midi()
  */
 export const { midichan } = registerControl('midichan');
+
+/**
+ * MIDI map: Sets the MIDI map for the event.
+ *
+ * @name midimap
+ * @param {Object} map MIDI map
+ */
+export const { midimap } = registerControl('midimap');
+
+/**
+ * MIDI port: Sets the MIDI port for the event.
+ *
+ * @name midiport
+ * @param {number | Pattern} port MIDI port
+ */
+export const { midiport } = registerControl('midiport');
 
 /**
  * MIDI command: Sends a MIDI command message.
@@ -1737,3 +1760,26 @@ export const { miditouch } = registerControl('miditouch');
 
 // TODO: what is this?
 export const { polyTouch } = registerControl('polyTouch');
+
+export const getControlName = (alias) => {
+  if (controlAlias.has(alias)) {
+    return controlAlias.get(alias);
+  }
+  return alias;
+};
+
+/**
+ * Sets properties in a batch.
+ *
+ * @name as
+ * @param {Array} mapping the control names that are set
+ * @example
+ * "c:.5 a:1 f:.25 e:.8".as("note:clip")
+ */
+export const as = register('as', (mapping, pat) => {
+  return pat.fmap((v) => {
+    v = Array.isArray(v) ? v : [v];
+    v = Object.fromEntries(mapping.map((prop, i) => [getControlName(prop), v[i]]));
+    return v;
+  });
+});

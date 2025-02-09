@@ -3,11 +3,11 @@ import { getAudioContext, registerSound } from '@strudel/webaudio';
 import { loadSoundfont as _loadSoundfont, startPresetNote } from 'sfumato';
 
 Pattern.prototype.soundfont = function (sf, n = 0) {
-  return this.onTrigger((t, h, ct) => {
+  return this.onTrigger((time_deprecate, h, ct, cps, targetTime) => {
     const ctx = getAudioContext();
     const note = getPlayableNoteValue(h);
     const preset = sf.presets[n % sf.presets.length];
-    const deadline = ctx.currentTime + t - ct;
+    const deadline = targetTime;
     const args = [ctx, preset, noteToMidi(note), deadline];
     const stop = startPresetNote(...args);
     stop(deadline + h.duration);

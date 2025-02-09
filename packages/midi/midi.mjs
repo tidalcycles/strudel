@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import * as _WebMidi from 'webmidi';
 import { Pattern, getEventOffsetMs, isPattern, logger, ref } from '@strudel/core';
-import { noteToMidi } from '@strudel/core';
+import { noteToMidi, getControlName } from '@strudel/core';
 import { Note } from 'webmidi';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -93,6 +93,220 @@ if (typeof window !== 'undefined') {
   });
 }
 
+// registry for midi mappings, converting control names to cc messages
+export const midicontrolMap = new Map();
+
+// takes midimap and converts each control key to the main control name
+function unifyMapping(mapping) {
+  return Object.fromEntries(
+    Object.entries(mapping).map(([key, mapping]) => {
+      if (typeof mapping === 'number') {
+        mapping = { ccn: mapping };
+      }
+      return [getControlName(key), mapping];
+    }),
+  );
+}
+
+function githubPath(base, subpath = '') {
+  if (!base.startsWith('github:')) {
+    throw new Error('expected "github:" at the start of pseudoUrl');
+  }
+  let [_, path] = base.split('github:');
+  path = path.endsWith('/') ? path.slice(0, -1) : path;
+  if (path.split('/').length === 2) {
+    // assume main as default branch if none set
+    path += '/main';
+  }
+  return `https://raw.githubusercontent.com/${path}/${subpath}`;
+}
+
+/**
+ * configures the default midimap, which is used when no "midimap" port is set
+ * @example
+ * defaultmidimap({ lpf: 74 })
+ * $: note("c a f e").midi();
+ * $: lpf(sine.slow(4).segment(16)).midi();
+ */
+export function defaultmidimap(mapping) {
+  midicontrolMap.set('default', unifyMapping(mapping));
+}
+
+let loadCache = {};
+
+/**
+ * Adds midimaps to the registry. Inside each midimap, control names (e.g. lpf) are mapped to cc numbers.
+ * @example
+ * midimaps({ mymap: { lpf: 74 } })
+ * $: note("c a f e")
+ * .lpf(sine.slow(4))
+ * .midimap('mymap')
+ * .midi()
+ * @example
+ * midimaps({ mymap: {
+ *   lpf: { ccn: 74, min: 0, max: 20000, exp: 0.5 }
+ * }})
+ * $: note("c a f e")
+ * .lpf(sine.slow(2).range(400,2000))
+ * .midimap('mymap')
+ * .midi()
+ */
+export async function midimaps(map) {
+  if (typeof map === 'string') {
+    if (map.startsWith('github:')) {
+      map = githubPath(map, 'midimap.json');
+    }
+    if (!loadCache[map]) {
+      loadCache[map] = fetch(map).then((res) => res.json());
+    }
+    map = await loadCache[map];
+  }
+  if (typeof map === 'object') {
+    Object.entries(map).forEach(([name, mapping]) => midicontrolMap.set(name, unifyMapping(mapping)));
+  }
+}
+
+// registry for midi sounds, converting sound names to controls
+export const midisoundMap = new Map();
+
+// normalizes the given value from the given range and exponent
+function normalize(value = 0, min = 0, max = 1, exp = 1) {
+  if (min === max) {
+    throw new Error('min and max cannot be the same value');
+  }
+  let normalized = (value - min) / (max - min);
+  normalized = Math.min(1, Math.max(0, normalized));
+  return Math.pow(normalized, exp);
+}
+function mapCC(mapping, value) {
+  return Object.keys(value)
+    .filter((key) => !!mapping[getControlName(key)])
+    .map((key) => {
+      const { ccn, min = 0, max = 1, exp = 1 } = mapping[key];
+      const ccv = normalize(value[key], min, max, exp);
+      return { ccn, ccv };
+    });
+}
+
+// sends a cc message to the given device on the given channel
+function sendCC(ccn, ccv, device, midichan, timeOffsetString) {
+  if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
+    throw new Error('expected ccv to be a number between 0 and 1');
+  }
+  if (!['string', 'number'].includes(typeof ccn)) {
+    throw new Error('expected ccn to be a number or a string');
+  }
+  const scaled = Math.round(ccv * 127);
+  device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
+}
+
+// registry for midi mappings, converting control names to cc messages
+export const midicontrolMap = new Map();
+
+// takes midimap and converts each control key to the main control name
+function unifyMapping(mapping) {
+  return Object.fromEntries(
+    Object.entries(mapping).map(([key, mapping]) => {
+      if (typeof mapping === 'number') {
+        mapping = { ccn: mapping };
+      }
+      return [getControlName(key), mapping];
+    }),
+  );
+}
+
+function githubPath(base, subpath = '') {
+  if (!base.startsWith('github:')) {
+    throw new Error('expected "github:" at the start of pseudoUrl');
+  }
+  let [_, path] = base.split('github:');
+  path = path.endsWith('/') ? path.slice(0, -1) : path;
+  if (path.split('/').length === 2) {
+    // assume main as default branch if none set
+    path += '/main';
+  }
+  return `https://raw.githubusercontent.com/${path}/${subpath}`;
+}
+
+/**
+ * configures the default midimap, which is used when no "midimap" port is set
+ * @example
+ * defaultmidimap({ lpf: 74 })
+ * $: note("c a f e").midi();
+ * $: lpf(sine.slow(4).segment(16)).midi();
+ */
+export function defaultmidimap(mapping) {
+  midicontrolMap.set('default', unifyMapping(mapping));
+}
+
+let loadCache = {};
+
+/**
+ * Adds midimaps to the registry. Inside each midimap, control names (e.g. lpf) are mapped to cc numbers.
+ * @example
+ * midimaps({ mymap: { lpf: 74 } })
+ * $: note("c a f e")
+ * .lpf(sine.slow(4))
+ * .midimap('mymap')
+ * .midi()
+ * @example
+ * midimaps({ mymap: {
+ *   lpf: { ccn: 74, min: 0, max: 20000, exp: 0.5 }
+ * }})
+ * $: note("c a f e")
+ * .lpf(sine.slow(2).range(400,2000))
+ * .midimap('mymap')
+ * .midi()
+ */
+export async function midimaps(map) {
+  if (typeof map === 'string') {
+    if (map.startsWith('github:')) {
+      map = githubPath(map, 'midimap.json');
+    }
+    if (!loadCache[map]) {
+      loadCache[map] = fetch(map).then((res) => res.json());
+    }
+    map = await loadCache[map];
+  }
+  if (typeof map === 'object') {
+    Object.entries(map).forEach(([name, mapping]) => midicontrolMap.set(name, unifyMapping(mapping)));
+  }
+}
+
+// registry for midi sounds, converting sound names to controls
+export const midisoundMap = new Map();
+
+// normalizes the given value from the given range and exponent
+function normalize(value = 0, min = 0, max = 1, exp = 1) {
+  if (min === max) {
+    throw new Error('min and max cannot be the same value');
+  }
+  let normalized = (value - min) / (max - min);
+  normalized = Math.min(1, Math.max(0, normalized));
+  return Math.pow(normalized, exp);
+}
+function mapCC(mapping, value) {
+  return Object.keys(value)
+    .filter((key) => !!mapping[getControlName(key)])
+    .map((key) => {
+      const { ccn, min = 0, max = 1, exp = 1 } = mapping[key];
+      const ccv = normalize(value[key], min, max, exp);
+      return { ccn, ccv };
+    });
+}
+
+// sends a cc message to the given device on the given channel
+function sendCC(ccn, ccv, device, midichan, timeOffsetString) {
+  if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
+    throw new Error('expected ccv to be a number between 0 and 1');
+  }
+  if (!['string', 'number'].includes(typeof ccn)) {
+    throw new Error('expected ccn to be a number or a string');
+  }
+  const scaled = Math.round(ccv * 127);
+  device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
+}
+
 /**
  * MIDI output: Opens a MIDI output port.
  * @param {string | number} output MIDI device name or index defaulting to 0
@@ -138,12 +352,12 @@ Pattern.prototype.midi = function (output) {
       console.log('not enabled');
       return;
     }
-    const device = getDevice(portName, WebMidi.outputs);
     hap.ensureObjectValue();
     //magic number to get audio engine to line up, can probably be calculated somehow
     const latencyMs = 34;
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
     const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
+
     // destructure value
     let {
       note,
@@ -161,9 +375,24 @@ Pattern.prototype.midi = function (output) {
       progNum,
       sysexid,
       sysexdata,
+      midimap = 'default',
+      midiport = output,
     } = hap.value;
 
+    const device = getDevice(midiport, WebMidi.outputs);
+    if (!device) {
+      logger(
+        `[midi] midiport "${midiport}" not found! available: ${WebMidi.outputs.map((output) => `'${output.name}'`).join(', ')}`,
+      );
+      return;
+    }
+
     velocity = gain * velocity;
+    // if midimap is set, send a cc messages from defined controls
+    if (midicontrolMap.has(midimap)) {
+      const ccs = mapCC(midicontrolMap.get(midimap), hap.value);
+      ccs.forEach(({ ccn, ccv }) => sendCC(ccn, ccv, device, midichan, timeOffsetString));
+    }
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
     const duration = (hap.duration.valueOf() / cps) * 1000 - 10;
@@ -240,11 +469,28 @@ Pattern.prototype.midi = function (output) {
 
     // Handle control change
     if (ccv !== undefined && ccn !== undefined) {
-      if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
-        throw new Error('expected ccv to be a number between 0 and 1');
+      sendCC(ccn, ccv, device, midichan, timeOffsetString);
+    }
+
+    // Handle NRPN non-registered parameter number
+    if (nrpnn !== undefined && nrpv !== undefined) {
+      if (Array.isArray(nrpnn)) {
+        if (!nrpnn.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+          throw new Error('all nrpnn bytes must be integers between 0 and 255');
+        }
+      } else if (!Number.isInteger(nrpv) || nrpv < 0 || nrpv > 255) {
+        throw new Error('A:sysexid must be an number between 0 and 255 or an array of such integers');
       }
-      if (!['string', 'number'].includes(typeof ccn)) {
-        throw new Error('expected ccn to be a number or a string');
+
+      device.sendNRPN(nrpnn, nrpv, midichan, { time: timeOffsetString });
+    }
+
+    // Handle midibend
+    if (midibend !== undefined) {
+      if (typeof midibend == 'number' || midibend < 1 || midibend > -1) {
+        device.sendPitchBend(midibend, midichan, { time: timeOffsetString });
+      } else {
+        throw new Error('expected midibend to be a number between 1 and -1');
       }
       const scaled = Math.round(ccv * 127);
       device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
