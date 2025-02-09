@@ -1622,7 +1622,6 @@ export const ar = register('ar', (t, pat) => {
  */
 export const { midichan } = registerControl('midichan');
 
-
 export const { midimap } = registerControl('midimap');
 
 /**

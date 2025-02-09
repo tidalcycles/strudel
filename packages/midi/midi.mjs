@@ -180,6 +180,8 @@ function normalize(value = 0, min = 0, max = 1, exp = 1) {
 }
 
 function mapCC(mapping, value) {
+  console.log('mapping', mapping);
+  console.log('value', value);
   return Object.keys(value)
     .filter((key) => !!mapping[getControlName(key)])
     .map((key) => {
@@ -340,6 +342,7 @@ Pattern.prototype.midi = function (output) {
     velocity = gain * velocity;
     // if midimap is set, send a cc messages from defined controls
     if (midicontrolMap.has(midimap)) {
+      console.log('midimap', midimap);
       const ccs = mapCC(midicontrolMap.get(midimap), hap.value);
       ccs.forEach(({ ccn, ccv }) => sendCC(ccn, ccv, device, midichan, timeOffsetString));
     }
