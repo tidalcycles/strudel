@@ -20,9 +20,6 @@ export const signal = (func) => {
   return new Pattern(query);
 };
 
-export const isaw = signal((t) => 1 - (t % 1));
-export const isaw2 = isaw.toBipolar();
-
 /**
  *  A sawtooth signal between 0 and 1.
  *
@@ -36,8 +33,40 @@ export const isaw2 = isaw.toBipolar();
  *
  */
 export const saw = signal((t) => t % 1);
+
+/**
+ *  A sawtooth signal between -1 and 1 (like `saw`, but bipolar).
+ *
+ * @return {Pattern}
+ */
 export const saw2 = saw.toBipolar();
 
+/**
+ *  A sawtooth signal between 1 and 0 (like `saw`, but flipped).
+ *
+ * @return {Pattern}
+ * @example
+ * note("<c3 [eb3,g3] g2 [g3,bb3]>*8")
+ * .clip(isaw.slow(2))
+ * @example
+ * n(isaw.range(0,8).segment(8))
+ * .scale('C major')
+ *
+ */
+export const isaw = signal((t) => 1 - (t % 1));
+
+/**
+ *  A sawtooth signal between 1 and -1 (like `saw2`, but flipped).
+ *
+ * @return {Pattern}
+ */
+export const isaw2 = isaw.toBipolar();
+
+/**
+ *  A sine signal between -1 and 1 (like `sine`, but bipolar).
+ *
+ * @return {Pattern}
+ */
 export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
 
 /**
@@ -61,6 +90,12 @@ export const sine = sine2.fromBipolar();
  *
  */
 export const cosine = sine._early(Fraction(1).div(4));
+
+/**
+ *  A cosine signal between -1 and 1 (like `cosine`, but bipolar).
+ *
+ * @return {Pattern}
+ */
 export const cosine2 = sine2._early(Fraction(1).div(4));
 
 /**
@@ -72,6 +107,12 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
  *
  */
 export const square = signal((t) => Math.floor((t * 2) % 2));
+
+/**
+ *  A square signal between -1 and 1 (like `square`, but bipolar).
+ *
+ * @return {Pattern}
+ */
 export const square2 = square.toBipolar();
 
 /**
@@ -82,9 +123,37 @@ export const square2 = square.toBipolar();
  * n(tri.segment(8).range(0,7)).scale("C:minor")
  *
  */
-export const tri = fastcat(isaw, saw);
-export const tri2 = fastcat(isaw2, saw2);
+export const tri = fastcat(saw, isaw);
 
+/**
+ *  A triangle signal between -1 and 1 (like `tri`, but bipolar).
+ *
+ * @return {Pattern}
+ */
+export const tri2 = fastcat(saw2, isaw2);
+
+/**
+ *  An inverted triangle signal between 1 and 0 (like `tri`, but flipped).
+ *
+ * @return {Pattern}
+ * @example
+ * n(itri.segment(8).range(0,7)).scale("C:minor")
+ *
+ */
+export const itri = fastcat(isaw, saw);
+
+/**
+ *  An inverted triangle signal between -1 and 1 (like `itri`, but bipolar).
+ *
+ * @return {Pattern}
+ */
+export const itri2 = fastcat(isaw2, saw2);
+
+/**
+ *  A signal representing the cycle time.
+ *
+ * @return {Pattern}
+ */
 export const time = signal(id);
 
 /**
