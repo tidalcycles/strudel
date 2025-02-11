@@ -1265,4 +1265,14 @@ describe('Pattern', () => {
       expect(s('bev').chop(8).loopAt(2)._steps).toStrictEqual(Fraction(4));
     });
   });
+  describe('bite', () => {
+    it('works with uneven patterns', () => {
+      sameFirst(
+        fastcat(slowcat('a', 'b', 'c', 'd', 'e'), slowcat(1, 2, 3, 4, 5))
+          .bite(2, stepcat(pure(0), pure(1).expand(2)))
+          .fast(5),
+        stepcat(slowcat('a', 'b', 'c', 'd', 'e'), slowcat(1, 2, 3, 4, 5).expand(2)).fast(5),
+      );
+    });
+  });
 });

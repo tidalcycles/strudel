@@ -1820,7 +1820,10 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
 export const focus = register('focus', function (b, e, pat) {
   b = Fraction(b);
   e = Fraction(e);
-  return pat._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
+  return pat
+    ._early(b.sam())
+    ._fast(Fraction(1).div(e.sub(b)))
+    ._late(b);
 });
 
 export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], function (span, pat) {
