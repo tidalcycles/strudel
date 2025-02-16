@@ -1,0 +1,38 @@
+{
+    "name": "@strudel/gamepad",
+    "version": "1.1.0",
+    "description": "Gamepad Inputs for strudel",
+    "main": "index.mjs",
+    "type": "module",
+    "publishConfig": {
+      "main": "dist/index.mjs"
+    },
+    "scripts": {
+      "build": "vite build",
+      "prepublishOnly": "npm run build"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/tidalcycles/strudel.git"
+    },
+    "keywords": [
+      "titdalcycles",
+      "strudel",
+      "pattern",
+      "livecoding",
+      "algorave"
+    ],
+    "author": "Yuta Nakayama <nkymut@gmail.com>",
+    "license": "AGPL-3.0-or-later",
+    "bugs": {
+      "url": "https://github.com/tidalcycles/strudel/issues"
+    },
+    "homepage": "https://github.com/tidalcycles/strudel#readme",
+    "dependencies": {
+      "@strudel/core": "workspace:*"
+    },
+    "devDependencies": {
+     "vite": "^6.0.11"
+    }
+}
+  

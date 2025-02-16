@@ -267,6 +267,16 @@ importers:
 
   packages/embed: {}
 
+  packages/gamepad:
+    dependencies:
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      vite:
+        specifier: ^6.0.11
+        version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+
   packages/hs2js:
     dependencies:
       web-tree-sitter:
@@ -640,6 +650,9 @@ importers:
       '@strudel/draw':
         specifier: workspace:*
         version: link:../packages/draw
+      '@strudel/gamepad':
+        specifier: workspace:*
+        version: link:../packages/gamepad
       '@strudel/hydra':
         specifier: workspace:*
         version: link:../packages/hydra
