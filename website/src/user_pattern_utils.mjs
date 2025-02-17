@@ -8,16 +8,13 @@ import { confirmDialog, parseJSON, supabase } from './repl/util.mjs';
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
 
-export const collectionName = {
-  user: 'user',
-  public: 'Last Creations',
-  stock: 'Stock Examples',
-  featured: 'Featured',
-};
+
 
 export const patternFilterName = {
-  community: 'community',
+  public: 'latest',
+  featured: 'featured',
   user: 'user',
+  // stock: 'stock examples',
 };
 
 const sessionAtom = (name, initial = undefined) => {
@@ -36,7 +33,7 @@ const sessionAtom = (name, initial = undefined) => {
 export let $viewingPatternData = sessionAtom('viewingPatternData', {
   id: '',
   code: '',
-  collection: collectionName.user,
+  collection: patternFilterName.user,
   created_at: Date.now(),
 });
 
@@ -52,11 +49,11 @@ export const setViewingPatternData = (data) => {
 };
 
 export function loadPublicPatterns() {
-  return supabase.from('code_v1').select().eq('public', true).limit(20).order('id', { ascending: false });
+  return supabase.from('code_v1').select().eq('public', true).limit(40).order('id', { ascending: false });
 }
 
 export function loadFeaturedPatterns() {
-  return supabase.from('code_v1').select().eq('featured', true).limit(20).order('id', { ascending: false });
+  return supabase.from('code_v1').select().eq('featured', true).limit(40).order('id', { ascending: false });
 }
 
 export async function loadDBPatterns() {
@@ -92,7 +89,7 @@ export const setLatestCode = (code) => settingsMap.setKey('latestCode', code);
 
 const defaultCode = '';
 export const userPattern = {
-  collection: collectionName.user,
+  collection: patternFilterName.user,
   getAll() {
     const patterns = parseJSON(settingsMap.get().userPatterns);
     return patterns ?? {};

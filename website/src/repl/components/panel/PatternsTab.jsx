@@ -84,82 +84,72 @@ function ActionButton({ children, onClick, label, labelIsHidden }) {
   );
 }
 
-export function PatternsTab({ context }) {
+const updateCodeWindow = (context, patternData, reset = false) => {
+  context.handleUpdate(patternData, reset);
+};
+
+const autoResetPatternOnChange = !isUdels();
+
+function UserPatterns({ context }) {
   const activePattern = useActivePattern();
   const viewingPatternStore = useViewingPatternData();
   const viewingPatternData = parseJSON(viewingPatternStore);
-
   const { userPatterns, patternFilter } = useSettings();
-
-  const examplePatterns = useExamplePatterns();
-  const collections = examplePatterns.collections;
-
-  const updateCodeWindow = (patternData, reset = false) => {
-    context.handleUpdate(patternData, reset);
-  };
   const viewingPatternID = viewingPatternData?.id;
-
-  const autoResetPatternOnChange = !isUdels();
-
   return (
-    <div className="px-4 w-full dark:text-white text-stone-900 space-y-2  flex flex-col overflow-hidden max-h-full h-full">
-      <ButtonGroup
-        value={patternFilter}
-        onChange={(value) => settingsMap.setKey('patternFilter', value)}
-        items={patternFilterName}
-      ></ButtonGroup>
-      {patternFilter === patternFilterName.user && (
-        <div>
-          <div className="pr-4 space-x-4 border-b border-foreground flex max-w-full overflow-x-auto">
-            <ActionButton
-              label="new"
-              onClick={() => {
-                const { data } = userPattern.createAndAddToDB();
-                updateCodeWindow(data);
-              }}
-            />
-            <ActionButton
-              label="duplicate"
-              onClick={() => {
-                const { data } = userPattern.duplicate(viewingPatternData);
-                updateCodeWindow(data);
-              }}
-            />
-            <ActionButton
-              label="delete"
-              onClick={() => {
-                const { data } = userPattern.delete(viewingPatternID);
-                updateCodeWindow({ ...data, collection: userPattern.collection });
-              }}
-            />
-            <label className="hover:opacity-50 cursor-pointer">
-              <input
-                style={{ display: 'none' }}
-                type="file"
-                multiple
-                accept="text/plain,application/json"
-                onChange={(e) => importPatterns(e.target.files)}
-              />
-              import
-            </label>
-            <ActionButton label="export" onClick={exportPatterns} />
+    <div className="flex flex-col flex-grow overflow-clip h-full">
+      <div className="pr-4 space-x-4 border-b border-foreground flex max-w-full overflow-x-auto">
+        <ActionButton
+          label="new"
+          onClick={() => {
+            const { data } = userPattern.createAndAddToDB();
+            updateCodeWindow(context, data);
+          }}
+        />
+        <ActionButton
+          label="duplicate"
+          onClick={() => {
+            const { data } = userPattern.duplicate(viewingPatternData);
+            updateCodeWindow(context, data);
+          }}
+        />
+        <ActionButton
+          label="delete"
+          onClick={() => {
+            const { data } = userPattern.delete(viewingPatternID);
+            updateCodeWindow(context, { ...data, collection: userPattern.collection });
+          }}
+        />
+        <label className="hover:opacity-50 cursor-pointer">
+          <input
+            style={{ display: 'none' }}
+            type="file"
+            multiple
+            accept="text/plain,application/json"
+            onChange={(e) => importPatterns(e.target.files)}
+          />
+          import
+        </label>
+        <ActionButton label="export" onClick={exportPatterns} />
 
-            <ActionButton
-              label="delete-all"
-              onClick={() => {
-                const { data } = userPattern.clearAll();
-                updateCodeWindow(data);
-              }}
-            />
-          </div>
-        </div>
-      )}
+        <ActionButton
+          label="delete-all"
+          onClick={() => {
+            const { data } = userPattern.clearAll();
+            updateCodeWindow(context, data);
+          }}
+        />
+      </div>
 
-      <section className="flex overflow-y-auto max-h-full flex-grow flex-col">
+      <div className="overflow-auto h-full">
         {patternFilter === patternFilterName.user && (
           <PatternButtons
             onClick={(id) =>
-              updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, autoResetPatternOnChange)
+              updateCodeWindow(
+                context,
+                { ...userPatterns[id], collection: userPattern.collection },
+                autoResetPatternOnChange,
+              )
             }
             patterns={userPatterns}
             started={context.started}
@@ -167,24 +157,47 @@ export function PatternsTab({ context }) {
             viewingPatternID={viewingPatternID}
           />
         )}
-        {patternFilter !== patternFilterName.user &&
-          Array.from(collections.keys()).map((collection) => {
-            const patterns = collections.get(collection);
-            return (
-              <section key={collection} className="py-2">
-                <h2 className="text-xl mb-2">{collection}</h2>
-                <div className="font-mono text-sm">
-                  <PatternButtons
-                    onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, autoResetPatternOnChange)}
-                    started={context.started}
-                    patterns={patterns}
-                    activePattern={activePattern}
-                  />
-                </div>
-              </section>
-            );
-          })}
-      </section>
+      </div>
+    </div>
+  );
+}
+
+function PublicPatterns({ context }) {
+  const activePattern = useActivePattern();
+  const examplePatterns = useExamplePatterns();
+  const collections = examplePatterns.collections;
+  const { patternFilter } = useSettings();
+  const patterns = collections.get(patternFilter) ?? collections.get(patternFilterName.public);
+  return (
+    <div className="overflow-auto flex flex-col flex-grow">
+      <PatternButtons
+        onClick={(id) =>
+          updateCodeWindow(context, { ...patterns[id], collection: patternFilter }, autoResetPatternOnChange)
+        }
+        started={context.started}
+        patterns={patterns}
+        activePattern={activePattern}
+      />
+    </div>
+  );
+}
+
+export function PatternsTab({ context }) {
+  const { patternFilter } = useSettings();
+
+  return (
+    <div className="px-4 w-full text-white  space-y-2  flex flex-col overflow-hidden max-h-full h-full">
+      <ButtonGroup
+        value={patternFilter}
+        onChange={(value) => settingsMap.setKey('patternFilter', value)}
+        items={patternFilterName}
+      ></ButtonGroup>
+
+      {patternFilter === patternFilterName.user ? (
+        <UserPatterns context={context} />
+      ) : (
+        <PublicPatterns context={context} />
+      )}
     </div>
   );
 }
