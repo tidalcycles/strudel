@@ -1,4 +1,4 @@
-import { $featuredPatterns, $publicPatterns,  patternFilterName } from '../user_pattern_utils.mjs';
+import { $featuredPatterns, $publicPatterns, patternFilterName } from '../user_pattern_utils.mjs';
 import { useStore } from '@nanostores/react';
 import { useMemo } from 'react';
 import * as tunes from '../repl/tunes.mjs';

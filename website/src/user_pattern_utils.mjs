@@ -8,8 +8,7 @@ import { confirmDialog, parseJSON, supabase } from './repl/util.mjs';
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
 
-
-const patternQueryLimit = 20
+const patternQueryLimit = 20;
 export const patternFilterName = {
   public: 'latest',
   featured: 'featured',
@@ -49,40 +48,49 @@ export const setViewingPatternData = (data) => {
 };
 
 function parsePageNum(page) {
- return isNaN(page) ? 0 : page
+  return isNaN(page) ? 0 : page;
 }
 export function loadPublicPatterns(page) {
-  page = parsePageNum(page)
-  const offset = page * patternQueryLimit
-  return supabase.from('code_v1').select().eq('public', true).range(offset, offset + patternQueryLimit ).order('id', { ascending: false });
+  page = parsePageNum(page);
+  const offset = page * patternQueryLimit;
+  return supabase
+    .from('code_v1')
+    .select()
+    .eq('public', true)
+    .range(offset, offset + patternQueryLimit)
+    .order('id', { ascending: false });
 }
 
 export function loadFeaturedPatterns(page = 0) {
-  page = parsePageNum(page)
-  const offset = page * patternQueryLimit
-  return supabase.from('code_v1').select().eq('featured', true).range(offset, offset + patternQueryLimit).order('id', { ascending: false });
+  page = parsePageNum(page);
+  const offset = page * patternQueryLimit;
+  return supabase
+    .from('code_v1')
+    .select()
+    .eq('featured', true)
+    .range(offset, offset + patternQueryLimit)
+    .order('id', { ascending: false });
 }
 
 export async function loadAndSetPublicPatterns(page) {
   const p = await loadPublicPatterns(page);
-  const data = p?.data
-  const pats = {}
+  const data = p?.data;
+  const pats = {};
   data?.forEach((data, key) => (pats[data.id ?? key] = data));
-  $publicPatterns.set(pats)
+  $publicPatterns.set(pats);
 }
 export async function loadAndSetFeaturedPatterns(page) {
-
   const p = await loadFeaturedPatterns(page);
-  const data = p?.data
-  const pats = {}
+  const data = p?.data;
+  const pats = {};
   data?.forEach((data, key) => (pats[data.id ?? key] = data));
-  $featuredPatterns.set(pats)
+  $featuredPatterns.set(pats);
 }
 
 export async function loadDBPatterns() {
   try {
-    await loadAndSetPublicPatterns()
-    await loadAndSetFeaturedPatterns()
+    await loadAndSetPublicPatterns();
+    await loadAndSetFeaturedPatterns();
   } catch (err) {
     console.error('error loading patterns', err);
   }

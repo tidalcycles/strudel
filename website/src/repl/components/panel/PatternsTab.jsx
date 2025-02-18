@@ -196,7 +196,7 @@ function PatternPageWithPagination({ patterns, patternOnClick, context, paginati
   );
 }
 
-let featuredPageNum = 1
+let featuredPageNum = 1;
 function FeaturedPatterns({ context }) {
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
@@ -215,13 +215,13 @@ function FeaturedPatterns({ context }) {
       }}
       paginationOnChange={async (pageNum) => {
         await loadAndSetFeaturedPatterns(pageNum);
-        featuredPageNum = pageNum
+        featuredPageNum = pageNum;
       }}
     />
   );
 }
 
-let latestPageNum = 1
+let latestPageNum = 1;
 function LatestPatterns({ context }) {
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
@@ -236,7 +236,7 @@ function LatestPatterns({ context }) {
       }}
       paginationOnChange={async (pageNum) => {
         await loadAndSetPublicPatterns(pageNum);
-        latestPageNum = pageNum
+        latestPageNum = pageNum;
       }}
     />
   );
