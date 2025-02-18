@@ -1,4 +1,4 @@
 // utility for combining class names
-export function cn(...classNameStrings) {
-    return classNameStrings.join(' ')
-  }
+export function cn(...classes) {
+  return classes.filter(Boolean).join(' ');
+}

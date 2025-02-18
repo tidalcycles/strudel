@@ -17,10 +17,7 @@ import { settingsMap, useSettings } from '../../../settings.mjs';
 import { Pagination } from '../pagination/Pagination.jsx';
 import { useState } from 'react';
 import { useDebounce } from '../usedebounce.jsx';
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+import { cn } from 'tailwind_utils.mjs';
 
 export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
   const meta = useMemo(() => getMetadata(pattern.code), [pattern]);
@@ -46,7 +43,7 @@ export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
 function PatternButton({ showOutline, onClick, pattern, showHiglight }) {
   return (
     <a
-      className={classNames(
+      className={cn(
         'mr-4 hover:opacity-50 cursor-pointer block',
         showOutline && 'outline outline-1',
         showHiglight && 'bg-selection',
@@ -169,8 +166,8 @@ function UserPatterns({ context }) {
   );
 }
 
-function PatternPageWithPagination({ patterns, patternOnClick, context, paginationOnChange }) {
-  const [page, setPage] = useState(1);
+function PatternPageWithPagination({ patterns, patternOnClick, context, paginationOnChange, initialPage }) {
+  const [page, setPage] = useState(initialPage);
   const debouncedPageChange = useDebounce(() => {
     paginationOnChange(page);
   });
@@ -192,13 +189,14 @@ function PatternPageWithPagination({ patterns, patternOnClick, context, paginati
         />
       </div>
       <div className="flex items-center gap-2 py-2">
-        <label htmlFor="pattern pagination">Page</label>{' '}
+        <label htmlFor="pattern pagination">Page</label>
         <Pagination id="pattern pagination" currPage={page} onPageChange={onPageChange} />
       </div>
     </div>
   );
 }
 
+let featuredPageNum = 1
 function FeaturedPatterns({ context }) {
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
@@ -207,6 +205,7 @@ function FeaturedPatterns({ context }) {
     <PatternPageWithPagination
       patterns={patterns}
       context={context}
+      initialPage={featuredPageNum}
       patternOnClick={(id) => {
         updateCodeWindow(
           context,
@@ -216,11 +215,13 @@ function FeaturedPatterns({ context }) {
       }}
       paginationOnChange={async (pageNum) => {
         await loadAndSetFeaturedPatterns(pageNum);
+        featuredPageNum = pageNum
       }}
     />
   );
 }
 
+let latestPageNum = 1
 function LatestPatterns({ context }) {
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
@@ -229,15 +230,13 @@ function LatestPatterns({ context }) {
     <PatternPageWithPagination
       patterns={patterns}
       context={context}
+      initialPage={latestPageNum}
       patternOnClick={(id) => {
-        updateCodeWindow(
-          context,
-          { ...patterns[id], collection: patternFilterName.public },
-          autoResetPatternOnChange,
-        );
+        updateCodeWindow(context, { ...patterns[id], collection: patternFilterName.public }, autoResetPatternOnChange);
       }}
       paginationOnChange={async (pageNum) => {
         await loadAndSetPublicPatterns(pageNum);
+        latestPageNum = pageNum
       }}
     />
   );
