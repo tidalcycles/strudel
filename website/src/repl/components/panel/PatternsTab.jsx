@@ -1,6 +1,8 @@
 import {
   exportPatterns,
   importPatterns,
+  loadAndSetFeaturedPatterns,
+  loadAndSetPublicPatterns,
   patternFilterName,
   useActivePattern,
   useViewingPatternData,
@@ -12,6 +14,9 @@ import { useExamplePatterns } from '../../useExamplePatterns.jsx';
 import { parseJSON, isUdels } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { settingsMap, useSettings } from '../../../settings.mjs';
+import { Pagination } from '../pagination/Pagination.jsx';
+import { useState } from 'react';
+import { useDebounce } from '../usedebounce.jsx';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -33,7 +38,9 @@ export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
   if (title == null) {
     title = 'unnamed';
   }
-  return <>{`${pattern.id}: ${title} by ${Array.isArray(meta.by) ? meta.by.join(',') : 'Anonymous'}`}</>;
+
+  const author = Array.isArray(meta.by) ? meta.by.join(',') : 'Anonymous';
+  return <>{`${pattern.id}: ${title} by ${author.slice(0, 100)}`.slice(0, 60)}</>;
 }
 
 function PatternButton({ showOutline, onClick, pattern, showHiglight }) {
@@ -57,7 +64,7 @@ function PatternButtons({ patterns, activePattern, onClick, started }) {
   const viewingPatternID = viewingPatternData.id;
   return (
     <div className="font-mono text-sm">
-      {Object.values(patterns)
+      {Object.values(patterns ?? {})
         .reverse()
         .map((pattern) => {
           const id = pattern.id;
@@ -97,8 +104,8 @@ function UserPatterns({ context }) {
   const { userPatterns, patternFilter } = useSettings();
   const viewingPatternID = viewingPatternData?.id;
   return (
-    <div className="flex flex-col flex-grow overflow-clip h-full">
-      <div className="pr-4 space-x-4 border-b border-foreground flex max-w-full overflow-x-auto">
+    <div className="flex flex-col gap-2 flex-grow overflow-hidden h-full pb-2 ">
+      <div className="pr-4 space-x-4  flex max-w-full overflow-x-auto">
         <ActionButton
           label="new"
           onClick={() => {
@@ -141,7 +148,7 @@ function UserPatterns({ context }) {
         />
       </div>
 
-      <div className="overflow-auto h-full">
+      <div className="overflow-auto h-full bg-background p-2 rounded-md">
         {patternFilter === patternFilterName.user && (
           <PatternButtons
             onClick={(id) =>
@@ -162,31 +169,93 @@ function UserPatterns({ context }) {
   );
 }
 
-function PublicPatterns({ context }) {
+function PatternPageWithPagination({ patterns, patternOnClick, context, paginationOnChange }) {
+  const [page, setPage] = useState(1);
+  const debouncedPageChange = useDebounce(() => {
+    paginationOnChange(page);
+  });
+
+  const onPageChange = (pageNum) => {
+    setPage(pageNum);
+    debouncedPageChange();
+  };
+
   const activePattern = useActivePattern();
-  const examplePatterns = useExamplePatterns();
-  const collections = examplePatterns.collections;
-  const { patternFilter } = useSettings();
-  const patterns = collections.get(patternFilter) ?? collections.get(patternFilterName.public);
   return (
-    <div className="overflow-auto flex flex-col flex-grow">
-      <PatternButtons
-        onClick={(id) =>
-          updateCodeWindow(context, { ...patterns[id], collection: patternFilter }, autoResetPatternOnChange)
-        }
-        started={context.started}
-        patterns={patterns}
-        activePattern={activePattern}
-      />
+    <div className="flex flex-grow flex-col  h-full overflow-hidden justify-between">
+      <div className="overflow-auto flex flex-col flex-grow bg-background p-2 rounded-md ">
+        <PatternButtons
+          onClick={(id) => patternOnClick(id)}
+          started={context.started}
+          patterns={patterns}
+          activePattern={activePattern}
+        />
+      </div>
+      <div className="flex items-center gap-2 py-2">
+        <label htmlFor="pattern pagination">Page</label>{' '}
+        <Pagination id="pattern pagination" currPage={page} onPageChange={onPageChange} />
+      </div>
     </div>
   );
+}
+
+function FeaturedPatterns({ context }) {
+  const examplePatterns = useExamplePatterns();
+  const collections = examplePatterns.collections;
+  const patterns = collections.get(patternFilterName.featured);
+  return (
+    <PatternPageWithPagination
+      patterns={patterns}
+      context={context}
+      patternOnClick={(id) => {
+        updateCodeWindow(
+          context,
+          { ...patterns[id], collection: patternFilterName.featured },
+          autoResetPatternOnChange,
+        );
+      }}
+      paginationOnChange={async (pageNum) => {
+        await loadAndSetFeaturedPatterns(pageNum);
+      }}
+    />
+  );
+}
+
+function LatestPatterns({ context }) {
+  const examplePatterns = useExamplePatterns();
+  const collections = examplePatterns.collections;
+  const patterns = collections.get(patternFilterName.public);
+  return (
+    <PatternPageWithPagination
+      patterns={patterns}
+      context={context}
+      patternOnClick={(id) => {
+        updateCodeWindow(
+          context,
+          { ...patterns[id], collection: patternFilterName.public },
+          autoResetPatternOnChange,
+        );
+      }}
+      paginationOnChange={async (pageNum) => {
+        await loadAndSetPublicPatterns(pageNum);
+      }}
+    />
+  );
+}
+
+function PublicPatterns({ context }) {
+  const { patternFilter } = useSettings();
+  if (patternFilter === patternFilterName.featured) {
+    return <FeaturedPatterns context={context} />;
+  }
+  return <LatestPatterns context={context} />;
 }
 
 export function PatternsTab({ context }) {
   const { patternFilter } = useSettings();
 
   return (
-    <div className="px-4 w-full text-white  space-y-2  flex flex-col overflow-hidden max-h-full h-full">
+    <div className="px-4 w-full text-foreground  space-y-2  flex flex-col overflow-hidden max-h-full h-full">
       <ButtonGroup
         value={patternFilter}
         onChange={(value) => settingsMap.setKey('patternFilter', value)}

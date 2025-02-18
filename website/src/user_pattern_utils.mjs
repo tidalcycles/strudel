@@ -9,7 +9,7 @@ export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
 
 
-
+const patternQueryLimit = 20
 export const patternFilterName = {
   public: 'latest',
   featured: 'featured',
@@ -48,25 +48,41 @@ export const setViewingPatternData = (data) => {
   $viewingPatternData.set(JSON.stringify(data));
 };
 
-export function loadPublicPatterns() {
-  return supabase.from('code_v1').select().eq('public', true).limit(40).order('id', { ascending: false });
+function parsePageNum(page) {
+ return isNaN(page) ? 0 : page
+}
+export function loadPublicPatterns(page) {
+  page = parsePageNum(page)
+  const offset = page * patternQueryLimit
+  return supabase.from('code_v1').select().eq('public', true).range(offset, offset + patternQueryLimit ).order('id', { ascending: false });
 }
 
-export function loadFeaturedPatterns() {
-  return supabase.from('code_v1').select().eq('featured', true).limit(40).order('id', { ascending: false });
+export function loadFeaturedPatterns(page = 0) {
+  page = parsePageNum(page)
+  const offset = page * patternQueryLimit
+  return supabase.from('code_v1').select().eq('featured', true).range(offset, offset + patternQueryLimit).order('id', { ascending: false });
+}
+
+export async function loadAndSetPublicPatterns(page) {
+  const p = await loadPublicPatterns(page);
+  const data = p?.data
+  const pats = {}
+  data?.forEach((data, key) => (pats[data.id ?? key] = data));
+  $publicPatterns.set(pats)
+}
+export async function loadAndSetFeaturedPatterns(page) {
+
+  const p = await loadFeaturedPatterns(page);
+  const data = p?.data
+  const pats = {}
+  data?.forEach((data, key) => (pats[data.id ?? key] = data));
+  $featuredPatterns.set(pats)
 }
 
 export async function loadDBPatterns() {
   try {
-    const { data: publicPatterns } = await loadPublicPatterns();
-    const { data: featuredPatterns } = await loadFeaturedPatterns();
-    const featured = {};
-    const pub = {};
-
-    publicPatterns?.forEach((data, key) => (pub[data.id ?? key] = data));
-    featuredPatterns?.forEach((data, key) => (featured[data.id ?? key] = data));
-    $publicPatterns.set(pub);
-    $featuredPatterns.set(featured);
+    await loadAndSetPublicPatterns()
+    await loadAndSetFeaturedPatterns()
   } catch (err) {
     console.error('error loading patterns', err);
   }
