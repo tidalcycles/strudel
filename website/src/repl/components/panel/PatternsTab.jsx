@@ -214,7 +214,7 @@ function FeaturedPatterns({ context }) {
         );
       }}
       paginationOnChange={async (pageNum) => {
-        await loadAndSetFeaturedPatterns(pageNum);
+        await loadAndSetFeaturedPatterns(pageNum -1);
         featuredPageNum = pageNum;
       }}
     />
@@ -235,7 +235,7 @@ function LatestPatterns({ context }) {
         updateCodeWindow(context, { ...patterns[id], collection: patternFilterName.public }, autoResetPatternOnChange);
       }}
       paginationOnChange={async (pageNum) => {
-        await loadAndSetPublicPatterns(pageNum);
+        await loadAndSetPublicPatterns(pageNum -1);
         latestPageNum = pageNum;
       }}
     />

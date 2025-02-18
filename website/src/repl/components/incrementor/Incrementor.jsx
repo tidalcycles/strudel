@@ -33,7 +33,7 @@ export function Incrementor({ onChange, value, min = -Infinity, max = Infinity, 
         type="number"
         placeholder=""
         value={value}
-        className="w-32 my-0 border-none rounded-r-none bg-transparent appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        className="w-32 mb-0 mt-0 border-none rounded-r-none bg-transparent appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
       <div className="flex gap-1 ">
         <IncButton label={'increment'} disabled={value <= min} onClick={() => onChange(value - 1)}>
