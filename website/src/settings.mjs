@@ -40,8 +40,6 @@ export const defaultSettings = {
   audioEngineTarget: audioEngineTargets.webaudio,
   isButtonRowHidden: false,
   isCSSAnimationDisabled: false,
-  publicPatternPage: 1,
-  featuredPatternPage: 1,
 };
 
 let search = null;
