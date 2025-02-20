@@ -99,12 +99,6 @@ Object.keys(networkInterfaces).forEach((key) => {
   });
 });
 
-if (!IP) {
-  console.error("Unable to determine server's IP address.");
-  // eslint-disable-next-line
-  process.exit(1);
-}
-
 server.listen(PORT, IP_ADDRESS, () => {
   console.log(`@strudel/sampler is now serving audio files from:
  ${directory}
@@ -113,6 +107,6 @@ To use them in the Strudel REPL, run:
  samples('http://localhost:${PORT}')
 
 Or on a machine in the same network:
- samples('http://${IP}:${PORT}')
+ ${IP ? `samples('http://${IP}:${PORT}')` : `Unable to determine server's IP address.`}
 `);
 });
