@@ -4,6 +4,7 @@ import blackscreen, { settings as blackscreenSettings } from './themes/blackscre
 import whitescreen, { settings as whitescreenSettings } from './themes/whitescreen.mjs';
 import teletext, { settings as teletextSettings } from './themes/teletext.mjs';
 import algoboy, { settings as algoboySettings } from './themes/algoboy.mjs';
+import grl2000, {settings as grl2000Settings} from './themes/grl2000.mjs'
 import terminal, { settings as terminalSettings } from './themes/terminal.mjs';
 import abcdef, { settings as abcdefSettings } from './themes/abcdef.mjs';
 import androidstudio, { settings as androidstudioSettings } from './themes/androidstudio.mjs';
@@ -55,6 +56,7 @@ export const themes = {
   androidstudio,
   duotoneDark,
   githubDark,
+  grl2000,
   gruvboxDark,
   materialDark,
   nord,
@@ -98,6 +100,7 @@ export const settings = {
   duotoneLight: duotoneLightSettings,
   duotoneDark: duotoneDarkSettings,
   eclipse: eclipseSettings,
+  grl2000: grl2000Settings,
   githubLight: githubLightSettings,
   githubDark: githubDarkSettings,
   gruvboxDark: gruvboxDarkSettings,

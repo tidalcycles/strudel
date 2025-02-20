@@ -55,18 +55,18 @@ export function Reference() {
         className="break-normal flex-grow flex-col overflow-y-auto overflow-x-hidden   px-2 flex relative"
         id="reference-container"
       >
-        <div className="prose dark:prose-invert min-w-full px-1 ">
-          <h2>API Reference</h2>
+        <div className="prose dark:prose-invert min-w-full px-1 text-foreground">
+          <h2 className='text-foreground'>API Reference</h2>
           <p>
             This is the long list of functions you can use. Remember that you don't need to remember all of those and
             that you can already make music with a small set of functions!
           </p>
           {visibleFunctions.map((entry, i) => (
             <section key={i}>
-              <h3 id={`doc-${i}`}>{entry.name}</h3>
+              <h3 className='text-foreground' id={`doc-${i}`}>{entry.name}</h3>
               {!!entry.synonyms_text && (
                 <p>
-                  Synonyms: <code>{entry.synonyms_text}</code>
+                  Synonyms: <code className='text-foreground'>{entry.synonyms_text}</code>
                 </p>
               )}
               {/* <small>{entry.meta.filename}</small> */}
@@ -79,7 +79,7 @@ export function Reference() {
                 ))}
               </ul>
               {entry.examples?.map((example, j) => (
-                <pre key={j}>{example}</pre>
+                <pre className='text-foreground bg-background' key={j}>{example}</pre>
               ))}
             </section>
           ))}
