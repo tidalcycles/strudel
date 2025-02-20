@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import cowsay from 'cowsay';
-import { createReadStream } from 'fs';
+import { createReadStream, existsSync } from 'fs';
 import { readdir } from 'fs/promises';
 import http from 'http';
 import { join, sep } from 'path';
@@ -70,12 +70,15 @@ const server = http.createServer(async (req, res) => {
     return res.end(JSON.stringify(banks));
   }
   let subpath = decodeURIComponent(req.url);
-  if (!files.includes(subpath)) {
+  const filePath = join(directory, subpath.split('/').join(sep));
+
+  //console.log('GET:', filePath);
+  const isFound = existsSync(filePath);
+  if (!isFound) {
     res.statusCode = 404;
     res.end('File not found');
     return;
   }
-  const filePath = join(directory, subpath.split('/').join(sep));
   const readStream = createReadStream(filePath);
   readStream.on('error', (err) => {
     res.statusCode = 500;
