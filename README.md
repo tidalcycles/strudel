@@ -31,6 +31,10 @@ This project is organized into many [packages](./packages), which are also avail
 
 Read more about how to use these in your own project [here](https://strudel.cc/technical-manual/project-start).
 
+You will need to abide by the terms of the [GNU Affero Public Licence v3](LICENSE.md). As such, Strudel code can only be shared within free/open source projects under the same license -- see the license for details.
+
+Licensing info for the default sound banks can be found over on the [dough-samples](https://github.com/felixroos/dough-samples/blob/main/README.md) repository.
+
 ## Contributing
 
 There are many ways to contribute to this project! See [contribution guide](./CONTRIBUTING.md).
