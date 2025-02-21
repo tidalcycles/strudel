@@ -46,42 +46,29 @@ module.exports = {
               'code::after': {
                 content: 'none',
               },
-               color: 'var(--foreground)',
-              // text: {
-
-              // },
-              // p: {
-              //   color: 'var(--foreground)', 
-              // },
+              color: 'var(--foreground)',
               a: {
-                color: 'var(--foreground)', 
+                color: 'var(--foreground)',
               },
               h1: {
-                color: 'var(--foreground)', 
+                color: 'var(--foreground)',
               },
               h2: {
-                color: 'var(--foreground)', 
+                color: 'var(--foreground)',
               },
               h3: {
-                color: 'var(--foreground)', 
+                color: 'var(--foreground)',
               },
               h4: {
-                color: 'var(--foreground)', 
+                color: 'var(--foreground)',
               },
               pre: {
-                  color: 'var(--foreground)', 
-                  background: 'var(--background)'   
+                color: 'var(--foreground)',
+                background: 'var(--background)',
               },
               code: {
                 color: 'var(--foreground)',
               },
-              // li: {
-              //   color: 'var(--foreground)',  
-              // },
-              // span: {
-              //   color: 'var(--foreground)',  
-              // }
-
             },
           },
         };
