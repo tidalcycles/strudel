@@ -36,8 +36,6 @@ export function Showcase() {
 }
 
 let _videos = [
-  { title: 'Coding Music With Strudel Workhop by Dan Gorelick and Viola He', id: 'oqyAJ4WeKoU' },
-  { title: 'Hexe - playing w strudel live coding music', id: '03m3F5xVOMg' },
   { title: 'DJ_Dave - Array [Lil Data Edit]', id: 'KUujFuTcuKc' },
   { title: 'DJ_Dave - Bitrot [v10101a Edit]', id: 'z_cJMdBp67Q' },
   { title: 'you will not steve reich your way out of it', id: 'xpILnXcWyuo' },
@@ -58,7 +56,6 @@ let _videos = [
   },
   { title: 'letSeaTstrudeL @ solstice stream 2023', id: 'fTiX6dVtdWQ' },
   { title: 'totalgee (Glen F) @ solstice stream 2023', id: 'IvI6uaE3nLU' },
-  { title: 'Dan Gorelick @ solstice stream 2023', id: 'qMJEljJyPi0' },
   //
   /* { // not sure if this is copyrighted ...
     title: 'Creative Coding @ Chalmers University of Technology, video by svt.se',
@@ -126,6 +123,11 @@ let _videos = [
       'A first foray into combining (an early version) strudel and hydra, using flok for collaborative coding.',
   },
   { title: 'froos @ Algorave 10th Birthday stream', id: 'IcMSocdKwvw' },
+  { title: 'todepasta 1.5', id: 'gCwaVu1Mijg' },
+  { title: 'Djenerative Music by Bogdan Vera @ TOPLAP solstice Dec 2024', id: 'LtMX4Lr1nzY' },
+  { title: 'La musique by BuboBubo @ TOPLAP solstice Dec 2024', id: 'Oz00Y_f80wU' },
+  { title: 'Livecode and vocal breaks by Switch Angel @ TOPLAP solstice Dec 2024', id: '2kzjOIsL6CM' },
+  { title: 'Eddyflux algorave set @ rudolf5', id: 'MXz8131Ut0A' },
 ];
 
 _shuffled = shuffleArray(_videos);
