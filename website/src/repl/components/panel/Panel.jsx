@@ -149,8 +149,9 @@ function PanelTab({ label, isSelected, onClick }) {
   );
 }
 function Tabs({ setTab, tab, className }) {
+  const {fontFamily, fontSize} = useSettings()
   return (
-    <div className={cx('flex select-none max-w-full overflow-auto pb-2', className)}>
+    <div className={cx('flex select-none max-w-full overflow-auto pb-2', className)} style={{fontFamily}}>
       {Object.keys(tabNames).map((key) => {
         const val = tabNames[key];
         return <PanelTab key={key} isSelected={tab === val} label={key} onClick={() => setTab(val)} />;

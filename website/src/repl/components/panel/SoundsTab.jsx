@@ -11,7 +11,7 @@ const getSamples = (samples) =>
 
 export function SoundsTab() {
   const sounds = useStore(soundMap);
-  const { soundsFilter } = useSettings();
+  const { soundsFilter, fontFamily } = useSettings();
   const [search, setSearch] = useState('');
 
   const soundEntries = useMemo(() => {
@@ -52,7 +52,7 @@ export function SoundsTab() {
   });
 
   return (
-    <div id="sounds-tab" className="px-4 flex flex-col w-full h-full  dark:text-white text-stone-900">
+    <div id="sounds-tab" className="px-4 flex flex-col w-full h-full  text-foreground" style={{fontFamily}}>
       <input
         className="w-full p-1 bg-background rounded-md my-2"
         placeholder="Search"
@@ -74,7 +74,7 @@ export function SoundsTab() {
         <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
       </div>
 
-      <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal pb-2">
+      <div className="min-h-0 max-h-full grow overflow-auto  text-sm break-normal pb-2">
         {soundEntries.map(([name, { data, onTrigger }]) => {
           return (
             <span

@@ -11,17 +11,19 @@ export function Header({ context, embedded = false }) {
   const { started, pending, isDirty, activeCode, handleTogglePlay, handleEvaluate, handleShuffle, handleShare } =
     context;
   const isEmbedded = typeof window !== 'undefined' && (embedded || window.location !== window.parent.location);
-  const { isZen, isButtonRowHidden, isCSSAnimationDisabled } = useSettings();
+  const { isZen, isButtonRowHidden, isCSSAnimationDisabled, fontFamily } = useSettings();
 
   return (
     <header
       id="header"
+      
       className={cx(
         'flex-none text-black  z-[100] text-lg select-none h-20 md:h-14',
         !isZen && !isEmbedded && 'bg-lineHighlight',
         isZen ? 'h-12 w-8 fixed top-0 left-0' : 'sticky top-0 w-full py-1 justify-between',
         isEmbedded ? 'flex' : 'md:flex',
       )}
+      style={{fontFamily}}
     >
       <div className="px-4 flex space-x-2 md:pt-0 select-none">
         <h1
@@ -46,7 +48,7 @@ export function Header({ context, embedded = false }) {
               }
             }}
           >
-            <span className="block rotate-90">꩜</span>
+            <span className="block text-foreground rotate-90">꩜</span>
           </div>
           {!isZen && (
             <div className="space-x-2">

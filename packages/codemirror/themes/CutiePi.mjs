@@ -12,7 +12,7 @@ const grey = '#272C35'
 const pinkAccent ="#fee1ff"
 const lightGrey = '#465063'
 const bratGreen = "#9acd3f"
-
+const lighterGrey = "#97a1b7"
 const pink = '#f6a6fd'
 
 export const settings = {
@@ -29,7 +29,7 @@ export const settings = {
 };
 
 export default createTheme({
-  theme: 'dark',
+  theme: 'light',
   settings,
   styles: [
     {
@@ -37,11 +37,11 @@ export default createTheme({
       color: deepPurple,
     },
     { tag: [t.tagName, t.heading], color: settings.foreground },
-    { tag: t.comment, color: pink },
-    { tag: [t.variableName, t.propertyName, t.labelName], color: lightGrey },
+    { tag: t.comment, color: lighterGrey },
+    { tag: [t.variableName, t.propertyName, t.labelName], color: pink },
     { tag: [t.attributeName, t.number], color: 'hsl( 29, 54%, 61%)' },
     { tag: t.className, color: grey },
-    { tag: t.keyword, color: grey },
+    { tag: t.keyword, color: deepPurple },
     { tag: [t.string, t.regexp, t.special(t.propertyName)], color: bratGreen },
   ],
 });
