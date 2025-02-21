@@ -42,8 +42,9 @@ export function WelcomeTab({ context }) {
         . You can find the source code at{' '}
         <a href="https://github.com/tidalcycles/strudel" target="_blank">
           github
-        </a>.
-         You can also find <a href="https://github.com/felixroos/dough-samples/blob/main/README.md">licensing info</a> for the default sound banks there. Please consider to{' '}
+        </a>
+        . You can also find <a href="https://github.com/felixroos/dough-samples/blob/main/README.md">licensing info</a>{' '}
+        for the default sound banks there. Please consider to{' '}
         <a href="https://opencollective.com/tidalcycles" target="_blank">
           support this project
         </a>{' '}
