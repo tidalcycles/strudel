@@ -89,7 +89,7 @@ export function PatternsTab({ context }) {
   const viewingPatternStore = useViewingPatternData();
   const viewingPatternData = parseJSON(viewingPatternStore);
 
-  const { userPatterns, patternFilter, fontFamily } = useSettings();
+  const { userPatterns, patternFilter } = useSettings();
 
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
@@ -102,7 +102,7 @@ export function PatternsTab({ context }) {
   const autoResetPatternOnChange = !isUdels();
 
   return (
-    <div className="px-4 w-full text-foreground space-y-2  flex flex-col overflow-hidden max-h-full h-full" style={{fontFamily}}>
+    <div className="px-4 w-full text-foreground space-y-2  flex flex-col overflow-hidden max-h-full h-full">
       <ButtonGroup
         value={patternFilter}
         onChange={(value) => settingsMap.setKey('patternFilter', value)}
@@ -173,14 +173,13 @@ export function PatternsTab({ context }) {
             return (
               <section key={collection} className="py-2">
                 <h2 className="text-xl mb-2">{collection}</h2>
-               
-                  <PatternButtons
-                    onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, autoResetPatternOnChange)}
-                    started={context.started}
-                    patterns={patterns}
-                    activePattern={activePattern}
-                  />
-                
+
+                <PatternButtons
+                  onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, autoResetPatternOnChange)}
+                  started={context.started}
+                  patterns={patterns}
+                  activePattern={activePattern}
+                />
               </section>
             );
           })}
