@@ -17,7 +17,7 @@ import { settingsMap, useSettings } from '../../../settings.mjs';
 import { Pagination } from '../pagination/Pagination.jsx';
 import { useState } from 'react';
 import { useDebounce } from '../usedebounce.jsx';
-import { cn } from 'tailwind_utils.mjs';
+import cx from '@src/cx.mjs';
 
 export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
   const meta = useMemo(() => getMetadata(pattern.code), [pattern]);
@@ -43,7 +43,7 @@ export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
 function PatternButton({ showOutline, onClick, pattern, showHiglight }) {
   return (
     <a
-      className={cn(
+      className={cx(
         'mr-4 hover:opacity-50 cursor-pointer block',
         showOutline && 'outline outline-1',
         showHiglight && 'bg-selection',
