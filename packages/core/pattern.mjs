@@ -1244,6 +1244,16 @@ export function reify(thing) {
   return pure(thing);
 }
 
+/** Takes a list of patterns, and returns a pattern of lists.
+ */
+export function sequenceP(pats) {
+  let result = pure([]);
+  for (const pat of pats) {
+    result = result.bind((list) => pat.fmap((v) => list.concat([v])));
+  }
+  return result;
+}
+
 /** The given items are played at the same time at the same length.
  *
  * @return {Pattern}
