@@ -16,7 +16,16 @@ function IncButton({ children, className, ...buttonProps }) {
     </button>
   );
 }
-export function Incrementor({ onChange, value, min = -Infinity, max = Infinity, className, ...incrementorProps }) {
+export function Incrementor({
+  onChange,
+  value,
+  min = -Infinity,
+  max = Infinity,
+  className,
+  incrementLabel = 'next page',
+  decrementLabel = 'prev page',
+  ...incrementorProps
+}) {
   value = parseInt(value);
   value = isNaN(value) ? '' : value;
   return (
@@ -37,12 +46,17 @@ export function Incrementor({ onChange, value, min = -Infinity, max = Infinity, 
         {...incrementorProps}
       />
       <div className="flex gap-1 ">
-        <IncButton disabled={value <= min} onClick={() => onChange(value - 1)}>
+        <IncButton disabled={value <= min} onClick={() => onChange(value - 1)} aria-label={decrementLabel}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4">
             <path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" />
           </svg>
         </IncButton>
-        <IncButton className="rounded-r-md" disabled={value >= max} onClick={() => onChange(value + 1)}>
+        <IncButton
+          className="rounded-r-md"
+          disabled={value >= max}
+          onClick={() => onChange(value + 1)}
+          aria-label={incrementLabel}
+        >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4">
             <path d="M8.75 3.75a.75.75 0 0 0-1.5 0v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5v-3.5Z" />
           </svg>
