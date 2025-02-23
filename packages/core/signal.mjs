@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat, pure, register, reify, silence, stack } from './pattern.mjs';
+import { Pattern, fastcat, pure, register, reify, silence, stack, sequenceP } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 
 import { id, keyAlias, getCurrentKeyboardState } from './util.mjs';
@@ -433,19 +433,30 @@ export const chooseCycles = (...xs) => chooseInWith(rand.segment(1), xs);
 export const randcat = chooseCycles;
 
 const _wchooseWith = function (pat, ...pairs) {
+  // A list of patterns of values
   const values = pairs.map((pair) => reify(pair[0]));
+
+  // A list of weight patterns
   const weights = [];
-  let accum = 0;
+
+  let total = pure(0);
   for (const pair of pairs) {
-    accum += pair[1];
-    weights.push(accum);
+    // 'add' accepts either values or patterns of values here, so no need
+    // to explicitly reify
+    total = total.add(pair[1]);
+    // accumulate our list of weight patterns
+    weights.push(total);
   }
-  const total = accum;
+  // a pattern of lists of weights
+  const weightspat = sequenceP(weights);
+
+  // Takes a number from 0-1, returns a pattern of patterns of values
   const match = function (r) {
-    const find = r * total;
-    return values[weights.findIndex((x) => x > find, weights)];
+    const findpat = total.mul(r);
+    return weightspat.fmap((weights) => (find) => values[weights.findIndex((x) => x > find, weights)]).appLeft(findpat);
   };
-  return pat.fmap(match);
+  // This returns a pattern of patterns.. The innerJoin is in wchooseCycles
+  return pat.bind(match);
 };
 
 const wchooseWith = (...args) => _wchooseWith(...args).outerJoin();
@@ -467,6 +478,9 @@ export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
  * wchooseCycles(["bd",10], ["hh",1], ["sd",1]).s().fast(8)
  * @example
  * wchooseCycles(["bd bd bd",5], ["hh hh hh",3], ["sd sd sd",1]).fast(4).s()
+ * @example
+ * // The probability can itself be a pattern
+ * wchooseCycles(["bd(3,8)","<5 0>"], ["hh hh hh",3]).fast(4).s()
  */
 export const wchooseCycles = (...pairs) => _wchooseWith(rand.segment(1), ...pairs).innerJoin();
 
