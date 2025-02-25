@@ -53,6 +53,7 @@
 @font-face {
   font-family: 'mode7';
   src: url('/fonts/mode7/MODE7GX3.TTF');
+  size-adjust: 82%;
 }
 
 .prose > h1:not(:first-child) {
