@@ -62,7 +62,7 @@ export function Reference() {
               <h3 id={`doc-${i}`}>{entry.name}</h3>
               {!!entry.synonyms_text && (
                 <p>
-                  Synonyms: <code className="text-foreground">{entry.synonyms_text}</code>
+                  Synonyms: <code>{entry.synonyms_text}</code>
                 </p>
               )}
               {/* <small>{entry.meta.filename}</small> */}
