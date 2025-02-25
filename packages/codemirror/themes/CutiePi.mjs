@@ -1,8 +1,6 @@
 /**
- * @name Atom One
- * Atom One dark syntax theme
- *
- * https://github.com/atom/one-dark-syntax
+ * @name Cutie Pi
+ * by Switch Angel
  */
 import { tags as t } from '@lezer/highlight';
 import { createTheme } from './theme-helper.mjs';
@@ -39,7 +37,7 @@ export default createTheme({
     { tag: [t.tagName, t.heading], color: settings.foreground },
     { tag: t.comment, color: lighterGrey },
     { tag: [t.variableName, t.propertyName, t.labelName], color: pink },
-    { tag: [t.attributeName, t.number], color: 'hsl( 29, 54%, 61%)' },
+    { tag: [t.attributeName, t.number], color: '#d19a66' },
     { tag: t.className, color: grey },
     { tag: t.keyword, color: deepPurple },
     { tag: [t.string, t.regexp, t.special(t.propertyName)], color: bratGreen },
