@@ -66,6 +66,7 @@ const themeOptions = Object.fromEntries(Object.keys(themes).map((k) => [k, k]));
 const fontFamilyOptions = {
   monospace: 'monospace',
   Courier: 'Courier',
+  CutiePi: 'CutiePi',
   JetBrains: 'JetBrains',
   Hack: 'Hack',
   FiraCode: 'FiraCode',
@@ -108,7 +109,7 @@ export function SettingsTab({ started }) {
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
   return (
-    <div className="text-foreground p-4 space-y-4 w-full">
+    <div className="text-foreground p-4 space-y-4 w-full" style={{ fontFamily }}>
       {canChangeAudioDevice && (
         <FormItem label="Audio Output Device">
           <AudioDeviceSelector
@@ -141,7 +142,7 @@ export function SettingsTab({ started }) {
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
         <FormItem label="Font Family">
           <SelectInput
             options={fontFamilyOptions}
