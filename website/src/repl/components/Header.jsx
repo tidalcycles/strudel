@@ -16,14 +16,13 @@ export function Header({ context, embedded = false }) {
   return (
     <header
       id="header"
-      
       className={cx(
         'flex-none text-black  z-[100] text-lg select-none h-20 md:h-14',
         !isZen && !isEmbedded && 'bg-lineHighlight',
         isZen ? 'h-12 w-8 fixed top-0 left-0' : 'sticky top-0 w-full py-1 justify-between',
         isEmbedded ? 'flex' : 'md:flex',
       )}
-      style={{fontFamily}}
+      style={{ fontFamily }}
     >
       <div className="px-4 flex space-x-2 md:pt-0 select-none">
         <h1
