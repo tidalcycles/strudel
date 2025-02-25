@@ -79,7 +79,6 @@ const fontFamilyOptions = {
   PressStart: 'PressStart2P',
   'we-come-in-peace': 'we-come-in-peace',
   galactico: 'galactico',
-
 };
 
 const RELOAD_MSG = 'Changing this setting requires the window to reload itself. OK?';
@@ -106,12 +105,11 @@ export function SettingsTab({ started }) {
     audioDeviceName,
     audioEngineTarget,
     togglePanelTrigger,
-
   } = useSettings();
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
   return (
-    <div className="text-foreground p-4 space-y-4 w-full" style={{fontFamily}}>
+    <div className="text-foreground p-4 space-y-4 w-full" style={{ fontFamily }}>
       {canChangeAudioDevice && (
         <FormItem label="Audio Output Device">
           <AudioDeviceSelector

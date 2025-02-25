@@ -6,14 +6,14 @@
  */
 import { tags as t } from '@lezer/highlight';
 import { createTheme } from './theme-helper.mjs';
-const deepPurple = '#5c019a'
-const yellowPink = '#fbeffc'
-const grey = '#272C35'
-const pinkAccent ="#fee1ff"
-const lightGrey = '#465063'
-const bratGreen = "#9acd3f"
-const lighterGrey = "#97a1b7"
-const pink = '#f6a6fd'
+const deepPurple = '#5c019a';
+const yellowPink = '#fbeffc';
+const grey = '#272C35';
+const pinkAccent = '#fee1ff';
+const lightGrey = '#465063';
+const bratGreen = '#9acd3f';
+const lighterGrey = '#97a1b7';
+const pink = '#f6a6fd';
 
 export const settings = {
   background: 'white',
