@@ -9,11 +9,11 @@ import UserFacingErrorMessage from '@src/repl/components/UserFacingErrorMessage'
 // }
 
 export default function UdelsEditor(Props) {
-  const { context } = Props;
+  const { context, ...editorProps } = Props;
   const { containerRef, editorRef, error, init, pending, started, handleTogglePlay } = context;
 
   return (
-    <div className={'h-full flex w-full flex-col relative'}>
+    <div className={'h-full flex w-full flex-col relative'} {...editorProps}>
       <Loader active={pending} />
       <BigPlayButton started={started} handleTogglePlay={handleTogglePlay} />
       <div className="grow flex relative overflow-hidden">

@@ -1,6 +1,7 @@
 @font-face {
   font-family: 'PressStart';
   src: url('/fonts/PressStart2P/PressStart2P-Regular.ttf');
+  size-adjust: 65%;
 }
 @font-face {
   font-family: 'BigBlueTerminal';
@@ -15,12 +16,18 @@
   src: url('/fonts/galactico/Galactico-Basic.otf');
 }
 @font-face {
+  font-family: 'CutiePi';
+  src: url('/fonts/CutiePi/Cute_Aurora_demo.ttf');
+  size-adjust: 120%;
+}
+@font-face {
   font-family: 'JetBrains';
   src: url('/fonts/JetBrains/JetBrainsMono.woff2');
 }
 @font-face {
   font-family: 'Monocraft';
   src: url('/fonts/Monocraft/Monocraft.ttf');
+  size-adjust: 90%;
 }
 @font-face {
   font-family: 'Hack';
@@ -41,10 +48,12 @@
 @font-face {
   font-family: 'teletext';
   src: url('/fonts/teletext/EuropeanTeletext.ttf');
+  size-adjust: 90%;
 }
 @font-face {
   font-family: 'mode7';
   src: url('/fonts/mode7/MODE7GX3.TTF');
+  size-adjust: 82%;
 }
 
 .prose > h1:not(:first-child) {
