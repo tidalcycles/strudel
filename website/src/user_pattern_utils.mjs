@@ -111,7 +111,7 @@ export function useActivePattern() {
 
 export const setLatestCode = (code) => settingsMap.setKey('latestCode', code);
 
-const defaultCode = '';
+export const defaultCode = '';
 export const userPattern = {
   collection: patternFilterName.user,
   getAll() {

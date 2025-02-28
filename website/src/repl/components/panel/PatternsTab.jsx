@@ -27,13 +27,9 @@ export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
     const date = new Date(pattern.created_at);
     if (!isNaN(date)) {
       title = date.toLocaleDateString();
+    } else {
+      title = 'unnamed';
     }
-  }
-  if (title == null) {
-    title = pattern.hash;
-  }
-  if (title == null) {
-    title = 'unnamed';
   }
 
   const author = Array.isArray(meta.by) ? meta.by.join(',') : 'Anonymous';
