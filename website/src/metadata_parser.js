@@ -1,9 +1,10 @@
 const ALLOW_MANY = ['by', 'url', 'genre', 'license'];
+import { defaultCode } from './user_pattern_utils.mjs';
 
 export function getMetadata(raw_code) {
   if (raw_code == null) {
-    console.error('saved pattern is empty or corrupted')
-    raw_code = '';
+    console.error('could not extract metadata from missing pattern code');
+    raw_code = defaultCode;
   }
   const comment_regexp = /\/\*([\s\S]*?)\*\/|\/\/(.*)$/gm;
   const comments = [...raw_code.matchAll(comment_regexp)].map((c) => (c[1] || c[2] || '').trim());
