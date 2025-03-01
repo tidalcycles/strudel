@@ -1,45 +1,14 @@
-import { logger } from '@strudel/core';
-import useEvent from '@src/useEvent.mjs';
 import cx from '@src/cx.mjs';
-import { nanoid } from 'nanoid';
-import { useCallback, useState } from 'react';
 import { useSettings } from '../../../settings.mjs';
+import { useStore } from '@nanostores/react';
+import { $strudel_log_history } from '../useLogger';
 
-function getUpdatedLog(log, event) {
-  const { message, type, data } = event.detail;
-  const lastLog = log.length ? log[log.length - 1] : undefined;
-  const id = nanoid(12);
-  // if (type === 'loaded-sample' && lastLog.type === 'load-sample' && lastLog.url === data.url) {
-  if (type === 'loaded-sample') {
-    // const loadIndex = log.length - 1;
-    const loadIndex = log.findIndex(({ data: { url }, type }) => type === 'load-sample' && url === data.url);
-    log[loadIndex] = { message, type, id, data };
-  } else if (lastLog && lastLog.message === message) {
-    log = log.slice(0, -1).concat([{ message, type, count: (lastLog.count ?? 1) + 1, id, data }]);
-  } else {
-    log = log.concat([{ message, type, id, data }]);
-  }
-  return log.slice(-20);
-}
-
-//ensures that the log state persists when component is remounted
-let logSaved = [];
 export function ConsoleTab() {
-  const [log, setLog] = useState(logSaved);
+  const log = useStore($strudel_log_history);
   const { fontFamily } = useSettings();
-
-  useLogger(
-    useCallback((event) => {
-      setLog((log) => {
-        const newLog = getUpdatedLog(log, event);
-        logSaved = newLog;
-        return newLog;
-      });
-    }, []),
-  );
   return (
-    <div id="console-tab" className="break-all  first-line:text-sm p-2  h-full" style={{ fontFamily }}>
-      <div className="bg-background h-full overflow-auto space-y-1 p-2 rounded-md">
+    <div id="console-tab" className="break-all w-full  first-line:text-sm p-2  h-full" style={{ fontFamily }}>
+      <div className="bg-background h-full w-full overflow-auto space-y-1 p-2 rounded-md">
         {log.map((l, i) => {
           const message = linkify(l.message);
           const color = l.data?.hap?.value?.color;
@@ -81,8 +50,4 @@ function linkify(inputText) {
   replacedText = replacedText.replace(replacePattern3, '<a class="underline" href="mailto:$1">$1</a>');
 
   return replacedText;
-}
-
-function useLogger(onTrigger) {
-  useEvent(logger.key, onTrigger);
 }
