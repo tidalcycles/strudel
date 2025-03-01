@@ -1,7 +1,6 @@
 ---
 import HeadCommon from '../components/HeadCommon.astro';
-import Vinyl from '../components/Vinyl.astro';
-// import { NeoCyclist } from '@strudel/core/neocyclist.mjs';
+import { Vinyl } from '../components/Vinyl.jsx';
 ---
 
 <html lang="en" class="m-0 dark">
@@ -10,6 +9,9 @@ import Vinyl from '../components/Vinyl.astro';
     <title>Strudel Cycler</title>
   </head>
   <body class="h-app-height bg-background m-0">
-    <Vinyl />
+    <div>Hello there.</div>
+    <div id="record" style="font-size: 20em"><center>💿</center></div>
+
+    <Vinyl client:only="react" />
   </body>
 </html>
