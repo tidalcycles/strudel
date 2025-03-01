@@ -9,10 +9,10 @@ import { Header } from './Header';
 // }
 
 export default function EmbeddedReplEditor(Props) {
-  const { context } = Props;
+  const { context, ...editorProps } = Props;
   const { pending, started, handleTogglePlay, containerRef, editorRef, error, init } = context;
   return (
-    <div className="h-full flex flex-col relative">
+    <div className="h-full flex flex-col relative" {...editorProps}>
       <Loader active={pending} />
       <Header context={context} embedded={true} />
       <BigPlayButton started={started} handleTogglePlay={handleTogglePlay} />

@@ -1,0 +1,7 @@
+
+100% free for personal and commercial use. 
+However it's limited on basic latin only, 
+contact riedjal@gmail.com for full glyph (based on ANSI encoding)
+and OTF features (alternates).
+
+src: https://www.dafont.com/cute-aurora.font?text=%24%3A+s%28%22bd%285%2C8%29%22%29.superimpose%28x+%3D%3E+x.note%28%22c2%22%29.midi%28device%29%29

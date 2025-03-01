@@ -5,6 +5,7 @@ import { FilesTab } from './FilesTab';
 import { Reference } from './Reference';
 import { SettingsTab } from './SettingsTab';
 import { SoundsTab } from './SoundsTab';
+import { useLogger } from '../useLogger';
 import { WelcomeTab } from './WelcomeTab';
 import { PatternsTab } from './PatternsTab';
 import { ChevronLeftIcon, XMarkIcon } from '@heroicons/react/16/solid';
@@ -115,6 +116,7 @@ function PanelNav({ children, className, settings, ...props }) {
 }
 
 function PanelContent({ context, tab }) {
+  useLogger();
   switch (tab) {
     case tabNames.patterns:
       return <PatternsTab context={context} />;

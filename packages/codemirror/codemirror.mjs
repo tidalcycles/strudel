@@ -67,6 +67,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
   const initialSettings = Object.keys(compartments).map((key) =>
     compartments[key].of(extensions[key](parseBooleans(settings[key]))),
   );
+
   initTheme(settings.theme);
   let state = EditorState.create({
     doc: initialCode,

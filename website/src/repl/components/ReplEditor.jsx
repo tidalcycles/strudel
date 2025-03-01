@@ -10,13 +10,13 @@ import { useSettings } from '@src/settings.mjs';
 // }
 
 export default function ReplEditor(Props) {
-  const { context } = Props;
+  const { context, ...editorProps } = Props;
   const { containerRef, editorRef, error, init, pending } = context;
   const settings = useSettings();
   const { panelPosition, isZen } = settings;
 
   return (
-    <div className="h-full flex flex-col relative">
+    <div className="h-full flex flex-col relative" {...editorProps}>
       <Loader active={pending} />
       <Header context={context} />
       <div className="grow flex relative overflow-hidden">

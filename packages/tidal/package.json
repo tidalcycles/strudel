@@ -5,7 +5,7 @@
   "module": "tidal.mjs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixroos/hs2js.git"
+    "url": "git+https://github.com/tidalcycles/strudel/tree/main/packages/tidal"
   },
   "keywords": [
     "haskell",

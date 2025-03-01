@@ -56,8 +56,8 @@ function PatternButtons({ patterns, activePattern, onClick, started }) {
   const viewingPatternData = parseJSON(viewingPatternStore);
   const viewingPatternID = viewingPatternData.id;
   return (
-    <div className="font-mono text-sm">
-      {Object.values(patterns ?? {})
+    <div className="">
+      {Object.values(patterns)
         .reverse()
         .map((pattern) => {
           const id = pattern.id;
