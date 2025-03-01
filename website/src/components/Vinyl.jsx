@@ -8,6 +8,9 @@ import { setInterval, clearInterval } from 'worker-timers';
 import { NeoCyclist } from '@strudel/core/neocyclist.mjs';
 import { getAudioContext } from '@strudel/webaudio';
 import { saw } from '@strudel/core';
+import encoder from '../../public/encoder_disc.svg';
+
+console.log(encoder);
 
 const schedulerOptions = {
   onTrigger: (x) => { },
@@ -34,7 +37,7 @@ export function Vinyl() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCyclepos(cyclist.cycle);
-    }, 20);
+    }, 10);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -44,5 +47,5 @@ export function Vinyl() {
     fontSize: "20em",
     transform: 'rotate(' + deg + 'deg)'
   };
-  return <div onClick={activate} style={style}><center>💿</center></div>
+  return <div onClick={activate} style={style}><center><img src={encoder.src} /></center></div>
 }
