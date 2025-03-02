@@ -1328,7 +1328,7 @@ export function stackBy(by, ...pats) {
     left: stackLeft,
     right: stackRight,
     expand: stack,
-    repeat: (...args) => polymeterSteps(steps, ...args),
+    repeat: (...args) => polymeter(...args).steps(steps),
   };
   return by
     .inhabit(lookup)
@@ -1814,9 +1814,9 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
     const newWhole = !hap.whole
       ? undefined
       : new TimeSpan(
-          newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
-          newPart.end.add(hap.whole.end.sub(end).div(factor)),
-        );
+        newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+        newPart.end.add(hap.whole.end.sub(end).div(factor)),
+      );
     return new Hap(newWhole, newPart, hap.value, hap.context);
   };
   return pat.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
@@ -2648,34 +2648,10 @@ export function _polymeterListSteps(steps, ...args) {
 /**
  * *Experimental*
  *
- * Aligns the steps of the patterns, to match the given number of steps per cycle, creating polymeters.
- *
- * @name polymeterSteps
- * @param  {number} steps how many items are placed in one cycle
- * @param  {any[]} patterns one or more patterns
- * @example
- * // the same as "{c d, e f g}%4"
- * polymeterSteps(4, "c d", "e f g").note()
- */
-export function polymeterSteps(steps, ...args) {
-  if (args.length == 0) {
-    return silence;
-  }
-  if (Array.isArray(args[0])) {
-    // Support old behaviour
-    return _polymeterListSteps(steps, ...args);
-  }
-
-  return polymeter(...args).pace(steps);
-}
-
-/**
- * *Experimental*
- *
- * Aligns the steps of the patterns, to match the steps per cycle of the first pattern, creating polymeters. See `polymeterSteps` to set the target steps explicitly.
+ * Aligns the steps of the patterns, creating polymeters. The patterns are repeated until they all fit the cycle. For example, in the below the first pattern is repeated twice, and the second is repeated three times, to fit the lowest common multiple of six steps.
  * @synonyms pm
  * @example
- * // The same as note("{c eb g, c2 g2}")
+ * // The same as note("{c eb g, c2 g2}%6")
  * polymeter("c eb g", "c2 g2").note()
  *
  */
@@ -2691,13 +2667,13 @@ export function polymeter(...args) {
   if (args.length == 0) {
     return silence;
   }
-  const steps = args[0]._steps;
+  const steps = lcm(...args.map(x => x._steps));
   if (steps.eq(Fraction(0))) {
     return nothing;
   }
-  const [head, ...tail] = args;
 
-  const result = stack(head, ...tail.map((pat) => pat._slow(pat._steps.div(steps))));
+
+  const result = stack(...args.map(x => x.pace(steps)));
   result._steps = steps;
   return result;
 }
@@ -3065,8 +3041,6 @@ export const timeCat = stepcat;
 // Deprecated stepwise aliases
 export const s_cat = stepcat;
 export const s_alt = stepalt;
-export const s_polymeterSteps = polymeterSteps;
-Pattern.prototype.s_polymeterSteps = Pattern.prototype.polymeterSteps;
 export const s_polymeter = polymeter;
 Pattern.prototype.s_polymeter = Pattern.prototype.polymeter;
 export const s_taper = shrink;
