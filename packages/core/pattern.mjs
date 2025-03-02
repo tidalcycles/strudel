@@ -1814,9 +1814,9 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
     const newWhole = !hap.whole
       ? undefined
       : new TimeSpan(
-        newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
-        newPart.end.add(hap.whole.end.sub(end).div(factor)),
-      );
+          newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+          newPart.end.add(hap.whole.end.sub(end).div(factor)),
+        );
     return new Hap(newWhole, newPart, hap.value, hap.context);
   };
   return pat.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
@@ -2667,13 +2667,12 @@ export function polymeter(...args) {
   if (args.length == 0) {
     return silence;
   }
-  const steps = lcm(...args.map(x => x._steps));
+  const steps = lcm(...args.map((x) => x._steps));
   if (steps.eq(Fraction(0))) {
     return nothing;
   }
 
-
-  const result = stack(...args.map(x => x.pace(steps)));
+  const result = stack(...args.map((x) => x.pace(steps)));
   result._steps = steps;
   return result;
 }
