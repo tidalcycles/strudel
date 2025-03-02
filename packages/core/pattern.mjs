@@ -2043,7 +2043,7 @@ export const zoom = register('zoom', function (s, e, pat) {
     return nothing;
   }
   const d = e.sub(s);
-  const steps = __steps ? pat._steps.mulmaybe(d) : undefined;
+  const steps = __steps ? pat._steps?.mulmaybe(d) : undefined;
   return pat
     .withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
     .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
