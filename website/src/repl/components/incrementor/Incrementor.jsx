@@ -6,7 +6,7 @@ function IncButton({ children, className, ...buttonProps }) {
     <button
       tabIndex={-1}
       className={cx(
-        'border border-transparent p-1 text-center text-sm transition-all hover:bg-foreground active:bg-lineBackground disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none',
+        'border border-transparent p-1 text-center hover:text-background text-sm transition-all hover:bg-foreground active:bg-lineBackground disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none',
         className,
       )}
       type="button"

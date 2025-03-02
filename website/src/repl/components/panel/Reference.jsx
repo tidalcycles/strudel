@@ -26,7 +26,7 @@ export function Reference() {
   }, [search]);
 
   return (
-    <div className="flex h-full w-full p-2 text-foreground overflow-hidden">
+    <div className="flex h-full w-full p-2 overflow-hidden">
       <div className="h-full  flex flex-col gap-2 w-1/3 max-w-72 ">
         <div class="w-full flex">
           <Textbox className="w-full" placeholder="Search" value={search} onChange={setSearch} />
@@ -35,7 +35,7 @@ export function Reference() {
           {visibleFunctions.map((entry, i) => (
             <a
               key={i}
-              className="cursor-pointer flex-none hover:bg-lineHighlight overflow-x-hidden  px-1 text-ellipsis"
+              className="cursor-pointer text-foreground flex-none hover:bg-lineHighlight overflow-x-hidden  px-1 text-ellipsis"
               onClick={() => {
                 const el = document.getElementById(`doc-${i}`);
                 const container = document.getElementById('reference-container');
@@ -75,7 +75,9 @@ export function Reference() {
                 ))}
               </ul>
               {entry.examples?.map((example, j) => (
-                <pre key={j}>{example}</pre>
+                <pre className="bg-background" key={j}>
+                  {example}
+                </pre>
               ))}
             </section>
           ))}
