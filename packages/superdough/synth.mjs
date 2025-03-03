@@ -133,6 +133,66 @@ export function registerSynthSounds() {
     { prebake: true, type: 'synth' },
   );
 
+
+  registerSound(
+    'pwm',
+    (begin, value, onended) => {
+      const ac = getAudioContext();
+      let { duration, n } = value;
+      const frequency = getFrequencyFromValue(value);
+
+      const [attack, decay, sustain, release] = getADSRValues(
+        [value.attack, value.decay, value.sustain, value.release],
+        'linear',
+        [0.001, 0.05, 0.6, 0.01],
+      );
+
+      const holdend = begin + duration;
+      const end = holdend + release + 0.01;
+
+      let o = getWorklet(
+        ac,
+        'pwm-oscillator',
+        {
+          frequency,
+          begin,
+          end,
+          pulsewidth: 1
+        },
+        {
+          outputChannelCount: [2],
+        },
+      );
+
+      getPitchEnvelope(o.parameters.get('detune'), value, begin, holdend);
+      // const vibratoOscillator = getVibratoOscillator(o.parameters.get('detune'), value, begin);
+      const fm = applyFM(o.parameters.get('frequency'), value, begin);
+      let envGain = gainNode(1);
+      envGain = o.connect(envGain);
+
+      webAudioTimeout(
+        ac,
+        () => {
+          o.disconnect();
+          envGain.disconnect();
+          onended();
+          fm?.stop();
+          // vibratoOscillator?.stop();
+        },
+        begin,
+        end,
+      );
+
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
+
+      return {
+        node: envGain,
+        stop: (time) => {},
+      };
+    },
+    { prebake: true, type: 'synth' },
+  );
+
   [...noises].forEach((s) => {
     registerSound(
       s,
