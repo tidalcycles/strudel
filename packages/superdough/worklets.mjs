@@ -75,7 +75,12 @@ const waveshapes = {
     return v - polyBlep(phase, dt);
   },
 };
-
+function getParamValue(block, param) {
+  if (param.length > 1) {
+    return param[block];
+  }
+  return param[0];
+}
 const waveShapeNames = Object.keys(waveshapes);
 class LFOProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
@@ -364,7 +369,7 @@ function getUnisonDetune(unison, detune, voiceIndex) {
 }
 
 function applySemitoneDetuneToFrequency(frequency, detune) {
- return frequency * Math.pow(2, detune / 12)
+  return frequency * Math.pow(2, detune / 12);
 }
 
 class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
@@ -443,8 +448,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
       const isOdd = (n & 1) == 1;
 
       //applies unison "spread" detune in semitones
-      const freq = applySemitoneDetuneToFrequency(frequency, getUnisonDetune(voices, freqspread, n))
-      // const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 12);
+      const freq = applySemitoneDetuneToFrequency(frequency, getUnisonDetune(voices, freqspread, n));
       let gainL = gain1;
       let gainR = gain2;
       // invert right and left gain
@@ -655,10 +659,7 @@ class PhaseVocoderProcessor extends OLAProcessor {
 
 registerProcessor('phase-vocoder-processor', PhaseVocoderProcessor);
 
-
 class PulseOscillatorProcessor extends AudioWorkletProcessor {
- 
-
   constructor() {
     super();
     this.pi = _PI;
@@ -670,7 +671,6 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
     this.dphif = 0; // filtered phase increment
     this.envf = 0; // filtered envelope
   }
-
 
   static get parameterDescriptors() {
     return [
@@ -694,10 +694,11 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
         min: Number.EPSILON,
       },
       {
-         name: 'detune', 
-         defaultValue: 0,
-         min: Number.NEGATIVE_INFINITY,
-         max: Number.POSITIVE_INFINITY},
+        name: 'detune',
+        defaultValue: 0,
+        min: Number.NEGATIVE_INFINITY,
+        max: Number.POSITIVE_INFINITY,
+      },
       {
         name: 'pulsewidth',
         defaultValue: 1,
@@ -708,22 +709,22 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
   }
 
   process(inputs, outputs, params) {
-     if (currentTime <= params.begin[0]) {
+    if (currentTime <= params.begin[0]) {
       return true;
     }
     if (currentTime >= params.end[0]) {
       return false;
     }
     const output = outputs[0];
-    let env = 1, dphi;
-    let pw = clamp(params.pulsewidth[0], 0.01, 0.99) * _PI * 2
-    let detune = params.detune[0];
-    let freq = applySemitoneDetuneToFrequency(params.frequency[0], detune /100)
+    let env = 1,
+      dphi;
 
     for (let i = 0; i < (output[0].length ?? 0); i++) {
+      const pw = clamp(getParamValue(i, params.pulsewidth), 0.01, 0.99) * _PI * 2;
+      const detune = getParamValue(i, params.detune);
+      const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
 
-    
-      dphi = freq * (this.pi / (sampleRate * .5)); // phase increment
+      dphi = freq * (this.pi / (sampleRate * 0.5)); // phase increment
       this.dphif += 0.1 * (dphi - this.dphif);
 
       env *= 0.9998; // exponential decay envelope
@@ -744,12 +745,11 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
       // Second half-Tomisawa generator (with phase offset for pulse width)
       let out1 = Math.cos(this.phi + this.B * this.Y1 + pw);
       this.Y1 = 0.5 * (out1 + this.Y1); // anti-hunting filter
-      
+
       for (let o = 0; o < output.length; o++) {
         // Combination of both oscillators with envelope applied
         output[o][i] = 0.15 * (out0 - out1) * this.envf;
       }
-
     }
 
     return true; // keep the audio processing going
