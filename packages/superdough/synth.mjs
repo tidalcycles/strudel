@@ -133,7 +133,6 @@ export function registerSynthSounds() {
     { prebake: true, type: 'synth' },
   );
 
-
   registerSound(
     'pulse',
     (begin, value, onended) => {
