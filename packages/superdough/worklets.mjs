@@ -659,6 +659,7 @@ class PhaseVocoderProcessor extends OLAProcessor {
 
 registerProcessor('phase-vocoder-processor', PhaseVocoderProcessor);
 
+// Adapted from https://www.musicdsp.org/en/latest/Effects/221-band-limited-pwm-generator.html
 class PulseOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
@@ -720,7 +721,7 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
       dphi;
 
     for (let i = 0; i < (output[0].length ?? 0); i++) {
-      const pw = clamp(getParamValue(i, params.pulsewidth), 0.01, 0.99) * _PI * 2;
+      const pw = (1 - clamp(getParamValue(i, params.pulsewidth), 0, 0.99)) * this.pi;
       const detune = getParamValue(i, params.detune);
       const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
 

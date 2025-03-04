@@ -183,7 +183,7 @@ export function registerSynthSounds() {
         end,
       );
 
-      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
 
       return {
         node: envGain,
