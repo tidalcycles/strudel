@@ -721,7 +721,7 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
       dphi;
 
     for (let i = 0; i < (output[0].length ?? 0); i++) {
-      const pw = (1 - clamp(getParamValue(i, params.pulsewidth), 0, 0.99)) * this.pi;
+      const pw = (1 - clamp(getParamValue(i, params.pulsewidth), -0.99, 0.99)) * this.pi;
       const detune = getParamValue(i, params.detune);
       const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
 
