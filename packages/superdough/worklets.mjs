@@ -362,6 +362,11 @@ function getUnisonDetune(unison, detune, voiceIndex) {
   }
   return lerp(-detune * 0.5, detune * 0.5, voiceIndex / (unison - 1));
 }
+
+function applySemitoneDetuneToFrequency(frequency, detune) {
+ return frequency * Math.pow(2, detune / 12)
+}
+
 class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
@@ -438,7 +443,8 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
       const isOdd = (n & 1) == 1;
 
       //applies unison "spread" detune in semitones
-      const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 12);
+      const freq = applySemitoneDetuneToFrequency(frequency, getUnisonDetune(voices, freqspread, n))
+      // const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 12);
       let gainL = gain1;
       let gainR = gain2;
       // invert right and left gain
@@ -649,9 +655,8 @@ class PhaseVocoderProcessor extends OLAProcessor {
 
 registerProcessor('phase-vocoder-processor', PhaseVocoderProcessor);
 
-// SelfPMpwmWorklet.js
 
-class PwmOscillatorProcessor extends AudioWorkletProcessor {
+class PulseOscillatorProcessor extends AudioWorkletProcessor {
  
 
   constructor() {
@@ -689,6 +694,11 @@ class PwmOscillatorProcessor extends AudioWorkletProcessor {
         min: Number.EPSILON,
       },
       {
+         name: 'detune', 
+         defaultValue: 0,
+         min: Number.NEGATIVE_INFINITY,
+         max: Number.POSITIVE_INFINITY},
+      {
         name: 'pulsewidth',
         defaultValue: 1,
         min: 0,
@@ -705,11 +715,14 @@ class PwmOscillatorProcessor extends AudioWorkletProcessor {
       return false;
     }
     const output = outputs[0];
-    let  env = 1, dphi;
-    let freq = params.frequency[0]
-    let pw = params.pulsewidth[0] * _PI
+    let env = 1, dphi;
+    let pw = clamp(params.pulsewidth[0], 0.01, 0.99) * _PI * 2
+    let detune = params.detune[0];
+    let freq = applySemitoneDetuneToFrequency(params.frequency[0], detune /100)
 
     for (let i = 0; i < (output[0].length ?? 0); i++) {
+
+    
       dphi = freq * (this.pi / (sampleRate * .5)); // phase increment
       this.dphif += 0.1 * (dphi - this.dphif);
 
@@ -743,4 +756,4 @@ class PwmOscillatorProcessor extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor('pwm-oscillator', PwmOscillatorProcessor);
+registerProcessor('pulse-oscillator', PulseOscillatorProcessor);

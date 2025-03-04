@@ -135,10 +135,10 @@ export function registerSynthSounds() {
 
 
   registerSound(
-    'pwm',
+    'pulse',
     (begin, value, onended) => {
       const ac = getAudioContext();
-      let { duration, n } = value;
+      let { duration, n: pulsewidth = 0.5 } = value;
       const frequency = getFrequencyFromValue(value);
 
       const [attack, decay, sustain, release] = getADSRValues(
@@ -152,12 +152,12 @@ export function registerSynthSounds() {
 
       let o = getWorklet(
         ac,
-        'pwm-oscillator',
+        'pulse-oscillator',
         {
           frequency,
           begin,
           end,
-          pulsewidth: 1
+          pulsewidth,
         },
         {
           outputChannelCount: [2],
@@ -165,7 +165,7 @@ export function registerSynthSounds() {
       );
 
       getPitchEnvelope(o.parameters.get('detune'), value, begin, holdend);
-      // const vibratoOscillator = getVibratoOscillator(o.parameters.get('detune'), value, begin);
+      const vibratoOscillator = getVibratoOscillator(o.parameters.get('detune'), value, begin);
       const fm = applyFM(o.parameters.get('frequency'), value, begin);
       let envGain = gainNode(1);
       envGain = o.connect(envGain);
@@ -177,7 +177,7 @@ export function registerSynthSounds() {
           envGain.disconnect();
           onended();
           fm?.stop();
-          // vibratoOscillator?.stop();
+          vibratoOscillator?.stop();
         },
         begin,
         end,
