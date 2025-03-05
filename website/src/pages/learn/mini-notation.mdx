@@ -8,7 +8,7 @@ import { JsDoc } from '../../docs/JsDoc';
 
 # Mini-notation
 
-Just like [Tidal Cycles](https://tidalcycles.org/), Strudel uses a so called "Mini-Notation", which is a custom language that is designed for writing rhythmic patterns using little amounts of text.
+Just like [Tidal Cycles](https://tidalcycles.org/docs/reference/mini_notation/), Strudel uses a so called "Mini-Notation", which is a custom language that is designed for writing rhythmic patterns using little amounts of text.
 
 ## Note
 
@@ -167,6 +167,17 @@ Here, the first chord has a weight of 2, making it twice the length of the other
 Using "!" we can repeat without speeding up:
 
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>*2")`} punchcard />
+
+## Degradation
+
+Using "?" we can randomly drop events from a pattern while perserving their time slot:
+
+<MiniRepl client:idle tune={`note("<[g3,b3,e4]? [a3,c3,e4]? [b3,d3,f#4]>*2")`} punchcard />
+
+We can include a number after the "?" to represent the probability of being dropped, otherwise defaulting to 0.5:
+
+<MiniRepl client:idle tune={`note("<[g3,b3,e4]? [a3,c3,e4]?0.9 [b3,d3,f#4]>*2")`} punchcard />
+
 
 ## Mini-notation review
 
