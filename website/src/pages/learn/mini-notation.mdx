@@ -156,7 +156,11 @@ But to play multiple chords in a sequence, we have to wrap them in brackets:
 
 ## Elongation
 
-With the "@" symbol, we can specify temporal "weight" of a sequence child:
+With the "_" symbol, we can manually extend the duration of an event:
+
+<MiniRepl client:idle tune={`note("<[g3,b3,e4] _ _ [a3,c3,e4] [b3,d3,f#4]>*2")`} punchcard />
+
+With the "@" symbol, we can do the same thing more conveniently by specifying the temporal "weight" of a sequence child:
 
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>*2")`} punchcard />
 
@@ -170,7 +174,7 @@ Using "!" we can repeat without speeding up:
 
 ## Degradation
 
-Using "?" we can randomly drop events from a pattern while perserving their time slot:
+Using "?" we can randomly drop events from a pattern while preserving their time slot:
 
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]? [a3,c3,e4]? [b3,d3,f#4]>*2")`} punchcard />
 
@@ -190,6 +194,8 @@ To recap what we've learned so far, compare the following patterns:
 <MiniRepl client:idle tune={`note("<[g3,b3,e4] _ [a3,c3,e4] [b3,d3,f#4]>*2")`} />
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>*2")`} />
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>*2")`} />
+<MiniRepl client:idle tune={`note("<[g3,b3,e4]?0.9 [a3,c3,e4] [b3,d3,f#4]>*2")`} />
+
 
 ## Euclidian rhythms
 
