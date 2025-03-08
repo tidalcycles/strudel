@@ -388,7 +388,7 @@ export class Pattern {
 
   polyJoin = function () {
     const pp = this;
-    return pp.fmap((p) => p.repeat(pp._steps.div(p._steps))).outerJoin();
+    return pp.fmap((p) => p.extend(pp._steps.div(p._steps))).outerJoin();
   };
 
   polyBind(func) {
@@ -1244,6 +1244,16 @@ export function reify(thing) {
   return pure(thing);
 }
 
+/** Takes a list of patterns, and returns a pattern of lists.
+ */
+export function sequenceP(pats) {
+  let result = pure([]);
+  for (const pat of pats) {
+    result = result.bind((list) => pat.fmap((v) => list.concat([v])));
+  }
+  return result;
+}
+
 /** The given items are played at the same time at the same length.
  *
  * @return {Pattern}
@@ -1318,7 +1328,7 @@ export function stackBy(by, ...pats) {
     left: stackLeft,
     right: stackRight,
     expand: stack,
-    repeat: (...args) => polymeterSteps(steps, ...args),
+    repeat: (...args) => polymeter(...args).steps(steps),
   };
   return by
     .inhabit(lookup)
@@ -1820,7 +1830,10 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
 export const focus = register('focus', function (b, e, pat) {
   b = Fraction(b);
   e = Fraction(e);
-  return pat._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
+  return pat
+    ._early(b.sam())
+    ._fast(Fraction(1).div(e.sub(b)))
+    ._late(b);
 });
 
 export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], function (span, pat) {
@@ -2030,7 +2043,7 @@ export const zoom = register('zoom', function (s, e, pat) {
     return nothing;
   }
   const d = e.sub(s);
-  const steps = __steps ? pat._steps.mulmaybe(d) : undefined;
+  const steps = __steps ? pat._steps?.mulmaybe(d) : undefined;
   return pat
     .withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
     .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
@@ -2635,34 +2648,10 @@ export function _polymeterListSteps(steps, ...args) {
 /**
  * *Experimental*
  *
- * Aligns the steps of the patterns, to match the given number of steps per cycle, creating polymeters.
- *
- * @name polymeterSteps
- * @param  {number} steps how many items are placed in one cycle
- * @param  {any[]} patterns one or more patterns
- * @example
- * // the same as "{c d, e f g}%4"
- * polymeterSteps(4, "c d", "e f g").note()
- */
-export function polymeterSteps(steps, ...args) {
-  if (args.length == 0) {
-    return silence;
-  }
-  if (Array.isArray(args[0])) {
-    // Support old behaviour
-    return _polymeterListSteps(steps, ...args);
-  }
-
-  return polymeter(...args).pace(steps);
-}
-
-/**
- * *Experimental*
- *
- * Aligns the steps of the patterns, to match the steps per cycle of the first pattern, creating polymeters. See `polymeterSteps` to set the target steps explicitly.
+ * Aligns the steps of the patterns, creating polymeters. The patterns are repeated until they all fit the cycle. For example, in the below the first pattern is repeated twice, and the second is repeated three times, to fit the lowest common multiple of six steps.
  * @synonyms pm
  * @example
- * // The same as note("{c eb g, c2 g2}")
+ * // The same as note("{c eb g, c2 g2}%6")
  * polymeter("c eb g", "c2 g2").note()
  *
  */
@@ -2678,13 +2667,12 @@ export function polymeter(...args) {
   if (args.length == 0) {
     return silence;
   }
-  const steps = args[0]._steps;
+  const steps = lcm(...args.map((x) => x._steps));
   if (steps.eq(Fraction(0))) {
     return nothing;
   }
-  const [head, ...tail] = args;
 
-  const result = stack(head, ...tail.map((pat) => pat._slow(pat._steps.div(steps))));
+  const result = stack(...args.map((x) => x.pace(steps)));
   result._steps = steps;
   return result;
 }
@@ -2845,16 +2833,16 @@ export const drop = stepRegister('drop', function (i, pat) {
 /**
  * *Experimental*
  *
- * `repeat` is similar to `fast` in that it 'speeds up' the pattern, but it also increases the step count
- * accordingly. So `stepcat("a b".repeat(2), "c d")` would be the same as `"a b a b c d"`, whereas
+ * `extend` is similar to `fast` in that it increases its density, but it also increases the step count
+ * accordingly. So `stepcat("a b".extend(2), "c d")` would be the same as `"a b a b c d"`, whereas
  * `stepcat("a b".fast(2), "c d")` would be the same as `"[a b] [a b] c d"`.
  * @example
  * stepcat(
- *   sound("bd bd - cp").repeat(2),
+ *   sound("bd bd - cp").extend(2),
  *   sound("bd - sd -")
  * ).pace(8)
  */
-export const repeat = stepRegister('repeat', function (factor, pat) {
+export const extend = stepRegister('extend', function (factor, pat) {
   return pat.fast(factor).expand(factor);
 });
 
@@ -3052,8 +3040,6 @@ export const timeCat = stepcat;
 // Deprecated stepwise aliases
 export const s_cat = stepcat;
 export const s_alt = stepalt;
-export const s_polymeterSteps = polymeterSteps;
-Pattern.prototype.s_polymeterSteps = Pattern.prototype.polymeterSteps;
 export const s_polymeter = polymeter;
 Pattern.prototype.s_polymeter = Pattern.prototype.polymeter;
 export const s_taper = shrink;
@@ -3066,8 +3052,8 @@ export const s_sub = drop;
 Pattern.prototype.s_sub = Pattern.prototype.drop;
 export const s_expand = expand;
 Pattern.prototype.s_expand = Pattern.prototype.expand;
-export const s_extend = repeat;
-Pattern.prototype.s_extend = Pattern.prototype.repeat;
+export const s_extend = extend;
+Pattern.prototype.s_extend = Pattern.prototype.extend;
 export const s_contract = contract;
 Pattern.prototype.s_contract = Pattern.prototype.contract;
 export const s_tour = tour;

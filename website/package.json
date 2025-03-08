@@ -29,6 +29,7 @@
     "@strudel/csound": "workspace:*",
     "@strudel/desktopbridge": "workspace:*",
     "@strudel/draw": "workspace:*",
+    "@strudel/gamepad": "workspace:*",
     "@strudel/hydra": "workspace:*",
     "@strudel/midi": "workspace:*",
     "@strudel/mini": "workspace:*",
