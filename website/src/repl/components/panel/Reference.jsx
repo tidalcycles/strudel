@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import jsdocJson from '../../../../../doc.json';
+import { Textbox } from '../textbox/Textbox';
 const availableFunctions = jsdocJson.docs
   .filter(({ name, description }) => name && !name.startsWith('_') && !!description)
   .sort((a, b) => /* a.meta.filename.localeCompare(b.meta.filename) +  */ a.name.localeCompare(b.name));
@@ -25,21 +26,16 @@ export function Reference() {
   }, [search]);
 
   return (
-    <div className="flex h-full w-full p-2 text-foreground overflow-hidden">
+    <div className="flex h-full w-full p-2 overflow-hidden">
       <div className="h-full  flex flex-col gap-2 w-1/3 max-w-72 ">
         <div class="w-full flex">
-          <input
-            className="w-full p-1 bg-background rounded-md border-none"
-            placeholder="Search"
-            value={search}
-            onInput={(event) => setSearch(event.target.value)}
-          />
+          <Textbox className="w-full" placeholder="Search" value={search} onChange={setSearch} />
         </div>
         <div className="flex flex-col h-full overflow-y-auto  gap-1.5 bg-background bg-opacity-50  rounded-md">
           {visibleFunctions.map((entry, i) => (
             <a
               key={i}
-              className="cursor-pointer flex-none hover:bg-lineHighlight overflow-x-hidden  px-1 text-ellipsis"
+              className="cursor-pointer text-foreground flex-none hover:bg-lineHighlight overflow-x-hidden  px-1 text-ellipsis"
               onClick={() => {
                 const el = document.getElementById(`doc-${i}`);
                 const container = document.getElementById('reference-container');
@@ -79,7 +75,9 @@ export function Reference() {
                 ))}
               </ul>
               {entry.examples?.map((example, j) => (
-                <pre key={j}>{example}</pre>
+                <pre className="bg-background" key={j}>
+                  {example}
+                </pre>
               ))}
             </section>
           ))}

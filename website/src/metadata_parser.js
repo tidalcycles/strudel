@@ -1,6 +1,10 @@
 const ALLOW_MANY = ['by', 'url', 'genre', 'license'];
 
 export function getMetadata(raw_code) {
+  if (raw_code == null) {
+    console.error('could not extract metadata from missing pattern code');
+    raw_code = '';
+  }
   const comment_regexp = /\/\*([\s\S]*?)\*\/|\/\/(.*)$/gm;
   const comments = [...raw_code.matchAll(comment_regexp)].map((c) => (c[1] || c[2] || '').trim());
   const tags = {};
