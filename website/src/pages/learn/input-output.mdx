@@ -16,14 +16,63 @@ It is also possible to pattern other things with Strudel, such as software and h
 
 Strudel supports MIDI without any additional software (thanks to [webmidi](https://npmjs.com/package/webmidi)), just by adding methods to your pattern:
 
-## midi(outputName?)
+## midiin(inputName?)
+
+<JsDoc client:idle name="midin" h={0} />
+
+## midi(outputName?,options?)
 
 Either connect a midi device or use the IAC Driver (Mac) or Midi Through Port (Linux) for internal midi messages.
 If no outputName is given, it uses the first midi output it finds.
 
-<MiniRepl client:idle tune={`chord("<C^7 A7 Dm7 G7>").voicing().midi()`} />
+<MiniRepl
+  client:idle
+  tune={`
+$: chord("<C^7 A7 Dm7 G7>").voicing().midi('IAC Driver')
+`}
+/>
 
-In the console, you will see a log of the available MIDI devices as soon as you run the code, e.g. `Midi connected! Using "Midi Through Port-0".`
+In the console, you will see a log of the available MIDI devices as soon as you run the code,
+e.g.
+
+```
+ `Midi connected! Using "Midi Through Port-0".`
+```
+
+The `.midi()` function accepts an options object with the following properties:
+
+<MiniRepl
+  client:idle
+  tune={`$: note("d e c a f").midi('IAC Driver', { isController: true, midimap: 'default'})
+`}
+/>
+
+<details>
+<summary>Available Options</summary>
+
+| Option       | Type          | Default   | Description                                                            |
+| ------------ | ------------- | --------- | ---------------------------------------------------------------------- |
+| isController | boolean       | false     | When true, disables sending note messages. Useful for MIDI controllers |
+| latencyMs    | number        | 34        | Latency in milliseconds to align MIDI with audio engine                |
+| noteOffsetMs | number        | 10        | Offset in milliseconds for note-off messages to prevent glitching      |
+| midichannel  | number        | 1         | Default MIDI channel (1-16)                                            |
+| velocity     | number        | 0.9       | Default note velocity (0-1)                                            |
+| gain         | number        | 1         | Default gain multiplier for velocity (0-1)                             |
+| midimap      | string        | 'default' | Name of MIDI mapping to use for control changes                        |
+| midiport     | string/number | -         | MIDI device name or index                                              |
+
+</details>
+
+### midiport(outputName)
+
+Selects the MIDI output device to use, pattern can be used to switch between devices.
+
+```javascript
+$: midiport('IAC Driver');
+$: note('c a f e').midiport('<0 1 2 3>').midi();
+```
+
+<JsDoc client:idle name="midiport" h={0} />
 
 ## midichan(number)
 
@@ -106,8 +155,8 @@ The value should be an array of numbers between 0-255 representing the SysEx dat
 let id = 0x43; //Yamaha
 //let id = "0x00:0x20:0x32"; //Behringer ID can be an array of numbers
 let data = "0x79:0x09:0x11:0x0A:0x00:0x00"; // Set NSX-39 voice to say "Aa"
-$: note("c d e f e d c").sysex(id, data).midi();
-$: note("c d e f e d c").sysexid(id).sysexdata(data).midi();`}
+$: note("c a f e").sysex(id, data).midi();
+$: note("c a f e").sysexid(id).sysexdata(data).midi();`}
 />
 
 The exact format of SysEx messages depends on your MIDI device's specification.
@@ -118,9 +167,9 @@ Consult your device's MIDI implementation guide for details on supported SysEx m
 `midibend` sets MIDI pitch bend (-1 - 1)
 `miditouch` sets MIDI key after touch (0-1)
 
-<MiniRepl client:idle tune={`note("c d e f e d c").midibend(sine.slow(4).range(-0.4,0.4)).midi()`} />
+<MiniRepl client:idle tune={`note("c a f e").midibend(sine.slow(4).range(-0.4,0.4)).midi()`} />
 
-<MiniRepl client:idle tune={`note("c d e f e d c").miditouch(sine.slow(4).range(0,1)).midi()`} />
+<MiniRepl client:idle tune={`note("c a f e").miditouch(sine.slow(4).range(0,1)).midi()`} />
 
 # OSC/SuperDirt/StrudelDirt
 

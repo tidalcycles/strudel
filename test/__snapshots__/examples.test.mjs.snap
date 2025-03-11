@@ -5215,6 +5215,15 @@ exports[`runs examples > example "midi" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "midi" example index 1 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c4 midichan:1 ]",
+  "[ 1/1 → 2/1 | note:c4 midichan:1 ]",
+  "[ 2/1 → 3/1 | note:c4 midichan:1 ]",
+  "[ 3/1 → 4/1 | note:c4 midichan:1 ]",
+]
+`;
+
 exports[`runs examples > example "midibend" example index 0 1`] = `
 [
   "[ 0/1 → 1/1 | note:c4 midibend:0 ]",
@@ -5450,6 +5459,27 @@ exports[`runs examples > example "midin" example index 0 1`] = `
   "[ 13/4 → 7/2 | note:a cutoff:0 resonance:0 s:sawtooth ]",
   "[ 7/2 → 15/4 | note:f cutoff:0 resonance:0 s:sawtooth ]",
   "[ 15/4 → 4/1 | note:e cutoff:0 resonance:0 s:sawtooth ]",
+]
+`;
+
+exports[`runs examples > example "midiport" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:c midiport:0 ]",
+  "[ 1/4 → 1/2 | note:a midiport:0 ]",
+  "[ 1/2 → 3/4 | note:f midiport:0 ]",
+  "[ 3/4 → 1/1 | note:e midiport:0 ]",
+  "[ 1/1 → 5/4 | note:c midiport:1 ]",
+  "[ 5/4 → 3/2 | note:a midiport:1 ]",
+  "[ 3/2 → 7/4 | note:f midiport:1 ]",
+  "[ 7/4 → 2/1 | note:e midiport:1 ]",
+  "[ 2/1 → 9/4 | note:c midiport:2 ]",
+  "[ 9/4 → 5/2 | note:a midiport:2 ]",
+  "[ 5/2 → 11/4 | note:f midiport:2 ]",
+  "[ 11/4 → 3/1 | note:e midiport:2 ]",
+  "[ 3/1 → 13/4 | note:c midiport:3 ]",
+  "[ 13/4 → 7/2 | note:a midiport:3 ]",
+  "[ 7/2 → 15/4 | note:f midiport:3 ]",
+  "[ 15/4 → 4/1 | note:e midiport:3 ]",
 ]
 `;
 

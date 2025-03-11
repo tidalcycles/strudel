@@ -41,7 +41,7 @@ Additional controls can be mapped using the mapping object passed to `.midi()`:
 
 ## Examples
 
-### midi(outputName?)
+### midi(outputName?, options?)
 
 Either connect a midi device or use the IAC Driver (Mac) or Midi Through Port (Linux) for internal midi messages.
 If no outputName is given, it uses the first midi output it finds.
@@ -51,6 +51,42 @@ $: chord("<C^7 A7 Dm7 G7>").voicing().midi('IAC Driver')
 ```
 
 In the console, you will see a log of the available MIDI devices as soon as you run the code, e.g. `Midi connected! Using "Midi Through Port-0".`
+
+### Options
+
+The `.midi()` function accepts an options object with the following properties:
+
+```javascript
+$: note("c a f e").midi('IAC Driver', { isController: true, midimap: 'default'})
+```
+
+<details>
+<summary>Available Options</summary>
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| isController | boolean | false | When true, disables sending note messages. Useful for MIDI controllers |
+| latencyMs | number | 34 | Latency in milliseconds to align MIDI with audio engine |
+| noteOffsetMs | number | 10 | Offset in milliseconds for note-off messages to prevent glitching |
+| midichannel | number | 1 | Default MIDI channel (1-16) |
+| velocity | number | 0.9 | Default note velocity (0-1) |
+| gain | number | 1 | Default gain multiplier for velocity (0-1) |
+| midimap | string | 'default' | Name of MIDI mapping to use for control changes |
+| midiport | string/number | - | MIDI device name or index |
+
+</details>
+
+
+
+
+### midiport(outputName)
+
+Selects the MIDI output device to use, pattern can be used to switch between devices.
+
+```javascript
+$: midiport('IAC Driver')
+$: note("c a f e").midiport("<0 1 2 3>").midi()
+```
 
 ### midichan(number)
 
