@@ -309,7 +309,7 @@ Pattern.prototype.midi = function (midiport, options = {}) {
   let midiConfig = {
     // Default configuration values
     isController: false, // Disable sending notes for midi controllers
-    latencyMs: 34, // Default latency to get audio engine to line up in ms 
+    latencyMs: 34, // Default latency to get audio engine to line up in ms
     noteOffsetMs: 10, // Default note-off offset to prevent glitching in ms
     midichannel: 1, // Default MIDI channel
     velocity: 0.9, // Default velocity
