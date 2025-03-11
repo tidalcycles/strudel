@@ -78,6 +78,7 @@ export function loadModules() {
     import('@strudel/codemirror'),
     import('@strudel/hydra'),
     import('@strudel/serial'),
+    import('@strudel/shader'),
     import('@strudel/soundfonts'),
     import('@strudel/csound'),
     import('@strudel/tidal'),
