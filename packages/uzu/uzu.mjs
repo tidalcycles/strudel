@@ -8,18 +8,18 @@ This program is free software: you can redistribute it and/or modify it under th
 export class UzuParser {
   // these are the tokens we expect
   token_types = {
-    string: /^\"(.*?)\"/,
+    string: /^"(.*?)"/,
     open_list: /^\(/,
     close_list: /^\)/,
-    open_cat: /^\</,
-    close_cat: /^\>/,
+    open_cat: /^</,
+    close_cat: /^>/,
     open_seq: /^\[/,
     close_seq: /^\]/,
     number: /^[0-9]*\.?[0-9]+/, // before pipe!
     pipe: /^\./,
-    stack: /^\,/,
-    op: /^[\*\/]/,
-    plain: /^[a-zA-Z0-9\-]+/,
+    stack: /^,/,
+    op: /^[*/]/,
+    plain: /^[a-zA-Z0-9-]+/,
   };
   // matches next token
   next_token(code) {
