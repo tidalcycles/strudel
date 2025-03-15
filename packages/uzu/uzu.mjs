@@ -86,10 +86,14 @@ export class UzuParser {
     return children;
   }
   // Token[] => Token[][] . returns empty list if type not found
-  split_children(children, type) {
+  split_children(children, split_type, sequence_type) {
+    if (sequence_type) {
+      // if given, the first child is ignored
+      children = children.slice(1);
+    }
     const chunks = [];
     while (true) {
-      let commaIndex = children.findIndex((child) => child.type === type);
+      let commaIndex = children.findIndex((child) => child.type === split_type);
       if (commaIndex === -1) break;
       const chunk = children.slice(0, commaIndex);
       chunks.push(chunk);
@@ -101,13 +105,11 @@ export class UzuParser {
     chunks.push(children);
     return chunks;
   }
-  desugar_stack(children) {
-    let [type, ...rest] = children;
+  desugar_stack(children, sequence_type) {
     // children is expected to contain seq or cat as first item
-    const chunks = this.split_children(rest, 'stack');
+    const chunks = this.split_children(children, 'stack', sequence_type);
     if (!chunks.length) {
-      // no stack
-      return children;
+      return this.desugar_children(children);
     }
     // collect args of stack function
     const args = chunks.map((chunk) => {
@@ -115,8 +117,14 @@ export class UzuParser {
         // chunks of one element can be added to the stack as is
         return chunk[0];
       } else {
-        // chunks of multiple args are added to a subsequence of type
-        return { type: 'list', children: [type, ...chunk] };
+        // chunks of multiple args
+        if (sequence_type) {
+          // if given, each chunk needs to be prefixed
+          // [a b, c d] => (stack (seq a b) (seq c d))
+          chunk = [{ type: 'plain', value: sequence_type }, ...chunk];
+        }
+        chunk = this.desugar_children(chunk);
+        return { type: 'list', children: chunk };
       }
     });
     return [{ type: 'plain', value: 'stack' }, ...args];
@@ -203,21 +211,22 @@ export class UzuParser {
   }
   parse_list() {
     let children = this.parse_pair('open_list', 'close_list');
+    children = this.desugar_stack(children);
     children = this.desugar_children(children);
     return { type: 'list', children };
   }
   parse_cat() {
     let children = this.parse_pair('open_cat', 'close_cat');
     children = [{ type: 'plain', value: 'cat' }, ...children];
-    children = this.desugar_children(children);
     children = this.desugar_stack(children, 'cat');
+    children = this.desugar_children(children);
     return { type: 'list', children };
   }
   parse_seq() {
     let children = this.parse_pair('open_seq', 'close_seq');
     children = [{ type: 'plain', value: 'seq' }, ...children];
-    children = this.desugar_children(children);
     children = this.desugar_stack(children, 'seq');
+    children = this.desugar_children(children);
     return { type: 'list', children };
   }
   consume(type) {
