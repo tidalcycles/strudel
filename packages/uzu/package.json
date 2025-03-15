@@ -1,0 +1,37 @@
+{
+  "name": "uzu",
+  "version": "1.1.0",
+  "description": "an uzu notation",
+  "main": "uzu.mjs",
+  "type": "module",
+  "publishConfig": {
+    "main": "dist/uzu.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "bench": "vitest bench",
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel/blob/main/packages/uzu/README.md",
+  "devDependencies": {
+    "vite": "^6.0.11",
+    "vitest": "^3.0.4"
+  }
+}
