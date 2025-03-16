@@ -19,8 +19,11 @@ export class MondoParser {
     pipe: /^\./,
     stack: /^,/,
     op: /^[*/]/,
-    plain: /^[a-zA-Z0-9-]+/,
+    plain: /^[a-zA-Z0-9-_]+/,
   };
+  constructor(config) {
+    this.config = config;
+  }
   // matches next token
   next_token(code) {
     for (let type in this.token_types) {
@@ -29,7 +32,7 @@ export class MondoParser {
         return { type, value: match[0] };
       }
     }
-    throw new Error(`zilp: could not match '${code}'`);
+    throw new Error(`mondo: could not match '${code}'`);
   }
   // takes code string, returns list of matched tokens (if valid)
   tokenize(code) {
@@ -182,7 +185,7 @@ export class MondoParser {
         const [callee, ...rest] = right.children;
         const leftSide = children.slice(0, pipeIndex - 1);
         const left = children[pipeIndex - 1];
-        const args = [callee, left, ...rest];
+        let args = [callee, left, ...rest];
         const call = { type: 'list', children: args };
         children = [...leftSide, call, ...rightSide];
       } else {
@@ -199,6 +202,10 @@ export class MondoParser {
       }
     }
     return children;
+  }
+  flip_call(children) {
+    let [name, first, ...rest] = children;
+    return [name, ...rest, first];
   }
   parse_pair(open_type, close_type) {
     this.consume(open_type);
@@ -252,9 +259,10 @@ export function printAst(ast, compact = false, lvl = 0) {
 
 // lisp runner
 export class MondoRunner {
-  constructor(lib) {
-    this.parser = new MondoParser();
+  constructor(lib, config = {}) {
+    this.parser = new MondoParser(config);
     this.lib = lib;
+    this.config = config;
   }
   // a helper to check conditions and throw if they are not met
   assert(condition, error) {
@@ -264,6 +272,7 @@ export class MondoRunner {
   }
   run(code) {
     const ast = this.parser.parse(code);
+    console.log(printAst(ast));
     return this.call(ast);
   }
   call(ast) {
@@ -298,6 +307,9 @@ export class MondoRunner {
     // look up function in lib
     const fn = this.lib[name];
     this.assert(fn, `function call: unknown function name "${name}"`);
+    if (this.lib.call) {
+      return this.lib.call(fn, args, name);
+    }
     return fn(...args);
   }
 }
