@@ -6,6 +6,9 @@ let runner = new MondoRunner(strudelScope, { pipepost: true, loc: true });
 
 let getLeaf = (value, token) => {
   const [from, to] = token.loc;
+  if (strudelScope[value]) {
+    return strudelScope[value].withLoc(from, to);
+  }
   return reify(value).withLoc(from, to);
 };
 
