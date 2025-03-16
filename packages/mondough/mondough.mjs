@@ -11,6 +11,7 @@ let getLeaf = (value, token) => {
 
 strudelScope.plain = getLeaf;
 strudelScope.number = getLeaf;
+strudelScope.string = getLeaf;
 
 strudelScope.call = (fn, args, name) => {
   const [pat, ...rest] = args;

@@ -306,11 +306,19 @@ export class MondoRunner {
     }
     return fn(...args);
   }
+  errorhead(ast) {
+    return `[mondo ${ast.loc?.join(':') || ''}]`;
+  }
   call(ast) {
     // for a node to be callable, it needs to be a list
-    this.assert(ast.type === 'list', `function call: expected list, got ${ast.type}`);
+    this.assert(ast.type === 'list', `${this.errorhead(ast)} function call: expected list, got ${ast.type}`);
     // the first element is expected to be the function name
-    this.assert(ast.children[0]?.type === 'plain', `function call: expected first child to be plain, got ${ast.type}`);
+    const first = ast.children[0];
+    const name = first.value;
+    this.assert(
+      first?.type === 'plain',
+      `${this.errorhead(first)} expected first child to be function name, got ${first.type}${name ? ` "${name}"` : ''}.`,
+    );
 
     // process args
     const args = ast.children.slice(1).map((arg) => {
@@ -326,18 +334,18 @@ export class MondoRunner {
       return this.call(arg);
     });
 
-    const name = ast.children[0].value;
     if (name === '.') {
       // lambda : (.fast 2) = x=>fast(2, x)
-      const callee = ast.children[1].value;
+      const second = ast.children[1];
+      const callee = second.value;
       const innerFn = this.lib[callee];
-      this.assert(innerFn, `function call: unknown function name "${callee}"`);
+      this.assert(innerFn, `${this.errorhead(second)} lambda error: unknown function name "${callee}"`);
       return (pat) => this.libcall(innerFn, [pat, ...args.slice(1)], callee);
     }
 
     // look up function in lib
     const fn = this.lib[name];
-    this.assert(fn, `function call: unknown function name "${name}"`);
+    this.assert(fn, `${this.errorhead(first)} function call: unknown function name "${name}"`);
     return this.libcall(fn, args, name);
   }
 }
