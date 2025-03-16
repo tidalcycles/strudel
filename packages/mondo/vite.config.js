@@ -7,9 +7,9 @@ export default defineConfig({
   plugins: [],
   build: {
     lib: {
-      entry: resolve(__dirname, 'uzu.mjs'),
+      entry: resolve(__dirname, 'mondo.mjs'),
       formats: ['es'],
-      fileName: (ext) => ({ es: 'uzu.mjs' })[ext],
+      fileName: (ext) => ({ es: 'mondo.mjs' })[ext],
     },
     rollupOptions: {
       // external: [...Object.keys(dependencies)],

@@ -1,11 +1,11 @@
 {
-  "name": "uzu",
+  "name": "mondo",
   "version": "1.1.0",
-  "description": "an uzu notation",
-  "main": "uzu.mjs",
+  "description": "a language for functional composition that translates to js",
+  "main": "mondo.mjs",
   "type": "module",
   "publishConfig": {
-    "main": "dist/uzu.mjs"
+    "main": "dist/mondo.mjs"
   },
   "scripts": {
     "test": "vitest run",
@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://github.com/tidalcycles/strudel/blob/main/packages/uzu/README.md",
+  "homepage": "https://github.com/tidalcycles/strudel/blob/main/packages/mondo/README.md",
   "devDependencies": {
     "vite": "^6.0.11",
     "vitest": "^3.0.4"

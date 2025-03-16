@@ -1,16 +1,16 @@
 /*
-uzu.test.mjs - <short description TODO>
+mondo.test.mjs - <short description TODO>
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/mini/test/mini.test.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { describe, expect, it } from 'vitest';
-import { UzuParser, UzuRunner, printAst } from '../uzu.mjs';
+import { MondoParser, MondoRunner, printAst } from '../mondo.mjs';
 
-const parser = new UzuParser();
+const parser = new MondoParser();
 const p = (code) => parser.parse(code);
 
-describe('uzu s-expressions parser', () => {
+describe('mondo s-expressions parser', () => {
   it('should parse an empty string', () => expect(p('')).toEqual({ type: 'list', children: [] }));
   it('should parse a single item', () =>
     expect(p('a')).toEqual({ type: 'list', children: [{ type: 'plain', value: 'a' }] }));
@@ -56,7 +56,7 @@ let desguar = (a) => {
   return printAst(parser.parse(a), true);
 };
 
-describe('uzu sugar', () => {
+describe('mondo sugar', () => {
   it('should desugar []', () => expect(desguar('[a b c]')).toEqual('(seq a b c)'));
   it('should desugar [] nested', () => expect(desguar('[a [b c] d]')).toEqual('(seq a (seq b c) d)'));
   it('should desugar <>', () => expect(desguar('<a b c>')).toEqual('(cat a b c)'));

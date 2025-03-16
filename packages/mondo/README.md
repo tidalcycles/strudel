@@ -1,4 +1,4 @@
-# uzu
+# mondo
 
 an experimental parser for an *uzulang*, a custom dsl for patterns that can stand on its own feet. more info:
 
@@ -6,9 +6,9 @@ an experimental parser for an *uzulang*, a custom dsl for patterns that can stan
 - [uzulang II](https://garten.salat.dev/uzu/uzulang2.html)
 
 ```js
-import { UzuRunner } from 'uzu'
+import { MondoRunner } from 'uzu'
 
-const runner = UzuRunner({ seq, cat, s, crush, speed, '*': fast });
+const runner = MondoRunner({ seq, cat, s, crush, speed, '*': fast });
 const pat = runner.run('s [bd hh*2 cp.(crush 4) <mt ht lt>] . speed .8')
 ```
 
@@ -26,4 +26,4 @@ the above code will create the following call structure:
 )
 ```
 
-you can pass all available functions to *UzuRunner* as an object.
+you can pass all available functions to *MondoRunner* as an object.
