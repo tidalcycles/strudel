@@ -35,4 +35,3 @@ export function mondo(code, offset = 0) {
 registerLanguage('mondo', {
   getLocations: (code, offset) => runner.parser.get_locations(code, offset),
 });
-
