@@ -904,12 +904,13 @@ Pattern.prototype.collect = function () {
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
  * .arpWith(haps => haps[2])
  * */
-Pattern.prototype.arpWith = function (func) {
-  return this.collect()
+export const arpWith = register('arpWith', (func, pat) => {
+  return pat
+    .collect()
     .fmap((v) => reify(func(v)))
     .innerJoin()
     .withHap((h) => new Hap(h.whole, h.part, h.value.value, h.combineContext(h.value)));
-};
+});
 
 /**
  * Selects indices in in stacked notes.
@@ -917,9 +918,11 @@ Pattern.prototype.arpWith = function (func) {
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
  * .arp("0 [0,2] 1 [0,2]")
  * */
-Pattern.prototype.arp = function (pat) {
-  return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
-};
+export const arp = register(
+  'arp',
+  (indices, pat) => pat.arpWith((haps) => reify(indices).fmap((i) => haps[i % haps.length])),
+  false,
+);
 
 /*
  * Takes a time duration followed by one or more patterns, and shifts the given patterns in time, so they are
