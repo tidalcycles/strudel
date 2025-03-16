@@ -279,26 +279,26 @@ const _rearrangeWith = (ipat, n, pat) => {
 };
 
 /**
- * @name shuffle
  * Slices a pattern into the given number of parts, then plays those parts in random order.
  * Each part will be played exactly once per cycle.
+ * @name shuffle
  * @example
  * note("c d e f").sound("piano").shuffle(4)
  * @example
- * note("c d e f".shuffle(4), "g").sound("piano")
+ * seq("c d e f".shuffle(4), "g").note().sound("piano")
  */
 export const shuffle = register('shuffle', (n, pat) => {
   return _rearrangeWith(randrun(n), n, pat);
 });
 
 /**
- * @name scramble
  * Slices a pattern into the given number of parts, then plays those parts at random. Similar to `shuffle`,
  * but parts might be played more than once, or not at all, per cycle.
+ * @name scramble
  * @example
  * note("c d e f").sound("piano").scramble(4)
  * @example
- * note("c d e f".scramble(4), "g").sound("piano")
+ * seq("c d e f".scramble(4), "g").note().sound("piano")
  */
 export const scramble = register('scramble', (n, pat) => {
   return _rearrangeWith(_irand(n)._segment(n), n, pat);

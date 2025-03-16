@@ -1001,7 +1001,7 @@ describe('Pattern', () => {
   });
   describe('hurry', () => {
     it('Can speed up patterns and sounds', () => {
-      sameFirst(s('a', 'b').hurry(2), s('a', 'b').fast(2).speed(2));
+      sameFirst(s(sequence('a', 'b')).hurry(2), s(sequence('a', 'b')).fast(2).speed(2));
     });
   });
   /*describe('composable functions', () => {

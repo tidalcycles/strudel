@@ -7401,9 +7401,7 @@ exports[`runs examples > example "scope" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "scramble
-Slices a pattern into the given number of parts, then plays those parts at random. Similar to \`shuffle\`,
-but parts might be played more than once, or not at all, per cycle." example index 0 1`] = `
+exports[`runs examples > example "scramble" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c s:piano ]",
   "[ 1/4 → 1/2 | note:d s:piano ]",
@@ -7424,9 +7422,7 @@ but parts might be played more than once, or not at all, per cycle." example ind
 ]
 `;
 
-exports[`runs examples > example "scramble
-Slices a pattern into the given number of parts, then plays those parts at random. Similar to \`shuffle\`,
-but parts might be played more than once, or not at all, per cycle." example index 1 1`] = `
+exports[`runs examples > example "scramble" example index 1 1`] = `
 [
   "[ 0/1 → 1/8 | note:c s:piano ]",
   "[ 1/8 → 1/4 | note:d s:piano ]",
@@ -7835,9 +7831,7 @@ exports[`runs examples > example "shrink" example index 3 1`] = `
 ]
 `;
 
-exports[`runs examples > example "shuffle
-Slices a pattern into the given number of parts, then plays those parts in random order.
-Each part will be played exactly once per cycle." example index 0 1`] = `
+exports[`runs examples > example "shuffle" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c s:piano ]",
   "[ 1/4 → 1/2 | note:d s:piano ]",
@@ -7858,9 +7852,7 @@ Each part will be played exactly once per cycle." example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "shuffle
-Slices a pattern into the given number of parts, then plays those parts in random order.
-Each part will be played exactly once per cycle." example index 1 1`] = `
+exports[`runs examples > example "shuffle" example index 1 1`] = `
 [
   "[ 0/1 → 1/8 | note:c s:piano ]",
   "[ 1/8 → 1/4 | note:d s:piano ]",
