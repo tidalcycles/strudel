@@ -15,7 +15,7 @@ export class MondoParser {
     close_cat: /^>/,
     open_seq: /^\[/,
     close_seq: /^\]/,
-    number: /^[0-9]*\.?[0-9]+/, // before pipe!
+    number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
     pipe: /^\./,
     stack: /^,/,
     op: /^[*/]/,
@@ -299,6 +299,13 @@ export class MondoRunner {
     // console.log(printAst(ast));
     return this.call(ast);
   }
+  // todo: always use lib.call?
+  libcall(fn, args, name) {
+    if (this.lib.call) {
+      return this.lib.call(fn, args, name);
+    }
+    return fn(...args);
+  }
   call(ast) {
     // for a node to be callable, it needs to be a list
     this.assert(ast.type === 'list', `function call: expected list, got ${ast.type}`);
@@ -325,15 +332,12 @@ export class MondoRunner {
       const callee = ast.children[1].value;
       const innerFn = this.lib[callee];
       this.assert(innerFn, `function call: unknown function name "${callee}"`);
-      return (pat) => innerFn(pat, args.slice(1));
+      return (pat) => this.libcall(innerFn, [pat, ...args.slice(1)], callee);
     }
 
     // look up function in lib
     const fn = this.lib[name];
     this.assert(fn, `function call: unknown function name "${name}"`);
-    if (this.lib.call) {
-      return this.lib.call(fn, args, name);
-    }
-    return fn(...args);
+    return this.libcall(fn, args, name);
   }
 }
