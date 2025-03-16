@@ -19,7 +19,7 @@ export class MondoParser {
     pipe: /^\./,
     stack: /^,/,
     op: /^[*/]/,
-    plain: /^[a-zA-Z0-9-_^]+/,
+    plain: /^[a-zA-Z0-9-~_^]+/,
   };
   // matches next token
   next_token(code, offset = 0) {
@@ -317,7 +317,7 @@ export class MondoRunner {
     const name = first.value;
     this.assert(
       first?.type === 'plain',
-      `${this.errorhead(first)} expected first child to be function name, got ${first.type}${name ? ` "${name}"` : ''}.`,
+      `${this.errorhead(first)} expected function name, got ${first.type}${name ? ` "${name}"` : ''}.`,
     );
 
     // process args
@@ -339,13 +339,13 @@ export class MondoRunner {
       const second = ast.children[1];
       const callee = second.value;
       const innerFn = this.lib[callee];
-      this.assert(innerFn, `${this.errorhead(second)} lambda error: unknown function name "${callee}"`);
+      this.assert(innerFn, `${this.errorhead(second)} unknown function name "${callee}"`);
       return (pat) => this.libcall(innerFn, [pat, ...args.slice(1)], callee);
     }
 
     // look up function in lib
     const fn = this.lib[name];
-    this.assert(fn, `${this.errorhead(first)} function call: unknown function name "${name}"`);
+    this.assert(fn, `${this.errorhead(first)} unknown function name "${name}"`);
     return this.libcall(fn, args, name);
   }
 }
