@@ -19,35 +19,46 @@ export class MondoParser {
     pipe: /^\./,
     stack: /^,/,
     op: /^[*/]/,
-    plain: /^[a-zA-Z0-9-_]+/,
+    plain: /^[a-zA-Z0-9-_\^]+/,
   };
-  constructor(config) {
-    this.config = config;
-  }
   // matches next token
-  next_token(code) {
+  next_token(code, offset = 0) {
     for (let type in this.token_types) {
       const match = code.match(this.token_types[type]);
       if (match) {
-        return { type, value: match[0] };
+        let token = { type, value: match[0] };
+        if (offset !== -1) {
+          // add location
+          token.loc = [offset, offset + match[0].length];
+        }
+        return token;
       }
     }
     throw new Error(`mondo: could not match '${code}'`);
   }
   // takes code string, returns list of matched tokens (if valid)
-  tokenize(code) {
+  tokenize(code, offset = 0) {
     let tokens = [];
+    let locEnabled = offset !== -1;
+    let trim = () => {
+      // trim whitespace at start, update offset
+      offset += code.length - code.trimStart().length;
+      // trim start and end to not confuse parser
+      return code.trim();
+    };
+    code = trim();
     while (code.length > 0) {
-      code = code.trim();
-      const token = this.next_token(code);
+      code = trim();
+      const token = this.next_token(code, locEnabled ? offset : -1);
       code = code.slice(token.value.length);
+      offset += token.value.length;
       tokens.push(token);
     }
     return tokens;
   }
   // take code, return abstract syntax tree
-  parse(code) {
-    this.tokens = this.tokenize(code);
+  parse(code, offset) {
+    this.tokens = this.tokenize(code, offset);
     const expressions = [];
     while (this.tokens.length) {
       expressions.push(this.parse_expr());
@@ -244,6 +255,20 @@ export class MondoParser {
     }
     return token;
   }
+  get_locations(code, offset = 0) {
+    let walk = (ast, locations = []) => {
+      if (ast.type === 'list') {
+        return ast.children.slice(1).forEach((child) => walk(child, locations));
+      }
+      if (ast.loc) {
+        locations.push(ast.loc);
+      }
+    };
+    const ast = this.parse(code, offset);
+    let locations = [];
+    walk(ast, locations);
+    return locations;
+  }
 }
 
 export function printAst(ast, compact = false, lvl = 0) {
@@ -259,10 +284,9 @@ export function printAst(ast, compact = false, lvl = 0) {
 
 // lisp runner
 export class MondoRunner {
-  constructor(lib, config = {}) {
-    this.parser = new MondoParser(config);
+  constructor(lib) {
+    this.parser = new MondoParser();
     this.lib = lib;
-    this.config = config;
   }
   // a helper to check conditions and throw if they are not met
   assert(condition, error) {
@@ -270,9 +294,9 @@ export class MondoRunner {
       throw new Error(error);
     }
   }
-  run(code) {
-    const ast = this.parser.parse(code);
-    console.log(printAst(ast));
+  run(code, offset = 0) {
+    const ast = this.parser.parse(code, offset);
+    // console.log(printAst(ast));
     return this.call(ast);
   }
   call(ast) {
@@ -284,13 +308,13 @@ export class MondoRunner {
     // process args
     const args = ast.children.slice(1).map((arg) => {
       if (arg.type === 'string') {
-        return this.lib.string(arg.value.slice(1, -1));
+        return this.lib.string(arg.value.slice(1, -1), arg);
       }
       if (arg.type === 'plain') {
-        return this.lib.plain(arg.value);
+        return this.lib.plain(arg.value, arg);
       }
       if (arg.type === 'number') {
-        return this.lib.number(Number(arg.value));
+        return this.lib.number(Number(arg.value), arg);
       }
       return this.call(arg);
     });

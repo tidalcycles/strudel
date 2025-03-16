@@ -32,7 +32,8 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel/core": "workspace:*"
+    "@strudel/core": "workspace:*",
+    "@strudel/transpiler": "workspace:*"
   },
   "devDependencies": {
     "mondo": "*",

@@ -8,8 +8,24 @@ import { describe, expect, it } from 'vitest';
 import { MondoParser, MondoRunner, printAst } from '../mondo.mjs';
 
 const parser = new MondoParser();
-const p = (code) => parser.parse(code);
+const p = (code) => parser.parse(code, -1);
 
+describe('mondo tokenizer', () => {
+  const parser = new MondoParser();
+  it('should tokenize with locations', () =>
+    expect(
+      parser
+        .tokenize('(one two three)')
+        .map((t) => t.value + '=' + t.loc.join('-'))
+        .join(' '),
+    ).toEqual('(=0-1 one=1-4 two=5-8 three=9-14 )=14-15'));
+  // it('should parse with locations', () => expect(parser.parse('(one two three)')).toEqual());
+  it('should get locations', () =>
+    expect(parser.get_locations('s bd rim')).toEqual([
+      [2, 4],
+      [5, 8],
+    ]));
+});
 describe('mondo s-expressions parser', () => {
   it('should parse an empty string', () => expect(p('')).toEqual({ type: 'list', children: [] }));
   it('should parse a single item', () =>
