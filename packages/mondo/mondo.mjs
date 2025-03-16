@@ -19,7 +19,7 @@ export class MondoParser {
     pipe: /^\./,
     stack: /^,/,
     op: /^[*/]/,
-    plain: /^[a-zA-Z0-9-_\^]+/,
+    plain: /^[a-zA-Z0-9-_^]+/,
   };
   // matches next token
   next_token(code, offset = 0) {
