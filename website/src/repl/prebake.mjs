@@ -115,6 +115,17 @@ export async function prebake() {
           'numbers/7.wav',
           'numbers/8.wav',
         ],
+        num: [
+          'num/0.wav',
+          'num/1.wav',
+          'num/2.wav',
+          'num/3.wav',
+          'num/4.wav',
+          'num/5.wav',
+          'num/6.wav',
+          'num/7.wav',
+          'num/8.wav',
+        ],
       },
       'github:tidalcycles/dirt-samples',
       {
