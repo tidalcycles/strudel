@@ -1,20 +1,19 @@
-import { strudelScope, reify, fast, slow, isPattern } from '@strudel/core';
+import { strudelScope, reify, fast, slow } from '@strudel/core';
 import { registerLanguage } from '@strudel/transpiler';
 import { MondoRunner } from '../mondo/mondo.mjs';
 
-let runner = new MondoRunner(strudelScope, { pipepost: true, loc: true });
+let runner = new MondoRunner(strudelScope);
 
-let getLeaf = (value, token) => {
+strudelScope.leaf = (token) => {
+  let { value } = token;
   const [from, to] = token.loc;
-  if (strudelScope[value]) {
+  if (token.type === 'plain' && strudelScope[value]) {
+    // what if we want a string that happens to also be a variable name?
+    // example: "s sine" -> sine is also a variable
     return reify(strudelScope[value]).withLoc(from, to);
   }
   return reify(value).withLoc(from, to);
 };
-
-strudelScope.plain = getLeaf;
-strudelScope.number = getLeaf;
-strudelScope.string = getLeaf;
 
 strudelScope.call = (fn, args, name) => {
   const [pat, ...rest] = args;

@@ -8,7 +8,8 @@ This program is free software: you can redistribute it and/or modify it under th
 export class MondoParser {
   // these are the tokens we expect
   token_types = {
-    string: /^"(.*?)"/,
+    quotes_double: /^"(.*?)"/,
+    quotes_single: /^'(.*?)'/,
     open_list: /^\(/,
     close_list: /^\)/,
     open_cat: /^</,
@@ -17,7 +18,7 @@ export class MondoParser {
     close_seq: /^\]/,
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
     pipe: /^\./,
-    stack: /^,/,
+    stack: /^[,$]/,
     op: /^[*/]/,
     plain: /^[a-zA-Z0-9-~_^]+/,
   };
@@ -71,7 +72,7 @@ export class MondoParser {
     if (expressions.length > 1 || expressions[0].type !== 'list') {
       return {
         type: 'list',
-        children: this.desugar_children(expressions),
+        children: this.desugar(expressions),
       };
     }
     // we have a single list
@@ -110,7 +111,7 @@ export class MondoParser {
       let commaIndex = children.findIndex((child) => child.type === split_type);
       if (commaIndex === -1) break;
       const chunk = children.slice(0, commaIndex);
-      chunks.push(chunk);
+      chunk.length && chunks.push(chunk);
       children = children.slice(commaIndex + 1);
     }
     if (!chunks.length) {
@@ -227,24 +228,26 @@ export class MondoParser {
     this.consume(close_type);
     return children;
   }
+  desugar(children, type) {
+    // not really needed but more readable and might be extended in the future
+    children = this.desugar_stack(children, type);
+    return children;
+  }
   parse_list() {
     let children = this.parse_pair('open_list', 'close_list');
-    children = this.desugar_stack(children);
-    children = this.desugar_children(children);
+    children = this.desugar(children);
     return { type: 'list', children };
   }
   parse_cat() {
     let children = this.parse_pair('open_cat', 'close_cat');
     children = [{ type: 'plain', value: 'cat' }, ...children];
-    children = this.desugar_stack(children, 'cat');
-    children = this.desugar_children(children);
+    children = this.desugar(children, 'cat');
     return { type: 'list', children };
   }
   parse_seq() {
     let children = this.parse_pair('open_seq', 'close_seq');
     children = [{ type: 'plain', value: 'seq' }, ...children];
-    children = this.desugar_stack(children, 'seq');
-    children = this.desugar_children(children);
+    children = this.desugar(children, 'seq');
     return { type: 'list', children };
   }
   consume(type) {
@@ -322,16 +325,19 @@ export class MondoRunner {
 
     // process args
     const args = ast.children.slice(1).map((arg) => {
-      if (arg.type === 'string') {
-        return this.lib.string(arg.value.slice(1, -1), arg);
+      if (arg.type === 'list') {
+        return this.call(arg);
       }
-      if (arg.type === 'plain') {
-        return this.lib.plain(arg.value, arg);
+      if (!this.lib.leaf) {
+        throw new Error(`no handler for leaft nodes! add leaf to your lib`);
       }
+
       if (arg.type === 'number') {
-        return this.lib.number(Number(arg.value), arg);
+        arg.value = Number(arg.value);
+      } else if (['quotes_double', 'quotes_single'].includes(arg.type)) {
+        arg.value = arg.value.slice(1, -1);
       }
-      return this.call(arg);
+      return this.lib.leaf(arg);
     });
 
     if (name === '.') {

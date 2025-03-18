@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { describe, expect, it } from 'vitest';
-import { MondoParser, MondoRunner, printAst } from '../mondo.mjs';
+import { MondoParser, printAst } from '../mondo.mjs';
 
 const parser = new MondoParser();
 const p = (code) => parser.parse(code, -1);
