@@ -358,6 +358,9 @@ importers:
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
     devDependencies:
       mondo:
         specifier: '*'
@@ -690,7 +693,7 @@ importers:
       '@strudel/mini':
         specifier: workspace:*
         version: link:../packages/mini
-      '@strudel/mondough':
+      '@strudel/mondo':
         specifier: workspace:*
         version: link:../packages/mondough
       '@strudel/motion':
