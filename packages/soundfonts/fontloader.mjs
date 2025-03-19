@@ -9,6 +9,13 @@ import {
 } from '@strudel/webaudio';
 import gm from './gm.mjs';
 
+let defaultSoundfontUrl = 'https://felixroos.github.io/webaudiofontdata/sound';
+let soundfontUrl = defaultSoundfontUrl;
+
+export function setSoundfontUrl(value) {
+  soundfontUrl = value;
+}
+
 let loadCache = {};
 async function loadFont(name) {
   if (loadCache[name]) {
@@ -16,7 +23,7 @@ async function loadFont(name) {
   }
   const load = async () => {
     // TODO: make soundfont source configurable
-    const url = `https://felixroos.github.io/webaudiofontdata/sound/${name}.js`;
+    const url = `${soundfontUrl}/${name}.js`;
     const preset = await fetch(url).then((res) => res.text());
     let [_, data] = preset.split('={');
     return eval('{' + data);
