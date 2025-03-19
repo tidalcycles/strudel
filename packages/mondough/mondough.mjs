@@ -4,8 +4,12 @@ import { MondoRunner } from '../mondo/mondo.mjs';
 
 let runner = new MondoRunner(strudelScope);
 
-strudelScope.leaf = (token) => {
+strudelScope.leaf = (token, scope) => {
   let { value } = token;
+  // local scope
+  if (token.type === 'plain' && scope[value]) {
+    return reify(scope[value]); // -> local scope has no location
+  }
   const [from, to] = token.loc;
   if (token.type === 'plain' && strudelScope[value]) {
     // what if we want a string that happens to also be a variable name?

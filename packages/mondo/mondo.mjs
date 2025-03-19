@@ -214,11 +214,14 @@ export class MondoParser {
       if (pipeIndex === -1) break;
       // pipe up front => lambda
       if (pipeIndex === 0) {
-        // . as lambda: (.fast 2) = x=>x.fast(2)
-        // TODO: this doesn't work for (.fast 2 .speed 2)
-        // probably needs proper ast representation of lambda
-        children[pipeIndex] = { type: 'plain', value: '.' };
-        continue;
+        // . as lambda: (.fast 2) = (lambda (_) (fast _ 2))
+        const args = [{ type: 'plain', value: '_' }];
+        const body = this.desugar([args[0], ...children]);
+        return [
+          { type: 'plain', value: 'lambda' },
+          { type: 'list', children: args },
+          { type: 'list', children: body },
+        ];
       }
       const rightSide = children.slice(pipeIndex + 2);
       const right = children[pipeIndex + 1];
@@ -343,7 +346,7 @@ export class MondoRunner {
   errorhead(ast) {
     return `[mondo ${ast.loc?.join(':') || ''}]`;
   }
-  call(ast) {
+  call(ast, scope = []) {
     // for a node to be callable, it needs to be a list
     this.assert(ast.type === 'list', `${this.errorhead(ast)} function call: expected list, got ${ast.type}`);
     // the first element is expected to be the function name
@@ -354,10 +357,22 @@ export class MondoRunner {
       `${this.errorhead(first)} expected function name, got ${first.type}${name ? ` "${name}"` : ''}.`,
     );
 
+    if (name === 'lambda') {
+      const [_, args, body] = ast.children;
+      const argNames = args.children.map((child) => child.value);
+      // console.log('lambda', argNames, body.children);
+      return (x) => {
+        scope = {
+          [argNames[0]]: x, // TODO: merge scope... + support multiple args
+        };
+        return this.call(body, scope);
+      };
+    }
+
     // process args
     const args = ast.children.slice(1).map((arg) => {
       if (arg.type === 'list') {
-        return this.call(arg);
+        return this.call(arg, scope);
       }
       if (!this.lib.leaf) {
         throw new Error(`no handler for leaft nodes! add leaf to your lib`);
@@ -368,21 +383,12 @@ export class MondoRunner {
       } else if (['quotes_double', 'quotes_single'].includes(arg.type)) {
         arg.value = arg.value.slice(1, -1);
       }
-      return this.lib.leaf(arg);
+      return this.lib.leaf(arg, scope);
     });
-
-    if (name === '.') {
-      // lambda : (.fast 2) = x=>fast(2, x)
-      const second = ast.children[1];
-      const callee = second.value;
-      const innerFn = this.lib[callee];
-      this.assert(innerFn, `${this.errorhead(second)} unknown function name "${callee}"`);
-      return (pat) => this.libcall(innerFn, [pat, ...args.slice(1)], callee);
-    }
 
     // look up function in lib
     const fn = this.lib[name];
     this.assert(fn, `${this.errorhead(first)} unknown function name "${name}"`);
-    return this.libcall(fn, args, name);
+    return this.libcall(fn, args, name, scope);
   }
 }
