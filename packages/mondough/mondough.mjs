@@ -17,7 +17,7 @@ strudelScope.leaf = (token) => {
 
 strudelScope.call = (fn, args, name) => {
   const [pat, ...rest] = args;
-  if (!['seq', 'cat', 'stack'].includes(name)) {
+  if (!['seq', 'cat', 'stack', ':'].includes(name)) {
     args = [...rest, pat];
   }
   return fn(...args);
@@ -25,6 +25,9 @@ strudelScope.call = (fn, args, name) => {
 
 strudelScope['*'] = fast;
 strudelScope['/'] = slow;
+
+const tail = (pat, friend) => pat.fmap((a) => (b) => (Array.isArray(a) ? [...a, b] : [a, b])).appLeft(friend);
+strudelScope[':'] = tail;
 
 export function mondo(code, offset = 0) {
   if (Array.isArray(code)) {

@@ -20,6 +20,7 @@ export class MondoParser {
     pipe: /^\./,
     stack: /^[,$]/,
     op: /^[*/]/,
+    tail: /^:/,
     plain: /^[a-zA-Z0-9-~_^]+/,
   };
   // matches next token
@@ -96,6 +97,7 @@ export class MondoParser {
     return this.consume(next);
   }
   desugar_children(children) {
+    children = this.resolve_tails(children);
     children = this.resolve_ops(children);
     children = this.resolve_pipes(children);
     return children;
@@ -143,6 +145,35 @@ export class MondoParser {
       }
     });
     return [{ type: 'plain', value: 'stack' }, ...args];
+  }
+  resolve_tails(children) {
+    while (true) {
+      let opIndex = children.findIndex((child) => child.type === 'tail');
+      if (opIndex === -1) break;
+      const op = { type: 'plain', value: children[opIndex].value };
+      if (opIndex === children.length - 1) {
+        throw new Error(`cannot use operator as last child.`);
+      }
+      if (opIndex === 0) {
+        // regular function call (assuming each operator exists as function)
+        children[opIndex] = op;
+        continue;
+      }
+      const left = children[opIndex - 1];
+      const right = children[opIndex + 1];
+
+      // convert infix to prefix notation
+      const call = { type: 'list', children: [op, left, right] };
+
+      // insert call while keeping other siblings
+      children = [...children.slice(0, opIndex - 1), call, ...children.slice(opIndex + 2)];
+      // unwrap double list.. e.g. (s jazz) * 2
+      if (children.length === 1) {
+        // there might be a cleaner solution
+        children = children[0].children;
+      }
+    }
+    return children;
   }
   resolve_ops(children) {
     while (true) {
