@@ -17,7 +17,7 @@ export class MondoParser {
     open_seq: /^\[/,
     close_seq: /^\]/,
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
-    op: /^[*\/:]|^\.{2}/, // * / : ..
+    op: /^[*/:]|^\.{2}/, // * / : ..
     pipe: /^\./,
     stack: /^[,$]/,
     plain: /^[a-zA-Z0-9-~_^]+/,

@@ -1,4 +1,4 @@
-import { strudelScope, reify, fast, slow } from '@strudel/core';
+import { strudelScope, reify, fast, slow, seq } from '@strudel/core';
 import { registerLanguage } from '@strudel/transpiler';
 import { MondoRunner } from '../mondo/mondo.mjs';
 
