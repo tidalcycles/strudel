@@ -289,21 +289,6 @@ function tidalWithLocation(value, offset) {
   };
 }
 
-function mondoWithLocation(value, offset) {
-  return {
-    type: 'CallExpression',
-    callee: {
-      type: 'Identifier',
-      name: 'mondo',
-    },
-    arguments: [
-      { type: 'Literal', value },
-      { type: 'Literal', value: offset },
-    ],
-    optional: false,
-  };
-}
-
 function languageWithLocation(name, value, offset) {
   return {
     type: 'CallExpression',
