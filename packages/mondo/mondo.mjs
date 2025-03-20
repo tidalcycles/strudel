@@ -12,10 +12,12 @@ export class MondoParser {
     quotes_single: /^'(.*?)'/,
     open_list: /^\(/,
     close_list: /^\)/,
-    open_cat: /^</,
+    open_cat: /^</, // todo: rename angle
     close_cat: /^>/,
-    open_seq: /^\[/,
+    open_seq: /^\[/, // todo: rename square
     close_seq: /^\]/,
+    open_curly: /^\{/,
+    close_curly: /^\}/,
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
     op: /^[*/:!@%]|^\.{2}/, // * / : ! @ % ..
     pipe: /^\./,
@@ -92,6 +94,9 @@ export class MondoParser {
     }
     if (next === 'open_seq') {
       return this.parse_seq();
+    }
+    if (next === 'open_curly') {
+      return this.parse_curly();
     }
     return this.consume(next);
   }
@@ -254,6 +259,12 @@ export class MondoParser {
     let children = this.parse_pair('open_seq', 'close_seq');
     children = [{ type: 'plain', value: 'seq' }, ...children];
     children = this.desugar(children, 'seq');
+    return { type: 'list', children };
+  }
+  parse_curly() {
+    let children = this.parse_pair('open_curly', 'close_curly');
+    children = [{ type: 'plain', value: 'curly' }, ...children];
+    children = this.desugar(children, 'curly');
     return { type: 'list', children };
   }
   consume(type) {

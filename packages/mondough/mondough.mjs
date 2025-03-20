@@ -1,4 +1,4 @@
-import { strudelScope, reify, fast, slow, seq } from '@strudel/core';
+import { strudelScope, reify, fast, slow, seq, stepcat } from '@strudel/core';
 import { registerLanguage } from '@strudel/transpiler';
 import { MondoRunner } from '../mondo/mondo.mjs';
 
@@ -18,17 +18,14 @@ strudelScope.leaf = (token, scope) => {
   }
   return reify(value).withLoc(from, to);
 };
+strudelScope.curly = stepcat;
+strudelScope.seq = (...args) => stepcat(...args).setSteps(1);
+strudelScope.cat = (...args) => stepcat(...args).pace(1);
 
 strudelScope.call = (fn, args, name) => {
   const [pat, ...rest] = args;
-  if (!['seq', 'cat', 'stack', ':', '..', '!', '@', '%'].includes(name)) {
+  if (!['seq', 'cat', 'stack', 'curly', ':', '..', '!', '@', '%'].includes(name)) {
     args = [...rest, pat];
-  }
-  if (name === 'seq') {
-    return stepcat(...args).setSteps(1);
-  }
-  if (name === 'cat') {
-    return stepcat(...args).pace(1);
   }
   return fn(...args);
 };
