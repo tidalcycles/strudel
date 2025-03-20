@@ -38,7 +38,7 @@ export function mondo(code, offset = 0) {
     code = code.join('');
   }
   const pat = runner.run(code, offset);
-  return pat;
+  return pat.markcss('color: var(--foreground);text-decoration:underline');
 }
 
 // tell transpiler how to get locations for mondo`` calls
