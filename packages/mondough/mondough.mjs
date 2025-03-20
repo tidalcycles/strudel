@@ -21,14 +21,22 @@ strudelScope.leaf = (token, scope) => {
 
 strudelScope.call = (fn, args, name) => {
   const [pat, ...rest] = args;
-  if (!['seq', 'cat', 'stack', ':', '..'].includes(name)) {
+  if (!['seq', 'cat', 'stack', ':', '..', '!', '@'].includes(name)) {
     args = [...rest, pat];
+  }
+  if (name === 'seq') {
+    return stepcat(...args).setSteps(1);
+  }
+  if (name === 'cat') {
+    return stepcat(...args).pace(1);
   }
   return fn(...args);
 };
 
 strudelScope['*'] = fast;
 strudelScope['/'] = slow;
+strudelScope['!'] = (pat, n) => pat.extend(n);
+strudelScope['@'] = (pat, n) => pat.expand(n);
 
 // : operator
 const tail = (pat, friend) => pat.fmap((a) => (b) => (Array.isArray(a) ? [...a, b] : [a, b])).appLeft(friend);
