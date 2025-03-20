@@ -1,4 +1,4 @@
-import { RangeSetBuilder, StateEffect, StateField } from '@codemirror/state';
+import { RangeSetBuilder, StateEffect, StateField, Prec } from '@codemirror/state';
 import { Decoration, EditorView } from '@codemirror/view';
 
 export const setMiniLocations = StateEffect.define();
@@ -134,5 +134,5 @@ export const isPatternHighlightingEnabled = (on, config) => {
     setTimeout(() => {
       updateMiniLocations(config.editor, config.miniLocations);
     }, 100);
-  return on ? highlightExtension : [];
+  return on ? Prec.highest(highlightExtension) : [];
 };
