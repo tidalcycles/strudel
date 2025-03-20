@@ -29,8 +29,15 @@ export function transpiler(input, options = {}) {
 
   let miniLocations = [];
   const collectMiniLocations = (value, node) => {
-    const leafLocs = getLeafLocations(`"${value}"`, node.start, input);
-    miniLocations = miniLocations.concat(leafLocs);
+    const minilang = languages.get('minilang');
+    if (minilang) {
+      const code = `[${value}]`;
+      const locs = minilang.getLocations(code, node.start);
+      miniLocations = miniLocations.concat(locs);
+    } else {
+      const leafLocs = getLeafLocations(`"${value}"`, node.start, input);
+      miniLocations = miniLocations.concat(leafLocs);
+    }
   };
   let widgets = [];
 
@@ -142,11 +149,18 @@ function isBackTickString(node, parent) {
 
 function miniWithLocation(value, node) {
   const { start: fromOffset } = node;
+
+  const minilang = languages.get('minilang');
+  let name = 'm';
+  if (minilang && minilang.name) {
+    name = minilang.name; // name is expected to be exported from the package of the minilang
+  }
+
   return {
     type: 'CallExpression',
     callee: {
       type: 'Identifier',
-      name: 'm',
+      name,
     },
     arguments: [
       { type: 'Literal', value },
