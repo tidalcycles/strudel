@@ -12,15 +12,15 @@ const p = (code) => parser.parse(code, -1);
 
 describe('mondo tokenizer', () => {
   const parser = new MondoParser();
-  it('should tokenize with locations', () =>
+  it('should tokenize with loangleions', () =>
     expect(
       parser
         .tokenize('(one two three)')
         .map((t) => t.value + '=' + t.loc.join('-'))
         .join(' '),
     ).toEqual('(=0-1 one=1-4 two=5-8 three=9-14 )=14-15'));
-  // it('should parse with locations', () => expect(parser.parse('(one two three)')).toEqual());
-  it('should get locations', () =>
+  // it('should parse with loangleions', () => expect(parser.parse('(one two three)')).toEqual());
+  it('should get loangleions', () =>
     expect(parser.get_locations('s bd rim')).toEqual([
       [2, 4],
       [5, 8],
@@ -73,32 +73,34 @@ let desguar = (a) => {
 };
 
 describe('mondo sugar', () => {
-  it('should desugar []', () => expect(desguar('[a b c]')).toEqual('(seq a b c)'));
-  it('should desugar [] nested', () => expect(desguar('[a [b c] d]')).toEqual('(seq a (seq b c) d)'));
-  it('should desugar <>', () => expect(desguar('<a b c>')).toEqual('(cat a b c)'));
-  it('should desugar <> nested', () => expect(desguar('<a <b c> d>')).toEqual('(cat a (cat b c) d)'));
-  it('should desugar mixed [] <>', () => expect(desguar('[a <b c>]')).toEqual('(seq a (cat b c))'));
-  it('should desugar mixed <> []', () => expect(desguar('<a [b c]>')).toEqual('(cat a (seq b c))'));
+  it('should desugar []', () => expect(desguar('[a b c]')).toEqual('(square a b c)'));
+  it('should desugar [] nested', () => expect(desguar('[a [b c] d]')).toEqual('(square a (square b c) d)'));
+  it('should desugar <>', () => expect(desguar('<a b c>')).toEqual('(angle a b c)'));
+  it('should desugar <> nested', () => expect(desguar('<a <b c> d>')).toEqual('(angle a (angle b c) d)'));
+  it('should desugar mixed [] <>', () => expect(desguar('[a <b c>]')).toEqual('(square a (angle b c))'));
+  it('should desugar mixed <> []', () => expect(desguar('<a [b c]>')).toEqual('(angle a (square b c))'));
 
   it('should desugar .', () => expect(desguar('s jazz . fast 2')).toEqual('(fast (s jazz) 2)'));
-  it('should desugar . seq', () => expect(desguar('[bd cp . fast 2]')).toEqual('(fast (seq bd cp) 2)'));
+  it('should desugar . square', () => expect(desguar('[bd cp . fast 2]')).toEqual('(fast (square bd cp) 2)'));
   it('should desugar . twice', () => expect(desguar('s jazz . fast 2 . slow 2')).toEqual('(slow (fast (s jazz) 2) 2)'));
   it('should desugar . nested', () => expect(desguar('(s cp . fast 2)')).toEqual('(fast (s cp) 2)'));
-  it('should desugar . within []', () => expect(desguar('[bd cp . fast 2]')).toEqual('(fast (seq bd cp) 2)'));
+  it('should desugar . within []', () => expect(desguar('[bd cp . fast 2]')).toEqual('(fast (square bd cp) 2)'));
   it('should desugar . within , within []', () =>
-    expect(desguar('[bd cp . fast 2, x]')).toEqual('(stack (fast (seq bd cp) 2) x)'));
+    expect(desguar('[bd cp . fast 2, x]')).toEqual('(stack (fast (square bd cp) 2) x)'));
 
-  it('should desugar . ()', () => expect(desguar('[jazz hh.(fast 2)]')).toEqual('(seq jazz (fast hh 2))'));
+  it('should desugar . ()', () => expect(desguar('[jazz hh.(fast 2)]')).toEqual('(square jazz (fast hh 2))'));
 
-  it('should desugar , seq', () => expect(desguar('[bd, hh]')).toEqual('(stack bd hh)'));
-  it('should desugar , seq 2', () => expect(desguar('[bd, hh oh]')).toEqual('(stack bd (seq hh oh))'));
-  it('should desugar , seq 3', () => expect(desguar('[bd cp, hh oh]')).toEqual('(stack (seq bd cp) (seq hh oh))'));
-  it('should desugar , cat', () => expect(desguar('<bd, hh>')).toEqual('(stack bd hh)'));
-  it('should desugar , cat 2', () => expect(desguar('<bd, hh oh>')).toEqual('(stack bd (cat hh oh))'));
-  it('should desugar , cat 3', () => expect(desguar('<bd cp, hh oh>')).toEqual('(stack (cat bd cp) (cat hh oh))'));
+  it('should desugar , square', () => expect(desguar('[bd, hh]')).toEqual('(stack bd hh)'));
+  it('should desugar , square 2', () => expect(desguar('[bd, hh oh]')).toEqual('(stack bd (square hh oh))'));
+  it('should desugar , square 3', () =>
+    expect(desguar('[bd cp, hh oh]')).toEqual('(stack (square bd cp) (square hh oh))'));
+  it('should desugar , angle', () => expect(desguar('<bd, hh>')).toEqual('(stack bd hh)'));
+  it('should desugar , angle 2', () => expect(desguar('<bd, hh oh>')).toEqual('(stack bd (angle hh oh))'));
+  it('should desugar , angle 3', () =>
+    expect(desguar('<bd cp, hh oh>')).toEqual('(stack (angle bd cp) (angle hh oh))'));
   it('should desugar , ()', () => expect(desguar('(s bd, s cp)')).toEqual('(stack (s bd) (s cp))'));
-  it('should desugar * /', () => expect(desguar('[a b*2 c d/3 e]')).toEqual('(seq a (* b 2) c (/ d 3) e)'));
-  it('should desugar []*x', () => expect(desguar('[a [b c]*3]')).toEqual('(seq a (* (seq b c) 3))'));
+  it('should desugar * /', () => expect(desguar('[a b*2 c d/3 e]')).toEqual('(square a (* b 2) c (/ d 3) e)'));
+  it('should desugar []*x', () => expect(desguar('[a [b c]*3]')).toEqual('(square a (* (square b c) 3))'));
   it('should desugar x:y', () => expect(desguar('x:y')).toEqual('(: x y)'));
   it('should desugar x:y:z', () => expect(desguar('x:y:z')).toEqual('(: (: x y) z)'));
   it('should desugar x:y*x', () => expect(desguar('bd:0*2')).toEqual('(* (: bd 0) 2)'));
@@ -106,6 +108,6 @@ describe('mondo sugar', () => {
 
   it('should desugar README example', () =>
     expect(desguar('s [bd hh*2 cp.(crush 4) <mt ht lt>] . speed .8')).toEqual(
-      '(speed (s (seq bd (* hh 2) (crush cp 4) (cat mt ht lt))) .8)',
+      '(speed (s (square bd (* hh 2) (crush cp 4) (angle mt ht lt))) .8)',
     ));
 });

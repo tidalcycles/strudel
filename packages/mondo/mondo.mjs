@@ -12,10 +12,10 @@ export class MondoParser {
     quotes_single: /^'(.*?)'/,
     open_list: /^\(/,
     close_list: /^\)/,
-    open_cat: /^</, // todo: rename angle
-    close_cat: /^>/,
-    open_seq: /^\[/, // todo: rename square
-    close_seq: /^\]/,
+    open_angle: /^</,
+    close_angle: /^>/,
+    open_square: /^\[/,
+    close_square: /^\]/,
     open_curly: /^\{/,
     close_curly: /^\}/,
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
@@ -89,11 +89,11 @@ export class MondoParser {
     if (next === 'open_list') {
       return this.parse_list();
     }
-    if (next === 'open_cat') {
-      return this.parse_cat();
+    if (next === 'open_angle') {
+      return this.parse_angle();
     }
-    if (next === 'open_seq') {
-      return this.parse_seq();
+    if (next === 'open_square') {
+      return this.parse_square();
     }
     if (next === 'open_curly') {
       return this.parse_curly();
@@ -126,7 +126,7 @@ export class MondoParser {
     return chunks;
   }
   desugar_stack(children, sequence_type) {
-    // children is expected to contain seq or cat as first item
+    // children is expected to contain square or angle as first item
     const chunks = this.split_children(children, 'stack', sequence_type);
     if (!chunks.length) {
       return this.desugar_children(children);
@@ -140,7 +140,7 @@ export class MondoParser {
         // chunks of multiple args
         if (sequence_type) {
           // if given, each chunk needs to be prefixed
-          // [a b, c d] => (stack (seq a b) (seq c d))
+          // [a b, c d] => (stack (square a b) (square c d))
           chunk = [{ type: 'plain', value: sequence_type }, ...chunk];
         }
         chunk = this.desugar_children(chunk);
@@ -249,16 +249,16 @@ export class MondoParser {
     children = this.desugar(children);
     return { type: 'list', children };
   }
-  parse_cat() {
-    let children = this.parse_pair('open_cat', 'close_cat');
-    children = [{ type: 'plain', value: 'cat' }, ...children];
-    children = this.desugar(children, 'cat');
+  parse_angle() {
+    let children = this.parse_pair('open_angle', 'close_angle');
+    children = [{ type: 'plain', value: 'angle' }, ...children];
+    children = this.desugar(children, 'angle');
     return { type: 'list', children };
   }
-  parse_seq() {
-    let children = this.parse_pair('open_seq', 'close_seq');
-    children = [{ type: 'plain', value: 'seq' }, ...children];
-    children = this.desugar(children, 'seq');
+  parse_square() {
+    let children = this.parse_pair('open_square', 'close_square');
+    children = [{ type: 'plain', value: 'square' }, ...children];
+    children = this.desugar(children, 'square');
     return { type: 'list', children };
   }
   parse_curly() {
@@ -307,6 +307,8 @@ export class MondoRunner {
   constructor(lib) {
     this.parser = new MondoParser();
     this.lib = lib;
+    this.assert(!!this.lib.leaf, `no handler for leaft nodes! add "leaf" to your lib`);
+    this.assert(!!this.lib.call, `no handler for call nodes! add "call" to your lib`);
   }
   // a helper to check conditions and throw if they are not met
   assert(condition, error) {
@@ -316,15 +318,8 @@ export class MondoRunner {
   }
   run(code, offset = 0) {
     const ast = this.parser.parse(code, offset);
-    // console.log(printAst(ast));
+    console.log(printAst(ast));
     return this.call(ast);
-  }
-  // todo: always use lib.call?
-  libcall(fn, args, name) {
-    if (this.lib.call) {
-      return this.lib.call(fn, args, name);
-    }
-    return fn(...args);
   }
   errorhead(ast) {
     return `[mondo ${ast.loc?.join(':') || ''}]`;
@@ -357,9 +352,6 @@ export class MondoRunner {
       if (arg.type === 'list') {
         return this.call(arg, scope);
       }
-      if (!this.lib.leaf) {
-        throw new Error(`no handler for leaft nodes! add leaf to your lib`);
-      }
 
       if (arg.type === 'number') {
         arg.value = Number(arg.value);
@@ -370,8 +362,6 @@ export class MondoRunner {
     });
 
     // look up function in lib
-    const fn = this.lib[name];
-    this.assert(fn, `${this.errorhead(first)} unknown function name "${name}"`);
-    return this.libcall(fn, args, name, scope);
+    return this.lib.call(name, args, scope);
   }
 }
