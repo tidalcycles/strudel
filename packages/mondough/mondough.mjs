@@ -21,7 +21,7 @@ strudelScope.leaf = (token, scope) => {
 
 strudelScope.call = (fn, args, name) => {
   const [pat, ...rest] = args;
-  if (!['seq', 'cat', 'stack', ':'].includes(name)) {
+  if (!['seq', 'cat', 'stack', ':', '..'].includes(name)) {
     args = [...rest, pat];
   }
   return fn(...args);
@@ -30,8 +30,17 @@ strudelScope.call = (fn, args, name) => {
 strudelScope['*'] = fast;
 strudelScope['/'] = slow;
 
+// : operator
 const tail = (pat, friend) => pat.fmap((a) => (b) => (Array.isArray(a) ? [...a, b] : [a, b])).appLeft(friend);
 strudelScope[':'] = tail;
+
+// .. operator
+const arrayRange = (start, stop, step = 1) =>
+  Array.from({ length: Math.abs(stop - start) / step + 1 }, (_, index) =>
+    start < stop ? start + index * step : start - index * step,
+  );
+const range = (min, max) => min.squeezeBind((a) => max.bind((b) => seq(...arrayRange(a, b))));
+strudelScope['..'] = range;
 
 export function mondo(code, offset = 0) {
   if (Array.isArray(code)) {
