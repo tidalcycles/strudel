@@ -24,7 +24,6 @@ lib['..'] = range;
 
 let runner = new MondoRunner({
   call(name, args, scope) {
-    console.log('call', name, args, scope);
     const fn = lib[name] || strudelScope[name];
     if (!fn) {
       throw new Error(`[moundough]: unknown function "${name}"`);
@@ -60,7 +59,19 @@ export function mondo(code, offset = 0) {
   return pat.markcss('color: var(--foreground);text-decoration:underline');
 }
 
+let getLocations = (code, offset) => runner.parser.get_locations(code, offset);
+
+export const mondi = (str, offset) => {
+  const code = `[${str}]`;
+  return mondo(code, offset);
+};
+
 // tell transpiler how to get locations for mondo`` calls
 registerLanguage('mondo', {
-  getLocations: (code, offset) => runner.parser.get_locations(code, offset),
+  getLocations,
 });
+// uncomment the following to use mondo as mini notation language
+/* registerLanguage('minilang', {
+  name: 'mondi',
+  getLocations,
+}); */
