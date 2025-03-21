@@ -481,6 +481,9 @@ export const superdough = async (value, t, hapDuration) => {
   const onended = () => {
     toDisconnect.forEach((n) => n?.disconnect());
   };
+  if (['-', '~'].includes(s)) {
+    return;
+  }
   if (bank && s) {
     s = `${bank}_${s}`;
     value.s = s;
