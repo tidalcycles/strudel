@@ -403,6 +403,10 @@ export const chooseInWith = (pat, xs) => {
  */
 export const choose = (...xs) => chooseWith(rand, xs);
 
+// todo: doc
+export const chooseIn = (...xs) => chooseInWith(rand, xs);
+export const chooseOut = choose;
+
 /**
  * Chooses from the given list of values (or patterns of values), according
  * to the pattern that the method is called on. The pattern should be in
