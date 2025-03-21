@@ -107,11 +107,7 @@ export class MondoParser {
     return children;
   }
   // Token[] => Token[][] . returns empty list if type not found
-  split_children(children, split_type, sequence_type) {
-    if (sequence_type) {
-      // if given, the first child is ignored
-      children = children.slice(1);
-    }
+  split_children(children, split_type) {
     const chunks = [];
     while (true) {
       let commaIndex = children.findIndex((child) => child.type === split_type);
@@ -126,11 +122,10 @@ export class MondoParser {
     chunks.push(children);
     return chunks;
   }
-  desugar_split(children, split_type, sequence_type) {
-    // children is expected to contain square or angle as first item
-    const chunks = this.split_children(children, split_type, sequence_type);
+  desugar_split(children, split_type, next) {
+    const chunks = this.split_children(children, split_type);
     if (!chunks.length) {
-      return this.desugar_children(children);
+      return next(children);
     }
     // collect args of stack function
     const args = chunks.map((chunk) => {
@@ -139,12 +134,7 @@ export class MondoParser {
         return chunk[0];
       } else {
         // chunks of multiple args
-        if (sequence_type) {
-          // if given, each chunk needs to be prefixed
-          // [a b, c d] => (stack (square a b) (square c d))
-          chunk = [{ type: 'plain', value: sequence_type }, ...chunk];
-        }
-        chunk = this.desugar_children(chunk);
+        chunk = next(chunk);
         return { type: 'list', children: chunk };
       }
     });
@@ -241,9 +231,19 @@ export class MondoParser {
     return children;
   }
   desugar(children, type) {
-    // not really needed but more readable and might be extended in the future
-    children = this.desugar_split(children, 'or', type);
-    children = this.desugar_split(children, 'stack', type);
+    // if type is given, the first element is expected to contain it as plain value
+    // e.g. with (square a b, c), we want to split (a b, c) and ignore "square"
+    children = type ? children.slice(1) : children;
+    children = this.desugar_split(children, 'stack', (children) =>
+      this.desugar_split(children, 'or', (children) => {
+        // chunks of multiple args
+        if (type) {
+          // the type we've removed before splitting needs to be added back
+          children = [{ type: 'plain', value: type }, ...children];
+        }
+        return this.desugar_children(children);
+      }),
+    );
     return children;
   }
   parse_list() {

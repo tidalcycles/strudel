@@ -90,6 +90,9 @@ describe('mondo sugar', () => {
 
   it('should desugar . ()', () => expect(desguar('[jazz hh.(fast 2)]')).toEqual('(square jazz (fast hh 2))'));
 
+  it('should desugar , |', () => expect(desguar('[bd, hh | oh]')).toEqual('(stack bd (or hh oh))'));
+  it('should desugar , | of []', () =>
+    expect(desguar('[bd, hh | [oh rim]]')).toEqual('(stack bd (or hh (square oh rim)))'));
   it('should desugar , square', () => expect(desguar('[bd, hh]')).toEqual('(stack bd hh)'));
   it('should desugar , square 2', () => expect(desguar('[bd, hh oh]')).toEqual('(stack bd (square hh oh))'));
   it('should desugar , square 3', () =>
