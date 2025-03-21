@@ -1,4 +1,16 @@
-import { strudelScope, reify, fast, slow, seq, stepcat, extend, expand, pace } from '@strudel/core';
+import {
+  strudelScope,
+  reify,
+  fast,
+  slow,
+  seq,
+  stepcat,
+  extend,
+  expand,
+  pace,
+  chooseIn,
+  degradeBy,
+} from '@strudel/core';
 import { registerLanguage } from '@strudel/transpiler';
 import { MondoRunner } from '../mondo/mondo.mjs';
 
@@ -19,8 +31,11 @@ lib['/'] = slow;
 lib['!'] = extend;
 lib['@'] = expand;
 lib['%'] = pace;
+lib['?'] = degradeBy; // todo: default 0.5 not working..
 lib[':'] = tail;
 lib['..'] = range;
+lib['or'] = (...children) => chooseIn(...children); // always has structure but is cyclewise.. e.g. "s oh*8.dec[.04 | .5]"
+//lib['or'] = (...children) => chooseOut(...children); // "s oh*8.dec[.04 | .5]" is better but "dec[.04 | .5].s oh*8" has no struct
 
 let runner = new MondoRunner({
   call(name, args, scope) {

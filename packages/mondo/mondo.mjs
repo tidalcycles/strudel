@@ -19,9 +19,10 @@ export class MondoParser {
     open_curly: /^\{/,
     close_curly: /^\}/,
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
-    op: /^[*/:!@%]|^\.{2}/, // * / : ! @ % ..
+    op: /^[*/:!@%?]|^\.{2}/, // * / : ! @ % ? ..
     pipe: /^\./,
     stack: /^[,$]/,
+    or: /^[|]/,
     plain: /^[a-zA-Z0-9-~_^]+/,
   };
   // matches next token
@@ -125,9 +126,9 @@ export class MondoParser {
     chunks.push(children);
     return chunks;
   }
-  desugar_stack(children, sequence_type) {
+  desugar_split(children, split_type, sequence_type) {
     // children is expected to contain square or angle as first item
-    const chunks = this.split_children(children, 'stack', sequence_type);
+    const chunks = this.split_children(children, split_type, sequence_type);
     if (!chunks.length) {
       return this.desugar_children(children);
     }
@@ -147,7 +148,7 @@ export class MondoParser {
         return { type: 'list', children: chunk };
       }
     });
-    return [{ type: 'plain', value: 'stack' }, ...args];
+    return [{ type: 'plain', value: split_type }, ...args];
   }
   // prevents to get a list, e.g. ((x y)) => (x y)
   unwrap_children(children) {
@@ -241,7 +242,8 @@ export class MondoParser {
   }
   desugar(children, type) {
     // not really needed but more readable and might be extended in the future
-    children = this.desugar_stack(children, type);
+    children = this.desugar_split(children, 'or', type);
+    children = this.desugar_split(children, 'stack', type);
     return children;
   }
   parse_list() {
