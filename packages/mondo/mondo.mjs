@@ -106,25 +106,22 @@ export class MondoParser {
     children = this.resolve_pipes(children);
     return children;
   }
-  // Token[] => Token[][] . returns empty list if type not found
+  // Token[] => Token[][], e.g. (x , y z) => [['x'],['y','z']]
   split_children(children, split_type) {
     const chunks = [];
     while (true) {
-      let commaIndex = children.findIndex((child) => child.type === split_type);
-      if (commaIndex === -1) break;
-      const chunk = children.slice(0, commaIndex);
+      let splitIndex = children.findIndex((child) => child.type === split_type);
+      if (splitIndex === -1) break;
+      const chunk = children.slice(0, splitIndex);
       chunk.length && chunks.push(chunk);
-      children = children.slice(commaIndex + 1);
-    }
-    if (!chunks.length) {
-      return [];
+      children = children.slice(splitIndex + 1);
     }
     chunks.push(children);
     return chunks;
   }
   desugar_split(children, split_type, next) {
     const chunks = this.split_children(children, split_type);
-    if (!chunks.length) {
+    if (chunks.length === 1) {
       return next(children);
     }
     // collect args of stack function
@@ -168,7 +165,8 @@ export class MondoParser {
         children[opIndex] = op;
         continue;
       }
-      const call = { type: 'list', children: [op, left, right] };
+      //const call = { type: 'list', children: [op, left, right] };
+      const call = { type: 'list', children: [op, right, left] };
       // insert call while keeping other siblings
       children = [...children.slice(0, opIndex - 1), call, ...children.slice(opIndex + 2)];
       children = this.unwrap_children(children);
@@ -176,46 +174,21 @@ export class MondoParser {
     return children;
   }
   resolve_pipes(children) {
-    while (true) {
-      let pipeIndex = children.findIndex((child) => child.type === 'pipe');
-      // no pipe => we're done
-      if (pipeIndex === -1) break;
-      // pipe up front => lambda
-      if (pipeIndex === 0) {
-        // . as lambda: (.fast 2) = (lambda (_) (fast _ 2))
-        const args = [{ type: 'plain', value: '_' }];
-        const body = this.desugar([args[0], ...children]);
-        return [
-          { type: 'plain', value: 'lambda' },
-          { type: 'list', children: args },
-          { type: 'list', children: body },
-        ];
-      }
-      const rightSide = children.slice(pipeIndex + 2);
-      const right = children[pipeIndex + 1];
-      if (right.type === 'list') {
-        // apply function only to left sibling (high precedence)
-        // s jazz.(fast 2) => s (fast jazz 2)
-        const [callee, ...rest] = right.children;
-        const leftSide = children.slice(0, pipeIndex - 1);
-        const left = children[pipeIndex - 1];
-        let args = [callee, left, ...rest];
-        const call = { type: 'list', children: args };
-        children = [...leftSide, call, ...rightSide];
+    let chunks = this.split_children(children, 'pipe');
+    while (chunks.length > 1) {
+      let [left, right, ...rest] = chunks;
+      if (right.length && right[0].type === 'list') {
+        // s jazz hh.(fast 2) => s jazz (fast 2 hh)
+        const target = left[left.length - 1]; // hh
+        const call = { type: 'list', children: [...right[0].children, target] };
+        chunks = [[...left.slice(0, -1), call, ...right.slice(1)], ...rest]; // jazz (fast 2 hh)
       } else {
-        // apply function to all left siblings (low precedence)
-        // s jazz . fast 2 => fast (s jazz) 2
-        let leftSide = children.slice(0, pipeIndex);
-        if (leftSide.length === 1) {
-          leftSide = leftSide[0];
-        } else {
-          // wrap in (..) if multiple items on the left side
-          leftSide = { type: 'list', children: leftSide };
-        }
-        children = [right, leftSide, ...rightSide];
+        //s jazz hh.fast 2 => (fast 2 (s jazz hh))
+        const call = left.length > 1 ? { type: 'list', children: left } : left[0];
+        chunks = [[...right, call], ...rest];
       }
     }
-    return children;
+    return chunks[0];
   }
   parse_pair(open_type, close_type) {
     this.consume(open_type);

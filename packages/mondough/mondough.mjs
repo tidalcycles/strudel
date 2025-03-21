@@ -43,11 +43,6 @@ let runner = new MondoRunner({
     if (!fn) {
       throw new Error(`[moundough]: unknown function "${name}"`);
     }
-    if (!['square', 'angle', 'stack', 'curly'].includes(name)) {
-      // flip args (pat to end)
-      const [pat, ...rest] = args;
-      args = [...rest, pat];
-    }
     return fn(...args);
   },
   leaf(token, scope) {
