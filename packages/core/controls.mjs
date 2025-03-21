@@ -1629,6 +1629,8 @@ export const { midimap } = registerControl('midimap');
  *
  * @name midiport
  * @param {number | Pattern} port MIDI port
+ * @example
+ * note("c a f e").midiport("<0 1 2 3>").midi()
  */
 export const { midiport } = registerControl('midiport');
 

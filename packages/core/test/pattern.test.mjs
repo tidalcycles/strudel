@@ -22,7 +22,6 @@ import {
   sequence,
   palindrome,
   polymeter,
-  polymeterSteps,
   polyrhythm,
   silence,
   fast,
@@ -611,16 +610,9 @@ describe('Pattern', () => {
   });
   describe('polymeter()', () => {
     it('Can layer up cycles, stepwise, with lists', () => {
-      expect(polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
-        fastcat(pure('d'), pure('e'), pure('d')).firstCycle(),
-      );
-
       expect(polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
         stack(sequence('a', 'b', 'c', 'a', 'b', 'c'), sequence('d', 'e', 'd', 'e', 'd', 'e')).firstCycle(),
       );
-    });
-    it('Can layer up cycles, stepwise, with weighted patterns', () => {
-      sameFirst(polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
     });
   });
 
@@ -1263,6 +1255,16 @@ describe('Pattern', () => {
   describe('loopAt', () => {
     it('maintains steps', () => {
       expect(s('bev').chop(8).loopAt(2)._steps).toStrictEqual(Fraction(4));
+    });
+  });
+  describe('bite', () => {
+    it('works with uneven patterns', () => {
+      sameFirst(
+        fastcat(slowcat('a', 'b', 'c', 'd', 'e'), slowcat(1, 2, 3, 4, 5))
+          .bite(2, stepcat(pure(0), pure(1).expand(2)))
+          .fast(5),
+        stepcat(slowcat('a', 'b', 'c', 'd', 'e'), slowcat(1, 2, 3, 4, 5).expand(2)).fast(5),
+      );
     });
   });
 });

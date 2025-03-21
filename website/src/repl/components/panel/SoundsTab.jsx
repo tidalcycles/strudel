@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from 'react';
 import { settingsMap, useSettings } from '../../../settings.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import ImportSoundsButton from './ImportSoundsButton.jsx';
+import { Textbox } from '../textbox/Textbox.jsx';
 
 const getSamples = (samples) =>
   Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1;
@@ -52,13 +53,8 @@ export function SoundsTab() {
   });
 
   return (
-    <div id="sounds-tab" className="px-4 flex flex-col w-full h-full  dark:text-white text-stone-900">
-      <input
-        className="w-full p-1 bg-background rounded-md my-2"
-        placeholder="Search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+    <div id="sounds-tab" className="px-4 flex flex-col w-full h-full text-foreground">
+      <Textbox placeholder="Search" value={search} onChange={(v) => setSearch(v)} />
 
       <div className="pb-2 flex shrink-0 flex-wrap">
         <ButtonGroup
@@ -74,7 +70,7 @@ export function SoundsTab() {
         <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
       </div>
 
-      <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal pb-2">
+      <div className="min-h-0 max-h-full grow overflow-auto  text-sm break-normal pb-2">
         {soundEntries.map(([name, { data, onTrigger }]) => {
           return (
             <span

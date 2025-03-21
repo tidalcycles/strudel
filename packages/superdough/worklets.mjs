@@ -75,7 +75,12 @@ const waveshapes = {
     return v - polyBlep(phase, dt);
   },
 };
-
+function getParamValue(block, param) {
+  if (param.length > 1) {
+    return param[block];
+  }
+  return param[0];
+}
 const waveShapeNames = Object.keys(waveshapes);
 class LFOProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
@@ -362,6 +367,11 @@ function getUnisonDetune(unison, detune, voiceIndex) {
   }
   return lerp(-detune * 0.5, detune * 0.5, voiceIndex / (unison - 1));
 }
+
+function applySemitoneDetuneToFrequency(frequency, detune) {
+  return frequency * Math.pow(2, detune / 12);
+}
+
 class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
@@ -438,7 +448,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
       const isOdd = (n & 1) == 1;
 
       //applies unison "spread" detune in semitones
-      const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 12);
+      const freq = applySemitoneDetuneToFrequency(frequency, getUnisonDetune(voices, freqspread, n));
       let gainL = gain1;
       let gainR = gain2;
       // invert right and left gain
@@ -648,3 +658,103 @@ class PhaseVocoderProcessor extends OLAProcessor {
 }
 
 registerProcessor('phase-vocoder-processor', PhaseVocoderProcessor);
+
+// Adapted from https://www.musicdsp.org/en/latest/Effects/221-band-limited-pwm-generator.html
+class PulseOscillatorProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.pi = _PI;
+    this.phi = -this.pi; // phase
+    this.Y0 = 0; // feedback memories
+    this.Y1 = 0;
+    this.PW = this.pi; // pulse width
+    this.B = 2.3; // feedback coefficient
+    this.dphif = 0; // filtered phase increment
+    this.envf = 0; // filtered envelope
+  }
+
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
+        name: 'frequency',
+        defaultValue: 440,
+        min: Number.EPSILON,
+      },
+      {
+        name: 'detune',
+        defaultValue: 0,
+        min: Number.NEGATIVE_INFINITY,
+        max: Number.POSITIVE_INFINITY,
+      },
+      {
+        name: 'pulsewidth',
+        defaultValue: 1,
+        min: 0,
+        max: Number.POSITIVE_INFINITY,
+      },
+    ];
+  }
+
+  process(inputs, outputs, params) {
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    if (currentTime >= params.end[0]) {
+      return false;
+    }
+    const output = outputs[0];
+    let env = 1,
+      dphi;
+
+    for (let i = 0; i < (output[0].length ?? 0); i++) {
+      const pw = (1 - clamp(getParamValue(i, params.pulsewidth), -0.99, 0.99)) * this.pi;
+      const detune = getParamValue(i, params.detune);
+      const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
+
+      dphi = freq * (this.pi / (sampleRate * 0.5)); // phase increment
+      this.dphif += 0.1 * (dphi - this.dphif);
+
+      env *= 0.9998; // exponential decay envelope
+      this.envf += 0.1 * (env - this.envf);
+
+      // Feedback coefficient control
+      this.B = 2.3 * (1 - 0.0001 * freq); // feedback limitation
+      if (this.B < 0) this.B = 0;
+
+      // Waveform generation (half-Tomisawa oscillators)
+      this.phi += this.dphif; // phase increment
+      if (this.phi >= this.pi) this.phi -= 2 * this.pi; // phase wrapping
+
+      // First half-Tomisawa generator
+      let out0 = Math.cos(this.phi + this.B * this.Y0); // self-phase modulation
+      this.Y0 = 0.5 * (out0 + this.Y0); // anti-hunting filter
+
+      // Second half-Tomisawa generator (with phase offset for pulse width)
+      let out1 = Math.cos(this.phi + this.B * this.Y1 + pw);
+      this.Y1 = 0.5 * (out1 + this.Y1); // anti-hunting filter
+
+      for (let o = 0; o < output.length; o++) {
+        // Combination of both oscillators with envelope applied
+        output[o][i] = 0.15 * (out0 - out1) * this.envf;
+      }
+    }
+
+    return true; // keep the audio processing going
+  }
+}
+
+registerProcessor('pulse-oscillator', PulseOscillatorProcessor);

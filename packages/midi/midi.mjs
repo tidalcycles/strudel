@@ -193,8 +193,6 @@ function normalize(value = 0, min = 0, max = 1, exp = 1) {
 }
 
 function mapCC(mapping, value) {
-  console.log('mapping', mapping);
-  console.log('value', value);
   return Object.keys(value)
     .filter((key) => !!mapping[getControlName(key)])
     .map((key) => {
@@ -272,35 +270,71 @@ function sendAftertouch(miditouch, device, midichan, timeOffsetString) {
   device.sendChannelAftertouch(miditouch, midichan, { time: timeOffsetString });
 }
 
+// sends a note message to the given device on the given channel
+function sendNote(note, velocity, duration, device, midichan, timeOffsetString) {
+  if (note == null || note === '') {
+    throw new Error('note cannot be null or empty');
+  }
+  if (velocity != null && (typeof velocity !== 'number' || velocity < 0 || velocity > 1)) {
+    throw new Error('velocity must be a number between 0 and 1');
+  }
+  if (duration != null && (typeof duration !== 'number' || duration < 0)) {
+    throw new Error('duration must be a positive number');
+  }
+
+  const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
+  const midiNote = new Note(midiNumber, { attack: velocity, duration });
+  device.playNote(midiNote, midichan, {
+    time: timeOffsetString,
+  });
+}
+
 /**
  * MIDI output: Opens a MIDI output port.
- * @param {string | number} output MIDI device name or index defaulting to 0
+ * @param {string | number} midiport MIDI device name or index defaulting to 0
+ * @param {object} options Additional MIDI configuration options
  * @example
- * note("c4").midichan(1).midi("IAC Driver Bus 1")
+ * note("c4").midichan(1).midi('IAC Driver Bus 1')
+ * @example
+ * note("c4").midichan(1).midi('IAC Driver Bus 1', { controller: true, latency: 50 })
  */
-Pattern.prototype.midi = function (output) {
-  if (isPattern(output)) {
+
+Pattern.prototype.midi = function (midiport, options = {}) {
+  if (isPattern(midiport)) {
     throw new Error(
-      `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
+      `.midi does not accept Pattern input for midiport. Make sure to pass device name with single quotes. Example: .midi('${
         WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
       }')`,
     );
   }
-  let portName = output;
-  let isController = false;
-  let mapping = {};
 
-  //TODO: MIDI mapping related
-  if (typeof output === 'object') {
-    const { port, controller = false, ...remainingProps } = output;
-    portName = port;
-    isController = controller;
-    mapping = remainingProps;
+  // For backward compatibility
+  if (typeof midiport === 'object') {
+    const { port, isController = false, ...configOptions } = midiport;
+    options = {
+      isController,
+      ...configOptions,
+      ...options, // Keep any options passed separately
+    };
+    midiport = port;
   }
+
+  let midiConfig = {
+    // Default configuration values
+    isController: false, // Disable sending notes for midi controllers
+    latencyMs: 34, // Default latency to get audio engine to line up in ms
+    noteOffsetMs: 10, // Default note-off offset to prevent glitching in ms
+    midichannel: 1, // Default MIDI channel
+    velocity: 0.9, // Default velocity
+    gain: 1, // Default gain
+    midimap: 'default', // Default MIDI map
+    midiport: midiport, // Store the port in the config
+    ...options, // Override defaults with provided options
+  };
 
   enableWebMidi({
     onEnabled: ({ outputs }) => {
-      const device = getDevice(portName, outputs);
+      const device = getDevice(midiConfig.midiport, outputs);
       const otherOutputs = outputs.filter((o) => o.name !== device.name);
       logger(
         `Midi enabled! Using "${device.name}". ${
@@ -314,34 +348,35 @@ Pattern.prototype.midi = function (output) {
 
   return this.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     if (!WebMidi.enabled) {
-      console.log('not enabled');
+      logger('Midi not enabled');
       return;
     }
     hap.ensureObjectValue();
+
     //magic number to get audio engine to line up, can probably be calculated somehow
-    const latencyMs = 34;
+    const latencyMs = midiConfig.latencyMs;
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
     const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
 
-    // destructure value
+    // midi event values from hap with configurable defaults
     let {
       note,
       nrpnn,
       nrpv,
       ccn,
       ccv,
-      midichan = 1,
+      midichan = midiConfig.midichannel,
       midicmd,
       midibend,
       miditouch,
-      polyTouch, //??
-      gain = 1,
-      velocity = 0.9,
+      polyTouch,
+      gain = midiConfig.gain,
+      velocity = midiConfig.velocity,
       progNum,
       sysexid,
       sysexdata,
-      midimap = 'default',
-      midiport = output,
+      midimap = midiConfig.midimap,
+      midiport = midiConfig.midiport,
     } = hap.value;
 
     const device = getDevice(midiport, WebMidi.outputs);
@@ -353,21 +388,24 @@ Pattern.prototype.midi = function (output) {
     }
 
     velocity = gain * velocity;
+
+    // Handle midimap
     // if midimap is set, send a cc messages from defined controls
     if (midicontrolMap.has(midimap)) {
-      console.log('midimap', midimap);
       const ccs = mapCC(midicontrolMap.get(midimap), hap.value);
       ccs.forEach(({ ccn, ccv }) => sendCC(ccn, ccv, device, midichan, timeOffsetString));
+    } else if (midimap !== 'default') {
+      // Add warning when a non-existent midimap is specified
+      logger(`[midi] midimap "${midimap}" not found! Available maps: ${[...midicontrolMap.keys()].join(', ')}`);
     }
 
-    // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
-    const duration = (hap.duration.valueOf() / cps) * 1000 - 10;
-    if (note != null && !isController) {
-      const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
-      const midiNote = new Note(midiNumber, { attack: velocity, duration });
-      device.playNote(midiNote, midichan, {
-        time: timeOffsetString,
-      });
+    // Handle note
+    if (note !== undefined && !midiConfig.isController) {
+      // note off messages will often a few ms arrive late,
+      // try to prevent glitching by subtracting noteOffsetMs from the duration length
+      const duration = (hap.duration.valueOf() / cps) * 1000 - midiConfig.noteOffsetMs;
+
+      sendNote(note, velocity, duration, device, midichan, timeOffsetString);
     }
 
     // Handle program change
@@ -443,7 +481,7 @@ const refs = {};
  * @param {string | number} input MIDI device name or index defaulting to 0
  * @returns {Function}
  * @example
- * let cc = await midin("IAC Driver Bus 1")
+ * let cc = await midin('IAC Driver Bus 1')
  * note("c a f e").lpf(cc(0).range(0, 1000)).lpq(cc(1).range(0, 10)).sound("sawtooth")
  */
 export async function midin(input) {
