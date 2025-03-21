@@ -217,10 +217,6 @@ export class MondoParser {
     }
     return children;
   }
-  flip_call(children) {
-    let [name, first, ...rest] = children;
-    return [name, ...rest, first];
-  }
   parse_pair(open_type, close_type) {
     this.consume(open_type);
     const children = [];
@@ -340,7 +336,6 @@ export class MondoRunner {
     if (name === 'lambda') {
       const [_, args, body] = ast.children;
       const argNames = args.children.map((child) => child.value);
-      // console.log('lambda', argNames, body.children);
       return (x) => {
         scope = {
           [argNames[0]]: x, // TODO: merge scope... + support multiple args
@@ -354,7 +349,6 @@ export class MondoRunner {
       if (arg.type === 'list') {
         return this.call(arg, scope);
       }
-
       if (arg.type === 'number') {
         arg.value = Number(arg.value);
       } else if (['quotes_double', 'quotes_single'].includes(arg.type)) {
@@ -363,7 +357,6 @@ export class MondoRunner {
       return this.lib.leaf(arg, scope);
     });
 
-    // look up function in lib
     return this.lib.call(name, args, scope);
   }
 }
