@@ -301,7 +301,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let [attack, decay, sustain, release] = getADSRValues([value.attack, value.decay, value.sustain, value.release]);
 
   const sbs = await getSampleBufferSource(value, bank, resolveUrl);
- const { bufferSource, sliceDuration, offset,bufferDuration } = sbs
+  const { bufferSource, sliceDuration, offset, bufferDuration } = sbs;
 
   // any stuff above took too long?
   if (ac.currentTime > t) {
@@ -323,7 +323,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   const envGain = ac.createGain();
   const node = bufferSource.connect(envGain);
 
-  const clipDeltaSeconds = 1.5
+  const clipDeltaSeconds = 1.5;
 
   // if none of these controls is set, the duration of the sound will be set to the duration of the sample slice
   if (clip == null && loop == null && value.release == null && bufferDuration < clipDeltaSeconds) {
