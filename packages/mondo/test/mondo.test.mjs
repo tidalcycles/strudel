@@ -108,6 +108,9 @@ describe('mondo sugar', () => {
   it('should desugar x:y:z', () => expect(desguar('x:y:z')).toEqual('(: z (: y x))'));
   it('should desugar x:y*x', () => expect(desguar('bd:0*2')).toEqual('(* 2 (: 0 bd))'));
   it('should desugar a..b', () => expect(desguar('0..2')).toEqual('(.. 2 0)'));
+  it('should desugar x $ y', () => expect(desguar('x $ y')).toEqual('(x y)'));
+  it('should desugar x $ y z', () => expect(desguar('x $ y z')).toEqual('(x (y z))'));
+  it('should desugar x $ y . z', () => expect(desguar('x $ y . z')).toEqual('(z (x y))'));
 
   it('should desugar README example', () =>
     expect(desguar('s [bd hh*2 cp.(crush 4) <mt ht lt>] . speed .8')).toEqual(

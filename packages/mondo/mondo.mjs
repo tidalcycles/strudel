@@ -20,8 +20,9 @@ export class MondoParser {
     close_curly: /^\}/,
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
     op: /^[*/:!@%?]|^\.{2}/, // * / : ! @ % ? ..
+    dollar: /^\$/,
     pipe: /^\./,
-    stack: /^[,$]/,
+    stack: /^[,]/,
     or: /^[|]/,
     plain: /^[a-zA-Z0-9-~_^]+/,
   };
@@ -103,7 +104,7 @@ export class MondoParser {
   }
   desugar_children(children) {
     children = this.resolve_ops(children);
-    children = this.resolve_pipes(children);
+    children = this.resolve_pipes(children, (children) => this.resolve_dollars(children));
     return children;
   }
   // Token[] => Token[][], e.g. (x , y z) => [['x'],['y','z']]
@@ -173,7 +174,7 @@ export class MondoParser {
     }
     return children;
   }
-  resolve_pipes(children) {
+  resolve_pipes(children, next) {
     let chunks = this.split_children(children, 'pipe');
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
@@ -184,9 +185,19 @@ export class MondoParser {
         chunks = [[...left.slice(0, -1), call, ...right.slice(1)], ...rest]; // jazz (fast 2 hh)
       } else {
         //s jazz hh.fast 2 => (fast 2 (s jazz hh))
-        const call = left.length > 1 ? { type: 'list', children: left } : left[0];
+        const call = left.length > 1 ? { type: 'list', children: next(left) } : left[0];
         chunks = [[...right, call], ...rest];
       }
+    }
+    return next(chunks[0]);
+  }
+  resolve_dollars(children) {
+    let chunks = this.split_children(children, 'dollar');
+    while (chunks.length > 1) {
+      let [left, right, ...rest] = chunks;
+      //fast 2 $ s jazz hh => (fast 2 (s jazz hh))
+      const call = right.length > 1 ? { type: 'list', children: right } : right[0];
+      chunks = [[...left, call], ...rest];
     }
     return chunks[0];
   }
