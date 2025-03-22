@@ -102,11 +102,6 @@ export class MondoParser {
     }
     return this.consume(next);
   }
-  desugar_children(children) {
-    children = this.resolve_ops(children);
-    children = this.resolve_pipes(children, (children) => this.resolve_dollars(children));
-    return children;
-  }
   // Token[] => Token[][], e.g. (x , y z) => [['x'],['y','z']]
   split_children(children, split_type) {
     const chunks = [];
@@ -145,7 +140,7 @@ export class MondoParser {
     }
     return children;
   }
-  resolve_ops(children) {
+  desugar_ops(children) {
     while (true) {
       let opIndex = children.findIndex((child) => child.type === 'op');
       if (opIndex === -1) break;
@@ -174,7 +169,7 @@ export class MondoParser {
     }
     return children;
   }
-  resolve_pipes(children, next) {
+  desugar_pipes(children, next) {
     let chunks = this.split_children(children, 'pipe');
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
@@ -191,7 +186,7 @@ export class MondoParser {
     }
     return next(chunks[0]);
   }
-  resolve_dollars(children) {
+  desugar_dollars(children) {
     let chunks = this.split_children(children, 'dollar');
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
@@ -221,7 +216,9 @@ export class MondoParser {
           // the type we've removed before splitting needs to be added back
           children = [{ type: 'plain', value: type }, ...children];
         }
-        return this.desugar_children(children);
+        children = this.desugar_ops(children);
+        children = this.desugar_pipes(children, (children) => this.desugar_dollars(children));
+        return children;
       }),
     );
     return children;
