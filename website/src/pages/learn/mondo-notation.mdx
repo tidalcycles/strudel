@@ -14,14 +14,20 @@ Here's an example:
 <MiniRepl
   mondo
   client:idle
-  tune={`n (irand 12.segment 8.ribbon 4 2)
-.scale<C:minor F:minor>/2
-.jux <rev (.slow 2)>/2
-.rarely (12.note.add) .delay .4 .vib 1:.3
-.fm (sine/4.range .5 4).fmh 2.02
-.lpf (sine/2.range 200 2000).lpq 4
-.s piano .clip 2
-.add (perlin.range 0 .2 .note)`}
+  tune={`$ note c2 .(euclid <3 6 3> <8 16>) . *2 
+.s "sine" .add (note [0 <12 24>]*2)
+.dec(sine .range .2 2) .room .5
+.lpf(sine/3.range 120 400)
+.lpenv(rand .range .5 4)
+.lpq(perlin .range 5 12 . * 2)
+.dist 1 .fm 4 .fmh 5.01 .fmdecay <.1 .2>
+.postgain .6 .delay .1 .clip 5
+
+$ s [bd bd bd bd] .bank tr909.clip.5
+.ply<1 [1 [2 4]]>
+
+$ s oh*4 .press .bank tr909 .speed.8
+.dec <.02 .05>*2 .(add (saw/8.range 0 1))`}
 />
 
 ## Calling Functions
@@ -42,21 +48,29 @@ The outermost parens are not needed, so we can drop them:
 
 Besides function calling with round parens, Mondo Notation has a lot in common with Mini Notation:
 
+### Brackets
+
 - `[]` for 1-cycle sequences
 - `<>` for multi-cycle sequences
 - `{}` for stepped sequences (more on that later)
+
+### Infix Operators
+
 - \* => [fast](/learn/time-modifiers/#fast)
 - / => [slow](/learn/time-modifiers/#slow)
-- , => [stack](/learn/factories/#stack)
 - ! => [extend](/learn/stepwise/#extend)
 - @ => [expand](/learn/stepwise/#expand)
 - % => [pace](/learn/stepwise/#pace)
 - ? => [degradeBy](/learn/random-modifiers/#degradeby) (currently requires right operand)
 - : => tail (creates a list)
 - .. => range (between numbers)
+
+### Separators
+
+- , => [stack](/learn/factories/#stack)
 - | => [chooseIn](/learn/random-modifiers/#choose)
 
-Example:
+### Example
 
 <MiniRepl
   mondo
@@ -109,6 +123,14 @@ in this case, `delay .6` will only be applied to `cp`. compare this with the JS 
 <MiniRepl client:idle tune={`s(seq("bd", "hh", "bd", "cp".delay(.6))).bank('tr909')`} />
 
 here we can see much we can save when there's no boundary between mini notation and function calls!
+
+### Chaining Infix Operators
+
+Infix operators exist as regular functions, so they can be chained as well:
+
+<MiniRepl client:idle mondo tune={`s [bd hh] .bank tr909 .*2`} />
+
+In this case, the \*2 will be applied to the whole pattern.
 
 ### Lambda Functions
 
