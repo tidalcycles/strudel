@@ -81,6 +81,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Visual Feedback', link: 'learn/visual-feedback' },
       { text: 'Offline', link: 'learn/pwa' },
       { text: 'Patterns', link: 'technical-manual/patterns' },
+      { text: 'Mondo Notation', link: 'learn/mondo-notation' },
       { text: 'Music metadata', link: 'learn/metadata' },
       { text: 'CSound', link: 'learn/csound' },
       { text: 'Hydra', link: 'learn/hydra' },
