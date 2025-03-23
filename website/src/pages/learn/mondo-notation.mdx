@@ -30,6 +30,15 @@ $ s oh*4 .press .bank tr909 .speed.8
 .dec <.02 .05>*2 .(add (saw/8.range 0 1))`}
 />
 
+## Mondo in the REPL
+
+For now, you can only use mondo in the repl like this:
+
+<MiniRepl client:idle tune={'mondo`s hh*8`'} />
+
+The rest of this site will only use the mondo notation itself.
+In the future, the REPL might get a way to use mondo notation directly.
+
 ## Calling Functions
 
 Compared to Mini Notation, the most notable feature of Mondo Notation is the ability to call functions using round brackets:
@@ -64,9 +73,6 @@ Besides function calling with round parens, Mondo Notation has a lot in common w
 - ? => [degradeBy](/learn/random-modifiers/#degradeby) (currently requires right operand)
 - : => tail (creates a list)
 - .. => range (between numbers)
-
-### Separators
-
 - , => [stack](/learn/factories/#stack)
 - | => [chooseIn](/learn/random-modifiers/#choose)
 
