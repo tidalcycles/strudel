@@ -20,9 +20,9 @@ export class MondoParser {
     close_curly: /^\}/,
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
     op: /^[*/:!@%?]|^\.{2}/, // * / : ! @ % ? ..
-    dollar: /^\$/,
+    // dollar: /^\$/,
     pipe: /^\./,
-    stack: /^[,]/,
+    stack: /^[,$]/,
     or: /^[|]/,
     plain: /^[a-zA-Z0-9-~_^#]+/,
   };
@@ -121,16 +121,20 @@ export class MondoParser {
       return next(children);
     }
     // collect args of stack function
-    const args = chunks.map((chunk) => {
-      if (chunk.length === 1) {
-        // chunks of one element can be added to the stack as is
-        return chunk[0];
-      } else {
+    const args = chunks
+      .map((chunk) => {
+        if (!chunk.length) {
+          return; // useful for things like "$ s bd $ s hh*8" (first chunk is empty)
+        }
+        if (chunk.length === 1) {
+          // chunks of one element can be added to the stack as is
+          return chunk[0];
+        }
         // chunks of multiple args
         chunk = next(chunk);
         return { type: 'list', children: chunk };
-      }
-    });
+      })
+      .filter(Boolean); // ignore empty chunks
     return [{ type: 'plain', value: split_type }, ...args];
   }
   // prevents to get a list, e.g. ((x y)) => (x y)
@@ -169,7 +173,7 @@ export class MondoParser {
     }
     return children;
   }
-  desugar_pipes(children, next) {
+  desugar_pipes(children) {
     let chunks = this.split_children(children, 'pipe');
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
@@ -190,13 +194,15 @@ export class MondoParser {
         chunks = [[...left.slice(0, -1), call, ...right.slice(1)], ...rest]; // jazz (fast 2 hh)
       } else {
         //s jazz hh.fast 2 => (fast 2 (s jazz hh))
-        const call = left.length > 1 ? { type: 'list', children: next(left) } : left[0];
+        // const call = left.length > 1 ? { type: 'list', children: next(left) } : left[0];
+        const call = left.length > 1 ? { type: 'list', children: left } : left[0];
         chunks = [[...right, call], ...rest];
       }
     }
-    return next(chunks[0]);
+    // return next(chunks[0]);
+    return chunks[0];
   }
-  desugar_dollars(children) {
+  /* desugar_dollars(children) {
     let chunks = this.split_children(children, 'dollar');
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
@@ -205,7 +211,7 @@ export class MondoParser {
       chunks = [[...left, call], ...rest];
     }
     return chunks[0];
-  }
+  } */
   parse_pair(open_type, close_type) {
     this.consume(open_type);
     const children = [];
@@ -227,7 +233,8 @@ export class MondoParser {
           children = [{ type: 'plain', value: type }, ...children];
         }
         children = this.desugar_ops(children);
-        children = this.desugar_pipes(children, (children) => this.desugar_dollars(children));
+        // children = this.desugar_pipes(children, (children) => this.desugar_dollars(children));
+        children = this.desugar_pipes(children);
         return children;
       }),
     );
