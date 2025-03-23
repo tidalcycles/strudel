@@ -1766,11 +1766,14 @@ export const getControlName = (alias) => {
  * Sets properties in a batch.
  *
  * @name as
- * @param {Array} mapping the control names that are set
+ * @param {String | Array} mapping the control names that are set
  * @example
  * "c:.5 a:1 f:.25 e:.8".as("note:clip")
+ * @example
+ * "{0@2 0.25 0 0.5 .3 .5}%8".as("begin").s("sax_vib").clip(1)
  */
 export const as = register('as', (mapping, pat) => {
+  mapping = Array.isArray(mapping) ? mapping : [mapping];
   return pat.fmap((v) => {
     v = Array.isArray(v) ? v : [v];
     v = Object.fromEntries(mapping.map((prop, i) => [getControlName(prop), v[i]]));
