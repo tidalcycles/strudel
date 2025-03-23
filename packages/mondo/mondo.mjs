@@ -24,7 +24,7 @@ export class MondoParser {
     pipe: /^\./,
     stack: /^[,]/,
     or: /^[|]/,
-    plain: /^[a-zA-Z0-9-~_^]+/,
+    plain: /^[a-zA-Z0-9-~_^#]+/,
   };
   // matches next token
   next_token(code, offset = 0) {
@@ -109,7 +109,7 @@ export class MondoParser {
       let splitIndex = children.findIndex((child) => child.type === split_type);
       if (splitIndex === -1) break;
       const chunk = children.slice(0, splitIndex);
-      chunk.length && chunks.push(chunk);
+      chunks.push(chunk);
       children = children.slice(splitIndex + 1);
     }
     chunks.push(children);
@@ -173,6 +173,16 @@ export class MondoParser {
     let chunks = this.split_children(children, 'pipe');
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
+      if (!left.length) {
+        // . as lambda: (.fast 2) = (lambda (_) (fast _ 2))
+        const args = [{ type: 'plain', value: '_' }];
+        const body = this.desugar([args[0], ...children]);
+        return [
+          { type: 'plain', value: 'lambda' },
+          { type: 'list', children: args },
+          { type: 'list', children: body },
+        ];
+      }
       if (right.length && right[0].type === 'list') {
         // s jazz hh.(fast 2) => s jazz (fast 2 hh)
         const target = left[left.length - 1]; // hh
