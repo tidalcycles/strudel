@@ -10,6 +10,7 @@ import {
   pace,
   chooseIn,
   degradeBy,
+  silence,
 } from '@strudel/core';
 import { registerLanguage } from '@strudel/transpiler';
 import { MondoRunner } from '../mondo/mondo.mjs';
@@ -20,9 +21,11 @@ const arrayRange = (start, stop, step = 1) =>
   Array.from({ length: Math.abs(stop - start) / step + 1 }, (_, index) =>
     start < stop ? start + index * step : start - index * step,
   );
-const range = (min, max) => min.squeezeBind((a) => max.bind((b) => seq(...arrayRange(a, b))));
+const range = (max, min) => min.squeezeBind((a) => max.bind((b) => seq(...arrayRange(a, b))));
 
 let lib = {};
+lib['-'] = silence;
+lib['~'] = silence;
 lib.curly = stepcat;
 lib.square = (...args) => stepcat(...args).setSteps(1);
 lib.angle = (...args) => stepcat(...args).pace(1);
@@ -46,14 +49,15 @@ let runner = new MondoRunner({
     return fn(...args);
   },
   leaf(token, scope) {
-    let { value } = token;
+    let { value, type } = token;
     // local scope
-    if (token.type === 'plain' && scope[value]) {
+    if (type === 'plain' && scope[value]) {
       return reify(scope[value]); // -> local scope has no location
     }
     const [from, to] = token.loc;
-    if (token.type === 'plain' && strudelScope[value]) {
-      // what if we want a string that happens to also be a variable name?
+    const variable = lib[value] ?? strudelScope[value];
+    if (type === 'plain' && typeof variable !== 'undefined') {
+      // problem: collisions when we want a string that happens to also be a variable name
       // example: "s sine" -> sine is also a variable
       return reify(strudelScope[value]).withLoc(from, to);
     }
@@ -66,7 +70,7 @@ export function mondo(code, offset = 0) {
     code = code.join('');
   }
   const pat = runner.run(code, offset);
-  return pat.markcss('color: var(--foreground);text-decoration:underline');
+  return pat.markcss('color: var(--caret,--foreground);text-decoration:underline');
 }
 
 let getLocations = (code, offset) => runner.parser.get_locations(code, offset);
@@ -79,6 +83,12 @@ export const mondi = (str, offset) => {
 // tell transpiler how to get locations for mondo`` calls
 registerLanguage('mondo', {
   getLocations,
+});
+
+// this is like mondo, but with a zero offset
+export const mondolang = (code) => mondo(code, 0);
+registerLanguage('mondolang', {
+  getLocations: (code) => getLocations(code, 0),
 });
 // uncomment the following to use mondo as mini notation language
 /* registerLanguage('minilang', {
