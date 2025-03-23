@@ -1,0 +1,145 @@
+---
+title: Mondo Notation
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Mondo Notation
+
+"Mondo Notation" is a new kind of notation that is similar to [Mini Notation](/learn/mini-notation/), but with enough abilities to make it work as a standalone pattern language.
+Here's an example:
+
+<MiniRepl
+  mondo
+  client:idle
+  tune={`n (irand 12.segment 8.ribbon 4 2)
+.scale<C:minor F:minor>/2
+.jux <rev (.slow 2)>/2
+.rarely (12.note.add) .delay .4 .vib 1:.3
+.fm (sine/4.range .5 4).fmh 2.02
+.lpf (sine/2.range 200 2000).lpq 4
+.s piano .clip 2
+.add (perlin.range 0 .2 .note)`}
+/>
+
+## Calling Functions
+
+Compared to Mini Notation, the most notable feature of Mondo Notation is the ability to call functions using round brackets:
+
+<MiniRepl mondo client:idle tune={`(s hh*8)`} />
+
+The first element inside the brackets is the function name. In JS, this would look like:
+
+<MiniRepl client:idle tune={`s("hh*8")`} />
+
+The outermost parens are not needed, so we can drop them:
+
+<MiniRepl mondo client:idle tune={`s hh*8`} />
+
+## Mini Notation Features
+
+Besides function calling with round parens, Mondo Notation has a lot in common with Mini Notation:
+
+- `[]` for 1-cycle sequences
+- `<>` for multi-cycle sequences
+- `{}` for stepped sequences (more on that later)
+- \* => [fast](/learn/time-modifiers/#fast)
+- / => [slow](/learn/time-modifiers/#slow)
+- , => [stack](/learn/factories/#stack)
+- ! => [extend](/learn/stepwise/#extend)
+- @ => [expand](/learn/stepwise/#expand)
+- % => [pace](/learn/stepwise/#pace)
+- ? => [degradeBy](/learn/random-modifiers/#degradeby) (currently requires right operand)
+- : => tail (creates a list)
+- .. => range (between numbers)
+- | => [chooseIn](/learn/random-modifiers/#choose)
+
+Example:
+
+<MiniRepl
+  mondo
+  client:idle
+  tune={`note <
+[e5 [b4 c5] d5 [c5 b4]]
+[a4 [a4 c5] e5 [d5 c5]]
+[b4 [~ c5] d5 e5]
+[c5 a4 a4 ~]
+[[~ d5] [~ f5] a5 [g5 f5]]
+[e5 [~ c5] e5 [d5 c5]]
+[b4 [b4 c5] d5 e5]
+[c5 a4 a4 ~]
+>`}
+/>
+
+## Chaining Functions
+
+Similar to how it works in JS, we can chain functions calls with the "." operator:
+
+<MiniRepl
+  mondo
+  client:idle
+  tune={`n <0 2 4 [3 1] -1>*4 
+.scale C4:minor 
+.jux rev 
+.dec .2
+.delay .5`}
+/>
+
+Here's the same written in JS:
+
+<MiniRepl
+  client:idle
+  tune={`n("<0 2 4 [3 1] -1>*4")
+.scale("C4:minor")
+.jux(rev)
+.dec(.2)
+.delay(.5)`}
+/>
+
+### Chaining Functions Locally
+
+A function can be applied "locally" by wrapping it in round parens:
+
+<MiniRepl mondo client:idle tune={`s [bd hh bd cp.(delay .6)] .bank tr909`} />
+
+in this case, `delay .6` will only be applied to `cp`. compare this with the JS version:
+
+<MiniRepl client:idle tune={`s(seq("bd", "hh", "bd", "cp".delay(.6))).bank('tr909')`} />
+
+here we can see much we can save when there's no boundary between mini notation and function calls!
+
+### Lambda Functions
+
+Some functions in strudel expect a function as input, for example:
+
+<MiniRepl client:idle tune={`n("0 .. 7").scale("C:minor").sometimes(x=>x.dec(.1))`} />
+
+in mondo, the `x=>x.` can be shortened to:
+
+<MiniRepl client:idle mondo tune={`n 0..7 .scale C:minor .sometimes (.dec .1)`} />
+
+chaining works as expected:
+
+<MiniRepl client:idle mondo tune={`n 0..7 .scale C:minor .sometimes (.dec .1 .jux rev)`} />
+
+## Strings
+
+You can use "double quotes" and 'single quotes' to get a string:
+
+<MiniRepl client:idle mondo tune={`n 0..7 .scale 'C minor'`} />
+
+## Multiple Patterns
+
+The `$` sign can be used to separate multiple patterns:
+
+<MiniRepl
+  client:idle
+  mondo
+  tune={`$ s [bd rim [- bd] rim] .bank tr707
+$ chord <Dm9!3 Db7>.voicing
+.struct[x - - x - x - -].delay.5`}
+/>
+
+The `$` sign is an alias for `,` so it will create a stack behind the scenes.
