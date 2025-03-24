@@ -520,12 +520,15 @@ export const degradeByWith = register(
  *
  * @name degradeBy
  * @memberof Pattern
+ * @synonym
  * @param {number} amount - a number between 0 and 1
  * @returns Pattern
  * @example
  * s("hh*8").degradeBy(0.2)
  * @example
  * s("[hh?0.2]*8")
+ * @example
+ * s("bd").segment(16).degradeBy(.5).ribbon(16,1)._punchcard()
  */
 export const degradeBy = register(
   'degradeBy',
