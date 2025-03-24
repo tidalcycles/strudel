@@ -2110,7 +2110,7 @@ export const linger = register(
  * @example
  * note(saw.range(40,52).segment(24))
  */
-export const {segment, seg} = register(['segment', 'seg'], function (rate, pat) {
+export const { segment, seg } = register(['segment', 'seg'], function (rate, pat) {
   return pat.struct(pure(true)._fast(rate)).setSteps(rate);
 });
 
@@ -2498,9 +2498,11 @@ export const bypass = register(
  * n(irand(8).segment(4)).scale("c:pentatonic").ribbon(1337, 2)
  * @example
  * // rhythm generator
- * s("bd!16?").ribbon(29,.5)._punchcard()
+ * s("bd!16?").ribbon(29,.5)
  */
-export const {ribbon, rib} = register(['ribbon', 'rib'], (offset, cycles, pat) => pat.early(offset).restart(pure(1).slow(cycles)));
+export const { ribbon, rib } = register(['ribbon', 'rib'], (offset, cycles, pat) =>
+  pat.early(offset).restart(pure(1).slow(cycles)),
+);
 
 export const hsla = register('hsla', (h, s, l, a, pat) => {
   return pat.color(`hsla(${h}turn,${s * 100}%,${l * 100}%,${a})`);

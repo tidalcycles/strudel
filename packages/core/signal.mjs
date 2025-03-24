@@ -528,7 +528,7 @@ export const degradeByWith = register(
  * @example
  * s("[hh?0.2]*8")
  * @example
- * s("bd").segment(16).degradeBy(.5).ribbon(16,1)._punchcard()
+ * s("bd").segment(16).degradeBy(.5).ribbon(16,1)
  */
 export const degradeBy = register(
   'degradeBy',
