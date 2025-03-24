@@ -2105,8 +2105,9 @@ export const linger = register(
 
 /**
  * Samples the pattern at a rate of n events per cycle. Useful for turning a continuous pattern into a discrete one.
- * @param {number} segments number of segments per cycle
+ * @name segment
  * @synonyms seg
+ * @param {number} segments number of segments per cycle
  * @example
  * note(saw.range(40,52).segment(24))
  */
@@ -2487,7 +2488,8 @@ export const bypass = register(
 
 /**
  * Loops the pattern inside an `offset` for `cycles`.
- * If you think of the entire span of time in cycles as a ribbon, you can grab a single piece and loop it.
+ * If you think of the entire span of time in cycles as a ribbon, you can cut a single piece and loop it.
+ * @name ribbon
  * @synonym rib
  * @param {number} offset start point of loop in cycles
  * @param {number} cycles loop length in cycles
