@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat, pure, register, reify, silence, stack } from './pattern.mjs';
+import { Pattern, fastcat, pure, register, reify, silence, stack, sequenceP } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 
 import { id, keyAlias, getCurrentKeyboardState } from './util.mjs';
@@ -32,29 +32,9 @@ export function steady(value) {
  * @returns Pattern
  */
 export const signal = (func) => {
-  const query = (state) => [new Hap(undefined, state.span, func(state.span.midpoint()))];
+  const query = (state) => [new Hap(undefined, state.span, func(state.span.begin))];
   return new Pattern(query);
 };
-
-/**
- * An inverse sawtooth signal between 1 and 0.
- *
- * @type {Pattern}
- * @example
- * note("<c3 [eb3,g3] g2 [g3,bb3]>*8")
- * .clip(isaw.slow(2))
- * @example
- * n(isaw.range(0,8).segment(8))
- * .scale('C major')
- */
-export const isaw = signal((t) => 1 - (t % 1));
-
-/**
- * Variant of `isaw` that ranges between 1 and -1.
- *
- * @type {Pattern}
- */
-export const isaw2 = isaw.toBipolar();
 
 /**
  *  A sawtooth signal between 0 and 1.
@@ -71,16 +51,37 @@ export const isaw2 = isaw.toBipolar();
 export const saw = signal((t) => t % 1);
 
 /**
- * Variant of `saw` that ranges between -1 and 1.
+ *  A sawtooth signal between -1 and 1 (like `saw`, but bipolar).
  *
- * @type {Pattern}
+ * @return {Pattern}
  */
 export const saw2 = saw.toBipolar();
 
 /**
- * Variant of `sine` that ranges between -1 and 1.
+ *  A sawtooth signal between 1 and 0 (like `saw`, but flipped).
  *
- * @type {Pattern}
+ * @return {Pattern}
+ * @example
+ * note("<c3 [eb3,g3] g2 [g3,bb3]>*8")
+ * .clip(isaw.slow(2))
+ * @example
+ * n(isaw.range(0,8).segment(8))
+ * .scale('C major')
+ *
+ */
+export const isaw = signal((t) => 1 - (t % 1));
+
+/**
+ *  A sawtooth signal between 1 and -1 (like `saw2`, but flipped).
+ *
+ * @return {Pattern}
+ */
+export const isaw2 = isaw.toBipolar();
+
+/**
+ *  A sine signal between -1 and 1 (like `sine`, but bipolar).
+ *
+ * @return {Pattern}
  */
 export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
 
@@ -107,9 +108,9 @@ export const sine = sine2.fromBipolar();
 export const cosine = sine._early(Fraction(1).div(4));
 
 /**
- * Variant of `cosine` that ranges between -1 and 1.
+ *  A cosine signal between -1 and 1 (like `cosine`, but bipolar).
  *
- * @type {Pattern}
+ * @return {Pattern}
  */
 export const cosine2 = sine2._early(Fraction(1).div(4));
 
@@ -124,9 +125,9 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
 export const square = signal((t) => Math.floor((t * 2) % 2));
 
 /**
- * Variant of `square` that ranges between -1 and 1.
+ *  A square signal between -1 and 1 (like `square`, but bipolar).
  *
- * @type {Pattern}
+ * @return {Pattern}
  */
 export const square2 = square.toBipolar();
 
@@ -138,19 +139,36 @@ export const square2 = square.toBipolar();
  * n(tri.segment(8).range(0,7)).scale("C:minor")
  *
  */
-export const tri = fastcat(isaw, saw);
+export const tri = fastcat(saw, isaw);
 
 /**
- * Variant of `tri` that ranges between -1 and 1.
+ *  A triangle signal between -1 and 1 (like `tri`, but bipolar).
  *
- * @type {Pattern}
+ * @return {Pattern}
  */
-export const tri2 = fastcat(isaw2, saw2);
+export const tri2 = fastcat(saw2, isaw2);
 
 /**
- * The current cycle count as a signal.
+ *  An inverted triangle signal between 1 and 0 (like `tri`, but flipped).
  *
- * @type {Pattern}
+ * @return {Pattern}
+ * @example
+ * n(itri.segment(8).range(0,7)).scale("C:minor")
+ *
+ */
+export const itri = fastcat(isaw, saw);
+
+/**
+ *  An inverted triangle signal between -1 and 1 (like `itri`, but bipolar).
+ *
+ * @return {Pattern}
+ */
+export const itri2 = fastcat(isaw2, saw2);
+
+/**
+ *  A signal representing the cycle time.
+ *
+ * @return {Pattern}
  */
 export const time = signal(id);
 
@@ -223,7 +241,7 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
  * n(run(4)).scale("C4:pentatonic")
  * // n("0 1 2 3").scale("C4:pentatonic")
  */
-export const run = (n) => saw.range(0, n).floor().segment(n);
+export const run = (n) => saw.range(0, n).round().segment(n);
 
 /**
  * Creates a pattern from a binary number.
@@ -429,19 +447,30 @@ export const chooseCycles = (...xs) => chooseInWith(rand.segment(1), xs);
 export const randcat = chooseCycles;
 
 const _wchooseWith = function (pat, ...pairs) {
+  // A list of patterns of values
   const values = pairs.map((pair) => reify(pair[0]));
+
+  // A list of weight patterns
   const weights = [];
-  let accum = 0;
+
+  let total = pure(0);
   for (const pair of pairs) {
-    accum += pair[1];
-    weights.push(accum);
+    // 'add' accepts either values or patterns of values here, so no need
+    // to explicitly reify
+    total = total.add(pair[1]);
+    // accumulate our list of weight patterns
+    weights.push(total);
   }
-  const total = accum;
+  // a pattern of lists of weights
+  const weightspat = sequenceP(weights);
+
+  // Takes a number from 0-1, returns a pattern of patterns of values
   const match = function (r) {
-    const find = r * total;
-    return values[weights.findIndex((x) => x > find, weights)];
+    const findpat = total.mul(r);
+    return weightspat.fmap((weights) => (find) => values[weights.findIndex((x) => x > find, weights)]).appLeft(findpat);
   };
-  return pat.fmap(match);
+  // This returns a pattern of patterns.. The innerJoin is in wchooseCycles
+  return pat.bind(match);
 };
 
 const wchooseWith = (...args) => _wchooseWith(...args).outerJoin();
@@ -463,6 +492,9 @@ export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
  * wchooseCycles(["bd",10], ["hh",1], ["sd",1]).s().fast(8)
  * @example
  * wchooseCycles(["bd bd bd",5], ["hh hh hh",3], ["sd sd sd",1]).fast(4).s()
+ * @example
+ * // The probability can itself be a pattern
+ * wchooseCycles(["bd(3,8)","<5 0>"], ["hh hh hh",3]).fast(4).s()
  */
 export const wchooseCycles = (...pairs) => _wchooseWith(rand.segment(1), ...pairs).innerJoin();
 

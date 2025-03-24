@@ -208,16 +208,16 @@ describe('mini', () => {
   it('_ and @ are almost interchangeable', () => {
     expect(minS('a @ b @ @')).toEqual(minS('a _2 b _3'));
   });
-  it('supports ^ tactus marking', () => {
-    expect(mini('a [^b c]').tactus).toEqual(Fraction(4));
-    expect(mini('[^b c]!3').tactus).toEqual(Fraction(6));
-    expect(mini('[a b c] [d [e f]]').tactus).toEqual(Fraction(2));
-    expect(mini('^[a b c] [d [e f]]').tactus).toEqual(Fraction(2));
-    expect(mini('[a b c] [d [^e f]]').tactus).toEqual(Fraction(8));
-    expect(mini('[a b c] [^d [e f]]').tactus).toEqual(Fraction(4));
-    expect(mini('[^a b c] [^d [e f]]').tactus).toEqual(Fraction(12));
-    expect(mini('[^a b c] [d [^e f]]').tactus).toEqual(Fraction(24));
-    expect(mini('[^a b c d e]').tactus).toEqual(Fraction(5));
+  it('supports ^ step marking', () => {
+    expect(mini('a [^b c]')._steps).toEqual(Fraction(4));
+    expect(mini('[^b c]!3')._steps).toEqual(Fraction(6));
+    expect(mini('[a b c] [d [e f]]')._steps).toEqual(Fraction(2));
+    expect(mini('^[a b c] [d [e f]]')._steps).toEqual(Fraction(2));
+    expect(mini('[a b c] [d [^e f]]')._steps).toEqual(Fraction(8));
+    expect(mini('[a b c] [^d [e f]]')._steps).toEqual(Fraction(4));
+    expect(mini('[^a b c] [^d [e f]]')._steps).toEqual(Fraction(12));
+    expect(mini('[^a b c] [d [^e f]]')._steps).toEqual(Fraction(24));
+    expect(mini('[^a b c d e]')._steps).toEqual(Fraction(5));
   });
 });
 

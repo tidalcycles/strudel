@@ -35,17 +35,13 @@ Pattern.prototype.mqtt = function (
   host = 'wss://localhost:8883/',
   client = undefined,
   latency = 0,
+  add_meta = true,
 ) {
   const key = host + '-' + client;
-  let connected = false;
   let password_entered = false;
 
-  if (!client) {
-    client = 'strudel-' + String(Math.floor(Math.random() * 1000000));
-  }
   function onConnect() {
     console.log('Connected to mqtt broker');
-    connected = true;
     if (password_entered) {
       document.cookie = 'mqtt_pass=' + password;
     }
@@ -55,7 +51,11 @@ Pattern.prototype.mqtt = function (
   if (connections[key]) {
     cx = connections[key];
   } else {
+    if (!client) {
+      client = 'strudel-' + String(Math.floor(Math.random() * 1000000));
+    }
     cx = new Paho.Client(host, client);
+    connections[key] = cx;
     cx.onConnectionLost = onConnectionLost;
     cx.onMessageArrived = onMessageArrived;
     const props = {
@@ -83,17 +83,32 @@ Pattern.prototype.mqtt = function (
   }
   return this.withHap((hap) => {
     const onTrigger = (t_deprecate, hap, currentTime, cps, targetTime) => {
-      if (!connected) {
+      let msg_topic = topic;
+      if (!cx || !cx.isConnected()) {
         return;
       }
       let message = '';
       if (typeof hap.value === 'object') {
-        message = JSON.stringify(hap.value);
+        let value = hap.value;
+
+        // Try to take topic from pattern if it's not set
+        if (typeof msg_topic === 'undefined' && 'topic' in value) {
+          msg_topic = value.topic;
+          if (Array.isArray(msg_topic)) {
+            msg_topic = msg_topic.join('/');
+          }
+          msg_topic = '/' + msg_topic;
+        }
+        if (add_meta) {
+          const duration = hap.duration.div(cps);
+          value = { ...value, duration: duration.valueOf(), cps: cps };
+        }
+        message = JSON.stringify(value);
       } else {
         message = hap.value;
       }
       message = new Paho.Message(message);
-      message.destinationName = topic;
+      message.destinationName = msg_topic;
 
       const offset = (targetTime - currentTime + latency) * 1000;
 

@@ -1,5 +1,5 @@
 import { Pattern, noteToMidi, valueToMidi } from '@strudel/core';
-import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel/webaudio';
+import { aliasBank, registerSynthSounds, registerZZFXSounds, samples } from '@strudel/webaudio';
 import { registerSamplesFromDB } from './idbutils.mjs';
 import './piano.mjs';
 import './files.mjs';
@@ -29,6 +29,7 @@ export async function prebake() {
       tag: 'drum-machines',
     }),
     samples(`${baseNoTrailing}/EmuSP12.json`, undefined, { prebake: true, tag: 'drum-machines' }),
+    samples(`${baseNoTrailing}/mridangam.json`, undefined, { prebake: true, tag: 'drum-machines' }),
     samples(
       {
         casio: ['casio/high.wav', 'casio/low.wav', 'casio/noise.wav'],
@@ -114,6 +115,29 @@ export async function prebake() {
           'numbers/7.wav',
           'numbers/8.wav',
         ],
+        num: [
+          'num/00.wav',
+          'num/01.wav',
+          'num/02.wav',
+          'num/03.wav',
+          'num/04.wav',
+          'num/05.wav',
+          'num/06.wav',
+          'num/07.wav',
+          'num/08.wav',
+          'num/09.wav',
+          'num/10.wav',
+          'num/11.wav',
+          'num/12.wav',
+          'num/13.wav',
+          'num/14.wav',
+          'num/15.wav',
+          'num/16.wav',
+          'num/17.wav',
+          'num/18.wav',
+          'num/19.wav',
+          'num/20.wav',
+        ],
       },
       'github:tidalcycles/dirt-samples',
       {
@@ -121,6 +145,8 @@ export async function prebake() {
       },
     ),
   ]);
+
+  aliasBank(`${baseNoTrailing}/tidal-drum-machines-alias.json`);
 }
 
 const maxPan = noteToMidi('C8');

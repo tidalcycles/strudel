@@ -84,6 +84,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Music metadata', link: 'learn/metadata' },
       { text: 'CSound', link: 'learn/csound' },
       { text: 'Hydra', link: 'learn/hydra' },
+      { text: 'Input Devices', link: 'learn/input-devices' },
       { text: 'Device Motion', link: 'learn/devicemotion' },
     ],
     'Pattern Functions': [
@@ -96,6 +97,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
       { text: 'Accumulation', link: 'learn/accumulation' },
       { text: 'Tonal Functions', link: 'learn/tonal' },
+      { text: 'Stepwise Functions', link: 'learn/stepwise' },
     ],
     Understand: [
       { text: 'Coding syntax', link: 'learn/code' },
