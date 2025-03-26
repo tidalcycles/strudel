@@ -329,7 +329,7 @@ export class MondoRunner {
       if (ast.type === 'number') {
         ast.value = Number(ast.value);
       } else if (['quotes_double', 'quotes_single'].includes(ast.type)) {
-        arg.value = arg.value.slice(1, -1);
+        ast.value = ast.value.slice(1, -1);
       }
       return this.lib.leaf(ast, scope);
     }
