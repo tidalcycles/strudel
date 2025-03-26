@@ -11,6 +11,7 @@ import {
   chooseIn,
   degradeBy,
   silence,
+  isPattern,
 } from '@strudel/core';
 import { registerLanguage } from '@strudel/transpiler';
 import { MondoRunner } from '../mondo/mondo.mjs';
@@ -42,6 +43,10 @@ lib['or'] = (...children) => chooseIn(...children); // always has structure but 
 
 let runner = new MondoRunner({
   call(name, args, scope) {
+    if (isPattern(name)) {
+      // patterned function name, e.g. "s bd . <speed fast> 2"
+      return name.fmap((fn) => fn(...args)).innerJoin();
+    }
     const fn = lib[name] || strudelScope[name];
     if (!fn) {
       throw new Error(`[moundough]: unknown function "${name}"`);

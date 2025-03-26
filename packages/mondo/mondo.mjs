@@ -207,11 +207,6 @@ export class MondoParser {
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
 
-      if (right.length && right[0].type === 'list') {
-        // x.(y) => not allowed anymore for now..
-        const snip = this.get_code_snippet(right[0]);
-        throw new Error(`${this.errorhead(right[0])} cannot apply list: expected "(${snip})" to be a word`);
-      }
       if (!left.length) {
         const arg = { type: 'plain', value: '_' };
         return this.get_lambda([arg], [arg, ...children]);
@@ -342,11 +337,13 @@ export class MondoRunner {
     // is list
     // the first element is expected to be the function name
     const first = ast.children[0];
-    const name = first.value;
-    this.assert(
-      first?.type === 'plain',
-      `${this.parser.errorhead(first)} expected function name, got ${first.type}${name ? ` "${name}"` : ''}.`,
-    );
+    let name;
+    if (first?.type !== 'list') {
+      name = first.value; // regular function call e.g. (fast 2 (s bd))
+    } else {
+      // dynamic function name e.g. "(<speed fast> 2 (s bd))"
+      name = this.evaluate(first);
+    }
 
     if (name === 'lambda') {
       const [_, args, body] = ast.children;
