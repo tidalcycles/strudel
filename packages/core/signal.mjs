@@ -526,6 +526,9 @@ export const degradeByWith = register(
  * s("hh*8").degradeBy(0.2)
  * @example
  * s("[hh?0.2]*8")
+ * @example
+ * //beat generator
+ * s("bd").segment(16).degradeBy(.5).ribbon(16,1)
  */
 export const degradeBy = register(
   'degradeBy',
