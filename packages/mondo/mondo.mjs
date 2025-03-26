@@ -176,31 +176,9 @@ export class MondoParser {
   }
   get_lambda(args, children) {
     // (.fast 2) = (lambda (_) (fast _ 2))
-    const body = this.desugar(children);
-    return [
-      { type: 'plain', value: 'lambda' },
-      { type: 'list', children: args },
-      { type: 'list', children: body },
-    ];
-  }
-  // inserts target into lambda body
-  desugar_lambda(lambda, target) {
-    // lambda looks like return value from this.get_lambda
-    const [_, args, body] = lambda;
-    if (args.length > 1) {
-      throw new Error('desugar_lambda with >1 arg is unsupported rn');
-    }
-    const argNames = args.children.map((child) => child.value);
-    let desugar = (child) => {
-      if (child.type === 'plain' && child.value === argNames[0]) {
-        return target;
-      }
-      if (child.type === 'list') {
-        child.children = child.children.map(desugar);
-      }
-      return child;
-    };
-    return desugar(body);
+    children = this.desugar(children);
+    const body = children.length === 1 ? children[0] : { type: 'list', children };
+    return [{ type: 'plain', value: 'lambda' }, { type: 'list', children: args }, body];
   }
   // returns location range of given ast (even if desugared)
   get_range(ast, range = [Infinity, 0]) {
@@ -228,40 +206,23 @@ export class MondoParser {
     let chunks = this.split_children(children, 'pipe');
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
+
+      if (right.length && right[0].type === 'list') {
+        // x.(y) => not allowed anymore for now..
+        const snip = this.get_code_snippet(right[0]);
+        throw new Error(`${this.errorhead(right[0])} cannot apply list: expected "(${snip})" to be a word`);
+      }
       if (!left.length) {
         const arg = { type: 'plain', value: '_' };
         return this.get_lambda([arg], [arg, ...children]);
       }
-      if (right.length && right[0].type === 'list') {
-        // s jazz hh.(.fast 2) => s jazz (hh.fast 2) = s jazz (fast 2 hh)
-        const target = left[left.length - 1]; // hh
-
-        if (right[0].children[0].value !== 'lambda') {
-          const snip = this.get_code_snippet(right[0]);
-          throw new Error(`${this.errorhead(right[0])} no lambda: expected "${snip}" to start with "."`);
-        }
-        const call = this.desugar_lambda(right[0].children, target);
-        chunks = [[...left.slice(0, -1), call, ...right.slice(1)], ...rest]; // jazz (fast 2 hh)
-      } else {
-        //s jazz hh.fast 2 => (fast 2 (s jazz hh))
-        // const call = left.length > 1 ? { type: 'list', children: next(left) } : left[0];
-        const call = left.length > 1 ? { type: 'list', children: left } : left[0];
-        chunks = [[...right, call], ...rest];
-      }
+      // s jazz hh.fast 2 => (fast 2 (s jazz hh))
+      const call = left.length > 1 ? { type: 'list', children: left } : left[0];
+      chunks = [[...right, call], ...rest];
     }
     // return next(chunks[0]);
     return chunks[0];
   }
-  /* desugar_dollars(children) {
-    let chunks = this.split_children(children, 'dollar');
-    while (chunks.length > 1) {
-      let [left, right, ...rest] = chunks;
-      //fast 2 $ s jazz hh => (fast 2 (s jazz hh))
-      const call = right.length > 1 ? { type: 'list', children: right } : right[0];
-      chunks = [[...left, call], ...rest];
-    }
-    return chunks[0];
-  } */
   parse_pair(open_type, close_type) {
     this.consume(open_type);
     const children = [];
@@ -365,11 +326,20 @@ export class MondoRunner {
   run(code, offset = 0) {
     const ast = this.parser.parse(code, offset);
     console.log(printAst(ast));
-    return this.call(ast);
+    return this.evaluate(ast);
   }
-  call(ast, scope = []) {
-    // for a node to be callable, it needs to be a list
-    this.assert(ast.type === 'list', `${this.parser.errorhead(ast)} function call: expected list, got ${ast.type}`);
+  evaluate(ast, scope = []) {
+    if (ast.type !== 'list') {
+      // is leaf
+      if (ast.type === 'number') {
+        ast.value = Number(ast.value);
+      } else if (['quotes_double', 'quotes_single'].includes(ast.type)) {
+        arg.value = arg.value.slice(1, -1);
+      }
+      return this.lib.leaf(ast, scope);
+    }
+
+    // is list
     // the first element is expected to be the function name
     const first = ast.children[0];
     const name = first.value;
@@ -385,23 +355,12 @@ export class MondoRunner {
         scope = {
           [argNames[0]]: x, // TODO: merge scope... + support multiple args
         };
-        return this.call(body, scope);
+        return this.evaluate(body, scope);
       };
     }
 
-    // process args
-    const args = ast.children.slice(1).map((arg) => {
-      if (arg.type === 'list') {
-        return this.call(arg, scope);
-      }
-      if (arg.type === 'number') {
-        arg.value = Number(arg.value);
-      } else if (['quotes_double', 'quotes_single'].includes(arg.type)) {
-        arg.value = arg.value.slice(1, -1);
-      }
-      return this.lib.leaf(arg, scope);
-    });
-
+    // evaluate args
+    const args = ast.children.slice(1).map((arg) => this.evaluate(arg, scope));
     return this.lib.call(name, args, scope);
   }
 }

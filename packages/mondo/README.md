@@ -9,7 +9,7 @@ an experimental parser for an *uzulang*, a custom dsl for patterns that can stan
 import { MondoRunner } from 'uzu'
 
 const runner = MondoRunner({ seq, cat, s, crush, speed, '*': fast });
-const pat = runner.run('s [bd hh*2 cp.(.crush 4) <mt ht lt>] . speed .8')
+const pat = runner.run('s [bd hh*2 (cp.crush 4) <mt ht lt>] . speed .8')
 ```
 
 the above code will create the following call structure:
@@ -53,16 +53,6 @@ n("0 1 2").add(n("<0 -4>")).scale("C:minor")
 ---
 
 ```plaintext
-n[0 1 2].(add<0 -4>).scale"C minor"
-```
-
-```js
-n("0 1 2".add("<0 -4>")).scale("C:minor")
-```
-
----
-
-```plaintext
 n[0 1 2].scale"C minor"
 .sometimes (12.note.add)
 ```
@@ -75,11 +65,11 @@ n("0 1 2").scale("C:minor")
 ---
 
 ```plaintext
-note g2*8.dec <sine saw>/2.(range .1 .4)
+note g2*8.dec <sine saw .range .01 .4>/2
 ```
 
 ```js
-note("g2*8").dec(cat(sine, saw).slow(2).range(.1, .4))
+note("g2*8").dec(cat(sine, saw).range(.1, .4).slow(2))
 ```
 
 ---
@@ -95,7 +85,7 @@ n("<0 1 2 3 4>*4").scale("C:minor").jux(cat(rev,press))
 ---
 
 mondo`
-sound [bd sd.(every 3 (.fast 4))].jux <rev (.iter 4)>
+sound [bd (sd.every 3 (.fast 4))].jux <rev (.iter 4)>
 `
 // og "Alternate Timelines for TidalCycles" example:
 // jux <(rev) (iter 4)> $ sound [bd (every 3 (fast 4) [sn])]
@@ -128,9 +118,6 @@ s hh .struct(binaryN 55532 16)
 comments
 
 variables: note g2*8.dec sine
-
-sine.(range 0 4)/2 doesnt work
-sine/2.(range 0 4) works
 
 n (irand 8. ribbon 0 2) .scale"C minor" => lags because no whole
 
