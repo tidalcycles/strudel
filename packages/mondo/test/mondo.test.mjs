@@ -12,7 +12,7 @@ const p = (code) => parser.parse(code, -1);
 
 describe('mondo tokenizer', () => {
   const parser = new MondoParser();
-  it('should tokenize with loangleions', () =>
+  it('should tokenize with locations', () =>
     expect(
       parser
         .tokenize('(one two three)')
@@ -22,6 +22,7 @@ describe('mondo tokenizer', () => {
   // it('should parse with loangleions', () => expect(parser.parse('(one two three)')).toEqual());
   it('should get loangleions', () =>
     expect(parser.get_locations('s bd rim')).toEqual([
+      [0, 1],
       [2, 4],
       [5, 8],
     ]));
