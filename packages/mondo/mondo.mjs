@@ -63,6 +63,8 @@ export class MondoParser {
   }
   // take code, return abstract syntax tree
   parse(code, offset) {
+    this.code = code;
+    this.offset = offset;
     this.tokens = this.tokenize(code, offset);
     const expressions = [];
     while (this.tokens.length) {
@@ -165,7 +167,6 @@ export class MondoParser {
         children[opIndex] = op;
         continue;
       }
-      //const call = { type: 'list', children: [op, left, right] };
       const call = { type: 'list', children: [op, right, left] };
       // insert call while keeping other siblings
       children = [...children.slice(0, opIndex - 1), call, ...children.slice(opIndex + 2)];
@@ -173,24 +174,73 @@ export class MondoParser {
     }
     return children;
   }
+  get_lambda(args, children) {
+    // (.fast 2) = (lambda (_) (fast _ 2))
+    const body = this.desugar(children);
+    return [
+      { type: 'plain', value: 'lambda' },
+      { type: 'list', children: args },
+      { type: 'list', children: body },
+    ];
+  }
+  // inserts target into lambda body
+  desugar_lambda(lambda, target) {
+    // lambda looks like return value from this.get_lambda
+    const [_, args, body] = lambda;
+    if (args.length > 1) {
+      throw new Error('desugar_lambda with >1 arg is unsupported rn');
+    }
+    const argNames = args.children.map((child) => child.value);
+    let desugar = (child) => {
+      if (child.type === 'plain' && child.value === argNames[0]) {
+        return target;
+      }
+      if (child.type === 'list') {
+        child.children = child.children.map(desugar);
+      }
+      return child;
+    };
+    return desugar(body);
+  }
+  // returns location range of given ast (even if desugared)
+  get_range(ast, range = [Infinity, 0]) {
+    let union = (a, b) => [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
+    if (ast.loc) {
+      return union(range, ast.loc);
+    }
+    if (ast.type !== 'list') {
+      return range;
+    }
+    return ast.children.reduce((range, child) => {
+      const childrange = this.get_range(child, range);
+      return union(range, childrange);
+    }, range);
+  }
+  errorhead(ast) {
+    return `[mondo ${this.get_range(ast)?.join(':') || '?'}]`;
+  }
+  // returns original user code where the given ast originates (even if desugared)
+  get_code_snippet(ast) {
+    const [min, max] = this.get_range(ast);
+    return this.code.slice(min - this.offset, max - this.offset);
+  }
   desugar_pipes(children) {
     let chunks = this.split_children(children, 'pipe');
     while (chunks.length > 1) {
       let [left, right, ...rest] = chunks;
       if (!left.length) {
-        // . as lambda: (.fast 2) = (lambda (_) (fast _ 2))
-        const args = [{ type: 'plain', value: '_' }];
-        const body = this.desugar([args[0], ...children]);
-        return [
-          { type: 'plain', value: 'lambda' },
-          { type: 'list', children: args },
-          { type: 'list', children: body },
-        ];
+        const arg = { type: 'plain', value: '_' };
+        return this.get_lambda([arg], [arg, ...children]);
       }
       if (right.length && right[0].type === 'list') {
-        // s jazz hh.(fast 2) => s jazz (fast 2 hh)
+        // s jazz hh.(.fast 2) => s jazz (hh.fast 2) = s jazz (fast 2 hh)
         const target = left[left.length - 1]; // hh
-        const call = { type: 'list', children: [...right[0].children, target] };
+
+        if (right[0].children[0].value !== 'lambda') {
+          const snip = this.get_code_snippet(right[0]);
+          throw new Error(`${this.errorhead(right[0])} no lambda: expected "${snip}" to start with "."`);
+        }
+        const call = this.desugar_lambda(right[0].children, target);
         chunks = [[...left.slice(0, -1), call, ...right.slice(1)], ...rest]; // jazz (fast 2 hh)
       } else {
         //s jazz hh.fast 2 => (fast 2 (s jazz hh))
@@ -317,18 +367,15 @@ export class MondoRunner {
     console.log(printAst(ast));
     return this.call(ast);
   }
-  errorhead(ast) {
-    return `[mondo ${ast.loc?.join(':') || ''}]`;
-  }
   call(ast, scope = []) {
     // for a node to be callable, it needs to be a list
-    this.assert(ast.type === 'list', `${this.errorhead(ast)} function call: expected list, got ${ast.type}`);
+    this.assert(ast.type === 'list', `${this.parser.errorhead(ast)} function call: expected list, got ${ast.type}`);
     // the first element is expected to be the function name
     const first = ast.children[0];
     const name = first.value;
     this.assert(
       first?.type === 'plain',
-      `${this.errorhead(first)} expected function name, got ${first.type}${name ? ` "${name}"` : ''}.`,
+      `${this.parser.errorhead(first)} expected function name, got ${first.type}${name ? ` "${name}"` : ''}.`,
     );
 
     if (name === 'lambda') {

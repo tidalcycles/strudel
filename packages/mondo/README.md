@@ -9,7 +9,7 @@ an experimental parser for an *uzulang*, a custom dsl for patterns that can stan
 import { MondoRunner } from 'uzu'
 
 const runner = MondoRunner({ seq, cat, s, crush, speed, '*': fast });
-const pat = runner.run('s [bd hh*2 cp.(crush 4) <mt ht lt>] . speed .8')
+const pat = runner.run('s [bd hh*2 cp.(.crush 4) <mt ht lt>] . speed .8')
 ```
 
 the above code will create the following call structure:
