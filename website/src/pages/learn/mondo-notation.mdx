@@ -14,7 +14,7 @@ Here's an example:
 <MiniRepl
   mondo
   client:idle
-  tune={`$ note c2 .(euclid <3 6 3> <8 16>) . *2 
+  tune={`$ note (c2 .euclid <3 6 3> <8 16>) . *2 
 .s "sine" .add (note [0 <12 24>]*2)
 .dec(sine .range .2 2) .room .5
 .lpf(sine/3.range 120 400)
@@ -27,7 +27,7 @@ $ s [bd bd bd bd] .bank tr909.clip.5
 .ply<1 [1 [2 4]]>
 
 $ s oh*4 .press .bank tr909 .speed.8
-.dec <.02 .05>*2 .(add (saw/8.range 0 1))`}
+.dec (<.02 .05>*2 .add (saw/8.range 0 1))`}
 />
 
 ## Mondo in the REPL

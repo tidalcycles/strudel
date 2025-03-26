@@ -11,7 +11,6 @@ import {
   chooseIn,
   degradeBy,
   silence,
-  isPattern,
 } from '@strudel/core';
 import { registerLanguage } from '@strudel/transpiler';
 import { MondoRunner } from '../mondo/mondo.mjs';
@@ -24,7 +23,10 @@ const arrayRange = (start, stop, step = 1) =>
   );
 const range = (max, min) => min.squeezeBind((a) => max.bind((b) => seq(...arrayRange(a, b))));
 
+let nope = (...args) => args[args.length - 1];
+
 let lib = {};
+lib['nope'] = nope;
 lib['-'] = silence;
 lib['~'] = silence;
 lib.curly = stepcat;
@@ -43,15 +45,19 @@ lib['or'] = (...children) => chooseIn(...children); // always has structure but 
 
 let runner = new MondoRunner({
   call(name, args, scope) {
-    if (isPattern(name)) {
-      // patterned function name, e.g. "s bd . <speed fast> 2"
-      return name.fmap((fn) => fn(...args)).innerJoin();
+    // name is expected to be a pattern of functions!
+    const first = name.firstCycle(true)[0];
+    if (typeof first?.value !== 'function') {
+      throw new Error(`[mondough] "${first}" is not a function`);
     }
-    const fn = lib[name] || strudelScope[name];
-    if (!fn) {
-      throw new Error(`[moundough]: unknown function "${name}"`);
-    }
-    return fn(...args);
+    return name
+      .fmap((fn) => {
+        if (typeof fn !== 'function') {
+          throw new Error(`[mondough] "${fn}" is not a function`);
+        }
+        return fn(...args);
+      })
+      .innerJoin();
   },
   leaf(token, scope) {
     let { value, type } = token;
@@ -59,14 +65,21 @@ let runner = new MondoRunner({
     if (type === 'plain' && scope[value]) {
       return reify(scope[value]); // -> local scope has no location
     }
-    const [from, to] = token.loc;
     const variable = lib[value] ?? strudelScope[value];
+    let pat;
     if (type === 'plain' && typeof variable !== 'undefined') {
       // problem: collisions when we want a string that happens to also be a variable name
       // example: "s sine" -> sine is also a variable
-      return reify(strudelScope[value]).withLoc(from, to);
+      pat = reify(variable);
+    } else {
+      pat = reify(value);
     }
-    return reify(value).withLoc(from, to);
+
+    if (token.loc) {
+      pat = pat.withLoc(token.loc[0], token.loc[1]);
+    }
+    pat.foo = true;
+    return pat;
   },
 });
 

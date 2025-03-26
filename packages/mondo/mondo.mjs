@@ -280,7 +280,7 @@ export class MondoParser {
   get_locations(code, offset = 0) {
     let walk = (ast, locations = []) => {
       if (ast.type === 'list') {
-        return ast.children.slice(1).forEach((child) => walk(child, locations));
+        return ast.children.forEach((child) => walk(child, locations));
       }
       if (ast.loc) {
         locations.push(ast.loc);
@@ -335,17 +335,11 @@ export class MondoRunner {
     }
 
     // is list
-    // the first element is expected to be the function name
-    const first = ast.children[0];
-    let name;
-    if (first?.type !== 'list') {
-      name = first.value; // regular function call e.g. (fast 2 (s bd))
-    } else {
-      // dynamic function name e.g. "(<speed fast> 2 (s bd))"
-      name = this.evaluate(first);
+    if (!ast.children.length) {
+      throw new Error(`empty list`);
     }
 
-    if (name === 'lambda') {
+    if (ast.children[0].value === 'lambda') {
       const [_, args, body] = ast.children;
       const argNames = args.children.map((child) => child.value);
       return (x) => {
@@ -356,8 +350,9 @@ export class MondoRunner {
       };
     }
 
+    const args = ast.children.map((arg) => this.evaluate(arg, scope));
+    // we could short circuit arg[0] if its plain...
     // evaluate args
-    const args = ast.children.slice(1).map((arg) => this.evaluate(arg, scope));
-    return this.lib.call(name, args, scope);
+    return this.lib.call(args[0], args.slice(1), scope);
   }
 }
