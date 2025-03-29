@@ -101,11 +101,14 @@ export function nearestNumberIndex(target, numbers, preferHigher) {
 let scaleSteps = {}; // [scaleName]: semitones[]
 
 export function stepInNamedScale(step, scale, anchor, preferHigher) {
+  let emitNotes = false; // true is experimental
   let [root, scaleName] = Scale.tokenize(scale);
   const rootMidi = x2midi(root);
   const rootChroma = midi2chroma(rootMidi);
+  let intervals;
+  // TODO: don't use Scale.get, just read from a map { [scaleName]: intervals }
+  intervals = Scale.get(`C ${scaleName}`).intervals;
   if (!scaleSteps[scaleName]) {
-    let { intervals } = Scale.get(`C ${scaleName}`);
     // cache result
     scaleSteps[scaleName] = intervals.map(step2semitones);
   }
@@ -113,19 +116,31 @@ export function stepInNamedScale(step, scale, anchor, preferHigher) {
   if (!steps) {
     return null;
   }
-  let transpose = rootMidi;
+  let offset = rootMidi;
   if (anchor) {
     anchor = x2midi(anchor, 3);
     const anchorChroma = midi2chroma(anchor);
     const anchorDiff = _mod(anchorChroma - rootChroma, 12);
     const zeroIndex = nearestNumberIndex(anchorDiff, steps, preferHigher);
     step = step + zeroIndex;
-    transpose = anchor - anchorDiff;
+    offset = anchor - anchorDiff;
   }
-  const octOffset = Math.floor(step / steps.length) * 12;
+  let octaves = Math.floor(step / steps.length);
   step = _mod(step, steps.length);
-  const targetMidi = steps[step] + transpose;
-  return targetMidi + octOffset;
+  if (emitNotes) {
+    // TODO: anchor octave currently has no effect
+    // this branch is for emitting notes
+    const interval = interval2step(intervals[step]);
+    let [pc, acc, oct = 3] = tokenizeNote(root);
+    // oct += octaves;
+    const rootWithOctave = pc + acc + oct;
+    if (anchor) {
+      // octaves = offset / 12 - oct;
+    }
+    let targetNote = transpose(rootWithOctave, interval, octaves);
+    return targetNote;
+  }
+  return steps[step] + offset + octaves * 12;
 }
 
 // different ways to resolve the note to compare the anchor to (see renderVoicing)
@@ -182,6 +197,9 @@ export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below'
 const steps = [1, 0, 2, 0, 3, 4, 0, 5, 0, 6, 0, 7];
 const notes = ['C', '', 'D', '', 'E', 'F', '', 'G', '', 'A', '', 'B'];
 const noteLetters = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+const intervalSteps = { P: '', M: '', m: 'b', A: '#', d: 'b' };
+
+export const interval2step = (interval) => intervalSteps[interval.slice(-1)] + interval.slice(0, -1);
 
 export const accidentalOffset = (accidentals) => {
   return accidentals.split('#').length - accidentals.split('b').length;
@@ -214,26 +232,28 @@ export const Step = {
 export const Note = {
   // TODO: support octave numbers
   tokenize(note) {
-    return [note[0], note.slice(1)];
+    return tokenizeNote(note);
   },
   accidentals(note) {
     return accidentalOffset(this.tokenize(note)[1]);
   },
 };
 
-// TODO: support octave numbers
-export function transpose(note, step) {
+export function transpose(note, step, octaveOffset = 0) {
   // example: E, 3
-  const stepNumber = Step.tokenize(step)[1]; // 3
-  const noteLetter = Note.tokenize(note)[0]; // E
-  const noteIndex = noteLetters.indexOf(noteLetter); // 2 "E is C+2"
-  const targetNote = noteLetters[(noteIndex + stepNumber - 1) % 8]; // G "G is a third above E"
-  const rootIndex = notes.indexOf(noteLetter); // 4 "E is 4 semitones above C"
-  const targetIndex = notes.indexOf(targetNote); // 7 "G is 7 semitones above C"
+  const stepNumber = Step.tokenize(step)[1]; // 3 / 7
+  const [noteLetter, acc, noteOctave] = Note.tokenize(note); // E / D
+  const noteIndex = noteLetters.indexOf(noteLetter); // 2 "E is C+2" / 1
+  const targetNoteIndex = noteIndex + stepNumber - 1;
+  const targetNote = noteLetters[targetNoteIndex % 7]; // G "G is a third above E" / "C "
+  const rootIndex = notes.indexOf(noteLetter); // 4 "E is 4 semitones above C" / 2
+  const targetIndex = notes.indexOf(targetNote); // 7 "G is 7 semitones above C" / 0
   const indexOffset = targetIndex - rootIndex; // 3 (E to G is normally a 3 semitones)
   const stepIndex = steps.indexOf(stepNumber); // 4 ("3" is normally 4 semitones)
-  const offsetAccidentals = accidentalString(Step.accidentals(step) + Note.accidentals(note) + stepIndex - indexOffset); // "we need to add a # to to the G to make it a major third from E"
-  return [targetNote, offsetAccidentals].join('');
+  const accidentalOffset = Step.accidentals(step) + Note.accidentals(note) + stepIndex - indexOffset;
+  const offsetAccidentals = accidentalString(accidentalOffset % 12); // "we need to add a # to to the G to make it a major third from E"
+  const targetOctave = noteOctave ? noteOctave + Math.floor(targetNoteIndex / 7) + octaveOffset : '';
+  return [targetNote, offsetAccidentals].join('') + targetOctave;
 }
 
 //Note("Bb3").transpose("c3")
