@@ -72,27 +72,23 @@ export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
 /**
  *  A sine signal between 0 and 1.
  * @return {Pattern}
- * @synonyms sin
  * @example
  * n(sine.segment(16).range(0,15))
  * .scale("C:minor")
  *
  */
 export const sine = sine2.fromBipolar();
-export const sin = sine;
 
 /**
  *  A cosine signal between 0 and 1.
  *
  * @return {Pattern}
- * @synonyms cos
  * @example
  * n(stack(sine,cosine).segment(16).range(0,15))
  * .scale("C:minor")
  *
  */
 export const cosine = sine._early(Fraction(1).div(4));
-export const cos = cosine;
 
 /**
  *  A cosine signal between -1 and 1 (like `cosine`, but bipolar).
@@ -105,13 +101,11 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
  *  A square signal between 0 and 1.
  *
  * @return {Pattern}
- * @synonyms sqr
  * @example
  * n(square.segment(4).range(0,7)).scale("C:minor")
  *
  */
 export const square = signal((t) => Math.floor((t * 2) % 2));
-export const sqr = square;
 
 /**
  *  A square signal between -1 and 1 (like `square`, but bipolar).
