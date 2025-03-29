@@ -43,8 +43,12 @@ lib['..'] = range;
 lib['or'] = (...children) => chooseIn(...children); // always has structure but is cyclewise.. e.g. "s oh*8.dec[.04 | .5]"
 //lib['or'] = (...children) => chooseOut(...children); // "s oh*8.dec[.04 | .5]" is better but "dec[.04 | .5].s oh*8" has no struct
 
-let runner = new MondoRunner({
-  call(name, args, scope) {
+function evaluator(node, scope) {
+  const { type } = node;
+  // node is list
+  if (type === 'list') {
+    const { children } = node;
+    const [name, ...args] = children;
     // name is expected to be a pattern of functions!
     const first = name.firstCycle(true)[0];
     if (typeof first?.value !== 'function') {
@@ -58,30 +62,29 @@ let runner = new MondoRunner({
         return fn(...args);
       })
       .innerJoin();
-  },
-  leaf(token, scope) {
-    let { value, type } = token;
-    // local scope
-    if (type === 'plain' && scope[value]) {
-      return reify(scope[value]); // -> local scope has no location
-    }
-    const variable = lib[value] ?? strudelScope[value];
-    let pat;
-    if (type === 'plain' && typeof variable !== 'undefined') {
-      // problem: collisions when we want a string that happens to also be a variable name
-      // example: "s sine" -> sine is also a variable
-      pat = reify(variable);
-    } else {
-      pat = reify(value);
-    }
+  }
+  // node is leaf
+  let { value } = node;
+  if (type === 'plain' && scope[value]) {
+    return reify(scope[value]); // -> local scope has no location
+  }
+  const variable = lib[value] ?? strudelScope[value];
+  let pat;
+  if (type === 'plain' && typeof variable !== 'undefined') {
+    // problem: collisions when we want a string that happens to also be a variable name
+    // example: "s sine" -> sine is also a variable
+    pat = reify(variable);
+  } else {
+    pat = reify(value);
+  }
+  if (node.loc) {
+    pat = pat.withLoc(node.loc[0], node.loc[1]);
+  }
+  pat.foo = true;
+  return pat;
+}
 
-    if (token.loc) {
-      pat = pat.withLoc(token.loc[0], token.loc[1]);
-    }
-    pat.foo = true;
-    return pat;
-  },
-});
+let runner = new MondoRunner(evaluator);
 
 export function mondo(code, offset = 0) {
   if (Array.isArray(code)) {

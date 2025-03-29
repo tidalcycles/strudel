@@ -306,11 +306,10 @@ export function printAst(ast, compact = false, lvl = 0) {
 
 // lisp runner
 export class MondoRunner {
-  constructor(lib) {
+  constructor(evaluator) {
     this.parser = new MondoParser();
-    this.lib = lib;
-    this.assert(!!this.lib.leaf, `no handler for leaft nodes! add "leaf" to your lib`);
-    this.assert(!!this.lib.call, `no handler for call nodes! add "call" to your lib`);
+    this.evaluator = evaluator;
+    this.assert(typeof evaluator === 'function', `expected an evaluator function to be passed to new MondoRunner`);
   }
   // a helper to check conditions and throw if they are not met
   assert(condition, error) {
@@ -331,15 +330,10 @@ export class MondoRunner {
       } else if (['quotes_double', 'quotes_single'].includes(ast.type)) {
         ast.value = ast.value.slice(1, -1);
       }
-      return this.lib.leaf(ast, scope);
+      return this.evaluator(ast, scope);
     }
 
-    // is list
-    if (!ast.children.length) {
-      throw new Error(`empty list`);
-    }
-
-    if (ast.children[0].value === 'lambda') {
+    if (ast.children[0]?.value === 'lambda') {
       const [_, args, body] = ast.children;
       const argNames = args.children.map((child) => child.value);
       return (x) => {
@@ -349,10 +343,8 @@ export class MondoRunner {
         return this.evaluate(body, scope);
       };
     }
-
-    const args = ast.children.map((arg) => this.evaluate(arg, scope));
-    // we could short circuit arg[0] if its plain...
-    // evaluate args
-    return this.lib.call(args[0], args.slice(1), scope);
+    // evaluate all children before evaluating list
+    ast.children = ast.children.map((arg) => this.evaluate(arg, scope));
+    return this.evaluator(ast, scope);
   }
 }

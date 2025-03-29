@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { describe, expect, it } from 'vitest';
-import { MondoParser, printAst } from '../mondo.mjs';
+import { MondoParser, printAst, MondoRunner } from '../mondo.mjs';
 
 const parser = new MondoParser();
 const p = (code) => parser.parse(code, -1);
@@ -127,4 +127,29 @@ describe('mondo sugar', () => {
   const target = { type: 'plain', value: 'xyz' };
   it('should desugar_lambda', () =>
     expect(printAst(parser.desugar_lambda(lambda.children, target))).toEqual('(fast 2 xyz)')); */
+});
+
+describe('mondo arithmetic', () => {
+  let lib = {
+    add: (a, b) => a + b,
+    mul: (a, b) => a * b,
+    PI: Math.PI,
+  };
+  function evaluator(node) {
+    // check if node is a leaf node (!= list)
+    if (node.type !== 'list') {
+      // check lib if we find a match in the lib, otherwise return value
+      return lib[node.value] ?? node.value;
+    }
+    // now it can only be a list..
+    const [fn, ...args] = node.children;
+    // children in a list will already be evaluated
+    // the first child is expected to be a function
+    if (typeof fn !== 'function') {
+      throw new Error(`"${fn}" is not a function ${typeof fn}`);
+    }
+    return fn(...args);
+  }
+  const runner = new MondoRunner(evaluator);
+  it('should desugar (.)', () => expect(runner.run('add 1 (mul 2 PI)').toFixed(2)).toEqual('7.28'));
 });
