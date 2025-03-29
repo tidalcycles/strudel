@@ -4,5 +4,9 @@ export default function UserFacingErrorMessage(Props) {
   if (error == null) {
     return;
   }
-  return <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>;
+  return (
+    <div className="text-background px-2 py-1 bg-foreground w-full ml-auto">
+      Error: {error.message || 'Unknown Error :-/'}
+    </div>
+  );
 }
