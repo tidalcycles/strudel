@@ -99,7 +99,6 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
 
 /**
  *  A square signal between 0 and 1.
- *
  * @return {Pattern}
  * @example
  * n(square.segment(4).range(0,7)).scale("C:minor")
