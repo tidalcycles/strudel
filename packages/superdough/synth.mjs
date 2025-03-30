@@ -63,7 +63,9 @@ export function registerSynthSounds() {
         stop(envEnd);
         return {
           node,
-          stop: (releaseTime) => {},
+          stop: (endTime) => {
+            stop(endTime);
+          },
         };
       },
       { type: 'synth', prebake: true },
@@ -110,7 +112,9 @@ export function registerSynthSounds() {
       let envGain = gainNode(1);
       envGain = o.connect(envGain);
 
-      webAudioTimeout(
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 0.3 * gainAdjustment, begin, holdend, 'linear');
+
+      let timeoutNode = webAudioTimeout(
         ac,
         () => {
           o.disconnect();
@@ -123,11 +127,11 @@ export function registerSynthSounds() {
         end,
       );
 
-      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 0.3 * gainAdjustment, begin, holdend, 'linear');
-
       return {
         node: envGain,
-        stop: (time) => {},
+        stop: (time) => {
+          timeoutNode.stop(time);
+        },
       };
     },
     { prebake: true, type: 'synth' },
@@ -169,7 +173,10 @@ export function registerSynthSounds() {
       let envGain = gainNode(1);
       envGain = o.connect(envGain);
 
-      webAudioTimeout(
+
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
+
+      let timeoutNode = webAudioTimeout(
         ac,
         () => {
           o.disconnect();
@@ -182,11 +189,11 @@ export function registerSynthSounds() {
         end,
       );
 
-      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
-
       return {
         node: envGain,
-        stop: (time) => {},
+        stop: (time) => {
+          timeoutNode.stop(time);
+        },
       };
     },
     { prebake: true, type: 'synth' },
@@ -229,7 +236,9 @@ export function registerSynthSounds() {
         stop(envEnd);
         return {
           node,
-          stop: (releaseTime) => {},
+          stop: (endTime) => {
+            stop(endTime)
+          },
         };
       },
       { type: 'synth', prebake: true },
@@ -299,6 +308,7 @@ export function getOscillator(s, t, value) {
   return {
     node: noiseMix?.node || o,
     stop: (time) => {
+      // console.info(time)
       fmModulator.stop(time);
       vibratoOscillator?.stop(time);
       noiseMix?.stop(time);

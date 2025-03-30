@@ -663,6 +663,9 @@ registerProcessor('phase-vocoder-processor', PhaseVocoderProcessor);
 class PulseOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
+    // this.port.onmessage = (event) => {
+    //   console.info(event)
+    // };
     this.pi = _PI;
     this.phi = -this.pi; // phase
     this.Y0 = 0; // feedback memories
