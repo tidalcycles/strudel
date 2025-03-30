@@ -150,6 +150,6 @@ describe('mondo arithmetic', () => {
     }
     return fn(...args);
   }
-  const runner = new MondoRunner(evaluator);
+  const runner = new MondoRunner({ evaluator });
   it('should desugar (.)', () => expect(runner.run('add 1 (mul 2 PI)').toFixed(2)).toEqual('7.28'));
 });

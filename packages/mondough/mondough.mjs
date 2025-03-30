@@ -87,7 +87,7 @@ function evaluator(node, scope) {
   return pat;
 }
 
-let runner = new MondoRunner(evaluator);
+let runner = new MondoRunner({ evaluator });
 
 export function mondo(code, offset = 0) {
   if (Array.isArray(code)) {

@@ -31,6 +31,6 @@ function evaluator(node) {
   }
   return fn(...args);
 }
-const runner = new MondoRunner(evaluator);
+const runner = new MondoRunner({ evaluator });
 const pat = runner.run('add 1 (mul 2 PI)') // 7.283185307179586
 ```

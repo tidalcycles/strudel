@@ -306,7 +306,7 @@ export function printAst(ast, compact = false, lvl = 0) {
 
 // lisp runner
 export class MondoRunner {
-  constructor(evaluator) {
+  constructor({ evaluator } = {}) {
     this.parser = new MondoParser();
     this.evaluator = evaluator;
     this.assert(typeof evaluator === 'function', `expected an evaluator function to be passed to new MondoRunner`);
@@ -322,43 +322,52 @@ export class MondoRunner {
     console.log(printAst(ast));
     return this.evaluate(ast);
   }
-  evaluate(ast, scope = {}) {
-    if (ast.type !== 'list') {
-      // is leaf
-      if (ast.type === 'number') {
-        ast.value = Number(ast.value);
-      } else if (['quotes_double', 'quotes_single'].includes(ast.type)) {
-        ast.value = ast.value.slice(1, -1);
-      }
-      return this.evaluator(ast, scope);
+  evaluate_def(ast, scope) {
+    // (def name body)
+    if (ast.children.length !== 3) {
+      throw new Error(`expected "def" to have 3 children, but got ${ast.children.length}`);
     }
-
-    if (ast.children[0]?.value === 'def') {
-      if (ast.children.length !== 3) {
-        throw new Error(`expected "def" to have 3 children, but got ${ast.children.length}`);
-      }
-      // (def myfn  (fn (_) (ply 2 _)))
-      //      ^name ^body
-      const name = ast.children[1].value;
-      const body = this.evaluate(ast.children[2], scope);
-      scope[name] = body;
-      return this.evaluator(ast, scope);
-    }
-    if (ast.children[0]?.value === 'fn') {
-      // (fn (_)   (ply 2 _)
-      //     ^args ^ body
-      const [_, args, body] = ast.children;
-      const argNames = args.children.map((child) => child.value);
-      return (x) => {
-        scope = {
-          [argNames[0]]: x, // TODO: merge scope... + support multiple args
-        };
-        return this.evaluate(body, scope);
+    const name = ast.children[1].value;
+    const body = this.evaluate(ast.children[2], scope);
+    scope[name] = body;
+    return this.evaluator(ast, scope);
+  }
+  evaluate_lambda(ast, scope) {
+    // (fn (_)   (ply 2 _)
+    //     ^args ^ body
+    const [_, args, body] = ast.children;
+    const argNames = args.children.map((child) => child.value);
+    return (x) => {
+      scope = {
+        [argNames[0]]: x, // TODO: merge scope... + support multiple args
       };
-    }
+      return this.evaluate(body, scope);
+    };
+  }
+  evaluate_list(ast, scope) {
     // evaluate all children before evaluating list (dont mutate!!!)
     const args = ast.children.map((arg) => this.evaluate(arg, scope));
     const node = { type: 'list', children: args };
     return this.evaluator(node, scope);
+  }
+  evaluate_leaf(ast, scope) {
+    if (ast.type === 'number') {
+      ast.value = Number(ast.value);
+    } else if (['quotes_double', 'quotes_single'].includes(ast.type)) {
+      ast.value = ast.value.slice(1, -1);
+    }
+    return this.evaluator(ast, scope);
+  }
+  evaluate(ast, scope = {}) {
+    if (ast.type !== 'list') {
+      return this.evaluate_leaf(ast, scope);
+    }
+    if (ast.children[0]?.value === 'def') {
+      return this.evaluate_def(ast, scope);
+    }
+    if (ast.children[0]?.value === 'fn') {
+      return this.evaluate_lambda(ast, scope);
+    }
+    return this.evaluate_list(ast, scope);
   }
 }
