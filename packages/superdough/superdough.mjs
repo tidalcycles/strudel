@@ -374,6 +374,9 @@ export function resetGlobalEffects() {
   analysersData = {};
 }
 
+let allAudioNodeChains = [];
+let maxPolyphony = 12;
+
 export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
@@ -472,14 +475,30 @@ export const superdough = async (value, t, hapDuration) => {
   } = value;
 
   gain = nanFallback(gain, 1);
+  console.info(allAudioNodeChains.length)
+
+  for (let i = 0; i <= allAudioNodeChains.length - maxPolyphony; i++) {
+   const chain = allAudioNodeChains.shift()
+   chain.forEach(node => node?.disconnect())
+  } 
+  // if (allAudioNodeChains.length > maxPolyphony) {
+
+    
+  //   allAudioNodeChains.slice(0, allAudioNodeChains.length - maxPolyphony).flat().forEach((node) => {
+  //     node.disconnect();
+  //   });
+  //   console.info(allAudioNodes.length)
+  // }
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
   gain *= velocity; // velocity currently only multiplies with gain. it might do other things in the future
-  let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
+  let audioNodes = [];
+  // audio nodes that will be disconnected when the source has ended
+
   const onended = () => {
-    toDisconnect.forEach((n) => n?.disconnect());
+    audioNodes.forEach((n) => n?.disconnect());
   };
   if (bank && s) {
     s = `${bank}_${s}`;
@@ -654,9 +673,10 @@ export const superdough = async (value, t, hapDuration) => {
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
 
-  // toDisconnect = all the node that should be disconnected in onended callback
+  // audioNodes = all the node that should be disconnected in onended callback
   // this is crucial for performance
-  toDisconnect = chain.concat([delaySend, reverbSend, analyserSend]);
+  audioNodes = chain.concat([delaySend, reverbSend, analyserSend]);
+  allAudioNodeChains.push(audioNodes)
 };
 
 export const superdoughTrigger = (t, hap, ct, cps) => {
