@@ -119,10 +119,10 @@ describe('mondo sugar', () => {
       '(speed .8 (s (square bd (* 2 hh) (crush 4 cp) (angle mt ht lt))))',
     ));
 
-  it('should desugar (.)', () => expect(desguar('(.)')).toEqual('(lambda (_) _)'));
-  it('should desugar lambda', () => expect(desguar('(.fast 2)')).toEqual('(lambda (_) (fast 2 _))'));
+  it('should desugar (.)', () => expect(desguar('(.)')).toEqual('(fn (_) _)'));
+  it('should desugar lambda', () => expect(desguar('(.fast 2)')).toEqual('(fn (_) (fast 2 _))'));
   it('should desugar lambda with pipe', () =>
-    expect(desguar('(.fast 2 .room 1)')).toEqual('(lambda (_) (room 1 (fast 2 _)))'));
+    expect(desguar('(.fast 2 .room 1)')).toEqual('(fn (_) (room 1 (fast 2 _)))'));
   /* const lambda = parser.parse('(lambda (_) (fast 2 _))');
   const target = { type: 'plain', value: 'xyz' };
   it('should desugar_lambda', () =>

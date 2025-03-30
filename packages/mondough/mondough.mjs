@@ -49,15 +49,19 @@ function evaluator(node, scope) {
   if (type === 'list') {
     const { children } = node;
     const [name, ...args] = children;
+    if (name.value === 'def') {
+      return silence;
+    }
     // name is expected to be a pattern of functions!
     const first = name.firstCycle(true)[0];
-    if (typeof first?.value !== 'function') {
-      throw new Error(`[mondough] "${first}" is not a function`);
+    const type = typeof first?.value;
+    if (type !== 'function') {
+      throw new Error(`[mondough] "${first}" is not a function, got ${type} ...`);
     }
     return name
       .fmap((fn) => {
         if (typeof fn !== 'function') {
-          throw new Error(`[mondough] "${fn}" is not a function`);
+          throw new Error(`[mondough] "${fn}" is not a function b`);
         }
         return fn(...args);
       })
@@ -80,7 +84,6 @@ function evaluator(node, scope) {
   if (node.loc) {
     pat = pat.withLoc(node.loc[0], node.loc[1]);
   }
-  pat.foo = true;
   return pat;
 }
 

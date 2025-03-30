@@ -175,10 +175,10 @@ export class MondoParser {
     return children;
   }
   get_lambda(args, children) {
-    // (.fast 2) = (lambda (_) (fast _ 2))
+    // (.fast 2) = (fn (_) (fast _ 2))
     children = this.desugar(children);
     const body = children.length === 1 ? children[0] : { type: 'list', children };
-    return [{ type: 'plain', value: 'lambda' }, { type: 'list', children: args }, body];
+    return [{ type: 'plain', value: 'fn' }, { type: 'list', children: args }, body];
   }
   // returns location range of given ast (even if desugared)
   get_range(ast, range = [Infinity, 0]) {
@@ -322,7 +322,7 @@ export class MondoRunner {
     console.log(printAst(ast));
     return this.evaluate(ast);
   }
-  evaluate(ast, scope = []) {
+  evaluate(ast, scope = {}) {
     if (ast.type !== 'list') {
       // is leaf
       if (ast.type === 'number') {
@@ -333,7 +333,20 @@ export class MondoRunner {
       return this.evaluator(ast, scope);
     }
 
-    if (ast.children[0]?.value === 'lambda') {
+    if (ast.children[0]?.value === 'def') {
+      if (ast.children.length !== 3) {
+        throw new Error(`expected "def" to have 3 children, but got ${ast.children.length}`);
+      }
+      // (def myfn  (fn (_) (ply 2 _)))
+      //      ^name ^body
+      const name = ast.children[1].value;
+      const body = this.evaluate(ast.children[2], scope);
+      scope[name] = body;
+      return this.evaluator(ast, scope);
+    }
+    if (ast.children[0]?.value === 'fn') {
+      // (fn (_)   (ply 2 _)
+      //     ^args ^ body
       const [_, args, body] = ast.children;
       const argNames = args.children.map((child) => child.value);
       return (x) => {
