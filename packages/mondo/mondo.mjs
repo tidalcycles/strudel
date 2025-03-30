@@ -343,8 +343,9 @@ export class MondoRunner {
         return this.evaluate(body, scope);
       };
     }
-    // evaluate all children before evaluating list
-    ast.children = ast.children.map((arg) => this.evaluate(arg, scope));
-    return this.evaluator(ast, scope);
+    // evaluate all children before evaluating list (dont mutate!!!)
+    const args = ast.children.map((arg) => this.evaluate(arg, scope));
+    const node = { type: 'list', children: args };
+    return this.evaluator(node, scope);
   }
 }
