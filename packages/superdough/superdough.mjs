@@ -14,6 +14,10 @@ import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
 
+let maxPolyphony = 128;
+export function setMaxPolyphony(polyphony) {
+  maxPolyphony = polyphony;
+}
 export const soundMap = map();
 
 export function registerSound(key, onTrigger, data = {}) {
@@ -162,7 +166,8 @@ function loadWorklets() {
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
-  const { disableWorklets = false } = options;
+  const { disableWorklets = false, polyphony = maxPolyphony } = options;
+  setMaxPolyphony(polyphony);
   if (typeof window === 'undefined') {
     return;
   }
@@ -374,8 +379,7 @@ export function resetGlobalEffects() {
   analysersData = {};
 }
 
-let allAudioNodeChains = [];
-let maxPolyphony = 12;
+let allAudioNodeChains = new Map();
 
 export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
@@ -475,30 +479,30 @@ export const superdough = async (value, t, hapDuration) => {
   } = value;
 
   gain = nanFallback(gain, 1);
-  console.info(allAudioNodeChains.length)
 
-  for (let i = 0; i <= allAudioNodeChains.length - maxPolyphony; i++) {
-   const chain = allAudioNodeChains.shift()
-   chain.forEach(node => node?.disconnect())
-  } 
-  // if (allAudioNodeChains.length > maxPolyphony) {
+  const chainID = Math.round(Math.random() * 10000);
 
-    
-  //   allAudioNodeChains.slice(0, allAudioNodeChains.length - maxPolyphony).flat().forEach((node) => {
-  //     node.disconnect();
-  //   });
-  //   console.info(allAudioNodes.length)
-  // }
+  // oldest audio nodes will be removed if maximum polyphony is exceeded
+  for (let i = 0; i <= allAudioNodeChains.size - maxPolyphony; i++) {
+    const ch = allAudioNodeChains.entries().next();
+    const key = ch.value[0];
+    const chain = ch.value[1];
+    if (key == null) {
+      continue;
+    }
+    chain?.forEach((node) => node?.disconnect());
+    allAudioNodeChains.delete(key);
+  }
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
   gain *= velocity; // velocity currently only multiplies with gain. it might do other things in the future
-  let audioNodes = [];
-  // audio nodes that will be disconnected when the source has ended
 
   const onended = () => {
-    audioNodes.forEach((n) => n?.disconnect());
+    const chain = allAudioNodeChains.get(chainID);
+    chain?.forEach((n) => n?.disconnect());
+    allAudioNodeChains.delete(chainID);
   };
   if (bank && s) {
     s = `${bank}_${s}`;
@@ -672,11 +676,7 @@ export const superdough = async (value, t, hapDuration) => {
 
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
-
-  // audioNodes = all the node that should be disconnected in onended callback
-  // this is crucial for performance
-  audioNodes = chain.concat([delaySend, reverbSend, analyserSend]);
-  allAudioNodeChains.push(audioNodes)
+  allAudioNodeChains.set(chainID, [...chain, delaySend, reverbSend, analyserSend]);
 };
 
 export const superdoughTrigger = (t, hap, ct, cps) => {

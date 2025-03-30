@@ -36,11 +36,11 @@ import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
 import { getMetadata } from '../metadata_parser';
 
-const { latestCode } = settingsMap.get();
+const { latestCode, maxPolyphony } = settingsMap.get();
 let modulesLoading, presets, drawContext, clearCanvas, audioReady;
 
 if (typeof window !== 'undefined') {
-  audioReady = initAudioOnFirstClick();
+  audioReady = initAudioOnFirstClick({ maxPolyphony });
   modulesLoading = loadModules();
   presets = prebake();
   drawContext = getDrawContext();
