@@ -20,6 +20,16 @@ export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key.toLowerCase(), { onTrigger, data });
 }
 
+let gainCurveFunc = (val) => Math.pow(val,2)
+
+export function applyGainCurve(val) {
+  return gainCurveFunc(val)
+}
+
+export function setGainCurve(newGainCurveFunc) {
+  gainCurveFunc = newGainCurveFunc
+}
+
 function aliasBankMap(aliasMap) {
   // Make all bank keys lower case for case insensitivity
   for (const key in aliasMap) {
@@ -87,7 +97,7 @@ export function getSound(s) {
 
 const defaultDefaultValues = {
   s: 'triangle',
-  gain: 0.8,
+  gain: 1,
   postgain: 1,
   density: '.03',
   ftype: '12db',
@@ -471,12 +481,17 @@ export const superdough = async (value, t, hapDuration) => {
     compressorRelease,
   } = value;
 
-  gain = nanFallback(gain, 1);
+  gain = applyGainCurve(nanFallback(gain, 1));
+  postgain = applyGainCurve(postgain)
+  shapevol = applyGainCurve(shapevol)
+  distortvol = applyGainCurve(distortvol)
+  delay = applyGainCurve(delay)
+  velocity = applyGainCurve(velocity)
+
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
-  gain *= velocity; // velocity currently only multiplies with gain. it might do other things in the future
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
   const onended = () => {
     toDisconnect.forEach((n) => n?.disconnect());
@@ -516,6 +531,7 @@ export const superdough = async (value, t, hapDuration) => {
 
   // gain stage
   chain.push(gainNode(gain));
+  chain.push(gainNode(.8 * velocity))
 
   //filter
   const ftype = getFilterType(value.ftype);
@@ -616,7 +632,7 @@ export const superdough = async (value, t, hapDuration) => {
   }
 
   // last gain
-  const post = new GainNode(ac, { gain: postgain });
+  const post = new GainNode(ac, { gain:postgain });
   chain.push(post);
   connectToDestination(post, channels);
 

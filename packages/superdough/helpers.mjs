@@ -1,9 +1,9 @@
-import { getAudioContext } from './superdough.mjs';
+import {  getAudioContext } from './superdough.mjs';
 import { clamp, nanFallback } from './util.mjs';
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
-  node.gain.value = value;
+  node.gain.value = value
   return node;
 }
 
