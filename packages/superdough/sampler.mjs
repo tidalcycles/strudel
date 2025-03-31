@@ -278,7 +278,6 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
 
 const cutGroups = [];
 
-
 export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let {
     s,
@@ -346,7 +345,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let envEnd = holdEnd + release + 0.01;
   bufferSource.stop(envEnd);
   const stop = (endTime) => {
-    bufferSource.stop(endTime)
+    bufferSource.stop(endTime);
   };
   const handle = { node: out, bufferSource, stop };
 
