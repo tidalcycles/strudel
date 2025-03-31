@@ -212,6 +212,7 @@ export function webAudioTimeout(audioContext, onComplete, startTime, stopTime) {
   constantNode.onended = () => {
     onComplete();
   };
+  return constantNode;
 }
 const mod = (freq, range = 1, type = 'sine') => {
   const ctx = getAudioContext();

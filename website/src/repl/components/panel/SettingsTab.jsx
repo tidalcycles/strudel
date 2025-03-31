@@ -1,10 +1,12 @@
 import { defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
 import { themes } from '@strudel/codemirror';
+import { Textbox } from '../textbox/Textbox.jsx';
 import { isUdels } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 import { AudioEngineTargetSelector } from './AudioEngineTargetSelector.jsx';
 import { confirmDialog } from '../../util.mjs';
+import { DEFAULT_MAX_POLYPHONY, setMaxPolyphony } from '@strudel/webaudio';
 
 function Checkbox({ label, value, onChange, disabled = false }) {
   return (
@@ -53,7 +55,7 @@ function NumberSlider({ value, onChange, step = 1, ...rest }) {
   );
 }
 
-function FormItem({ label, children }) {
+function FormItem({ label, children, sublabel }) {
   return (
     <div className="grid gap-2">
       <label>{label}</label>
@@ -105,6 +107,7 @@ export function SettingsTab({ started }) {
     audioDeviceName,
     audioEngineTarget,
     togglePanelTrigger,
+    maxPolyphony,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
@@ -137,6 +140,26 @@ export function SettingsTab({ started }) {
               }
             });
           }}
+        />
+      </FormItem>
+
+      <FormItem label="Maximum Polyphony">
+        <Textbox
+          min={1}
+          max={Infinity}
+          onBlur={(e) => {
+            let v = parseInt(e.target.value);
+            v = isNaN(v) ? DEFAULT_MAX_POLYPHONY : v;
+            setMaxPolyphony(v);
+            settingsMap.setKey('maxPolyphony', v);
+          }}
+          onChange={(v) => {
+            v = Math.max(1, parseInt(v));
+            settingsMap.setKey('maxPolyphony', isNaN(v) ? undefined : v);
+          }}
+          type="number"
+          placeholder=""
+          value={maxPolyphony ?? ''}
         />
       </FormItem>
       <FormItem label="Theme">
