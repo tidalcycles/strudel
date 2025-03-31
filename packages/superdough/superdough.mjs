@@ -680,7 +680,6 @@ export const superdough = async (value, t, hapDuration) => {
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
   audioNodes = audioNodes.concat(chain);
-  // activeSoundSources.set(chainID, [...chain, delaySend, reverbSend, analyserSend].filter(Boolean));
 };
 
 export const superdoughTrigger = (t, hap, ct, cps) => {
