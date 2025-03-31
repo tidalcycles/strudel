@@ -14,9 +14,10 @@ import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
 
-let maxPolyphony = 128;
+export const DEFAULT_MAX_POLYPHONY = 128;
+let maxPolyphony = DEFAULT_MAX_POLYPHONY;
 export function setMaxPolyphony(polyphony) {
-  maxPolyphony = polyphony;
+  maxPolyphony = parseInt(polyphony) ?? DEFAULT_MAX_POLYPHONY;
 }
 export const soundMap = map();
 
@@ -166,8 +167,8 @@ function loadWorklets() {
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
-  const { disableWorklets = false, polyphony = maxPolyphony } = options;
-  setMaxPolyphony(polyphony);
+  const { disableWorklets = false, maxPolyphony } = options;
+  setMaxPolyphony(maxPolyphony);
   if (typeof window === 'undefined') {
     return;
   }
@@ -487,7 +488,7 @@ export const superdough = async (value, t, hapDuration) => {
     const ch = activeSoundSources.entries().next();
     const source = ch.value[1];
     const chainID = ch.value[0];
-    const endTime = t + .25;
+    const endTime = t + 0.25;
     source?.node?.gain?.linearRampToValueAtTime(0, endTime);
     source?.stop?.(endTime);
     activeSoundSources.delete(chainID);

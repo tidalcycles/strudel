@@ -25,6 +25,10 @@ const getFrequencyFromValue = (value) => {
 
   return Number(freq);
 };
+function destroyAudioWorkletNode(node) {
+  node.disconnect();
+  node.parameters.get('end')?.setValueAtTime(0, 0);
+}
 
 const waveforms = ['triangle', 'square', 'sawtooth', 'sine'];
 const noises = ['pink', 'white', 'brown', 'crackle'];
@@ -117,7 +121,7 @@ export function registerSynthSounds() {
       let timeoutNode = webAudioTimeout(
         ac,
         () => {
-          o.disconnect();
+          destroyAudioWorkletNode(o);
           envGain.disconnect();
           onended();
           fm?.stop();
@@ -173,13 +177,12 @@ export function registerSynthSounds() {
       let envGain = gainNode(1);
       envGain = o.connect(envGain);
 
-
       getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
 
       let timeoutNode = webAudioTimeout(
         ac,
         () => {
-          o.disconnect();
+          destroyAudioWorkletNode(o);
           envGain.disconnect();
           onended();
           fm?.stop();
@@ -237,7 +240,7 @@ export function registerSynthSounds() {
         return {
           node,
           stop: (endTime) => {
-            stop(endTime)
+            stop(endTime);
           },
         };
       },
@@ -308,7 +311,6 @@ export function getOscillator(s, t, value) {
   return {
     node: noiseMix?.node || o,
     stop: (time) => {
-      // console.info(time)
       fmModulator.stop(time);
       vibratoOscillator?.stop(time);
       noiseMix?.stop(time);
