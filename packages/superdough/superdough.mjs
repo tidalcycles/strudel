@@ -20,14 +20,14 @@ export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key.toLowerCase(), { onTrigger, data });
 }
 
-let gainCurveFunc = (val) => Math.pow(val,2)
+let gainCurveFunc = (val) => Math.pow(val, 2);
 
 export function applyGainCurve(val) {
-  return gainCurveFunc(val)
+  return gainCurveFunc(val);
 }
 
 export function setGainCurve(newGainCurveFunc) {
-  gainCurveFunc = newGainCurveFunc
+  gainCurveFunc = newGainCurveFunc;
 }
 
 function aliasBankMap(aliasMap) {
@@ -482,12 +482,11 @@ export const superdough = async (value, t, hapDuration) => {
   } = value;
 
   gain = applyGainCurve(nanFallback(gain, 1));
-  postgain = applyGainCurve(postgain)
-  shapevol = applyGainCurve(shapevol)
-  distortvol = applyGainCurve(distortvol)
-  delay = applyGainCurve(delay)
-  velocity = applyGainCurve(velocity)
-
+  postgain = applyGainCurve(postgain);
+  shapevol = applyGainCurve(shapevol);
+  distortvol = applyGainCurve(distortvol);
+  delay = applyGainCurve(delay);
+  velocity = applyGainCurve(velocity);
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
@@ -531,7 +530,7 @@ export const superdough = async (value, t, hapDuration) => {
 
   // gain stage
   chain.push(gainNode(gain));
-  chain.push(gainNode(.8 * velocity))
+  chain.push(gainNode(0.8 * velocity));
 
   //filter
   const ftype = getFilterType(value.ftype);
@@ -632,7 +631,7 @@ export const superdough = async (value, t, hapDuration) => {
   }
 
   // last gain
-  const post = new GainNode(ac, { gain:postgain });
+  const post = new GainNode(ac, { gain: postgain });
   chain.push(post);
   connectToDestination(post, channels);
 
