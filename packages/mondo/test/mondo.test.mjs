@@ -121,6 +121,7 @@ describe('mondo sugar', () => {
 
   it('should desugar (.)', () => expect(desguar('(.)')).toEqual('(fn (_) _)'));
   it('should desugar lambda', () => expect(desguar('(.fast 2)')).toEqual('(fn (_) (fast 2 _))'));
+  it('should desugar lambda call', () => expect(desguar('((.mul 2) 2)')).toEqual('((fn (_) (mul 2 _)) 2)'));
   it('should desugar lambda with pipe', () =>
     expect(desguar('(.fast 2 .room 1)')).toEqual('(fn (_) (room 1 (fast 2 _)))'));
   /* const lambda = parser.parse('(lambda (_) (fast 2 _))');
@@ -130,26 +131,87 @@ describe('mondo sugar', () => {
 });
 
 describe('mondo arithmetic', () => {
+  let multi =
+    (op) =>
+    (init, ...rest) =>
+      rest.reduce((acc, arg) => op(acc, arg), init);
+
   let lib = {
-    add: (a, b) => a + b,
-    mul: (a, b) => a * b,
+    '+': multi((a, b) => a + b),
+    '-': multi((a, b) => a - b),
+    '*': multi((a, b) => a * b),
+    '/': multi((a, b) => a / b),
+    run: (...args) => args[args.length - 1],
+    def: () => 0,
     PI: Math.PI,
   };
-  function evaluator(node) {
-    // check if node is a leaf node (!= list)
+  function evaluator(node, scope) {
     if (node.type !== 'list') {
-      // check lib if we find a match in the lib, otherwise return value
-      return lib[node.value] ?? node.value;
+      // is leaf
+      return scope[node.value] ?? lib[node.value] ?? node.value;
     }
-    // now it can only be a list..
+    // is list
     const [fn, ...args] = node.children;
-    // children in a list will already be evaluated
-    // the first child is expected to be a function
     if (typeof fn !== 'function') {
-      throw new Error(`"${fn}" is not a function ${typeof fn}`);
+      throw new Error(`"${fn}": expected function, got ${typeof fn} "${JSON.stringify(fn)}"`);
     }
     return fn(...args);
   }
   const runner = new MondoRunner({ evaluator });
-  it('should desugar (.)', () => expect(runner.run('add 1 (mul 2 PI)').toFixed(2)).toEqual('7.28'));
+  let evaluate = (exp, scope) => runner.run(`run ${exp}`, scope);
+  let pretty = (exp) => printAst(runner.parser.parse(exp), false);
+  //it('should eval nested expression', () => expect(runner.run('add 1 (mul 2 PI)').toFixed(2)).toEqual('7.28'));
+
+  it('eval number', () => expect(evaluate('2')).toEqual(2));
+  it('eval string', () => expect(evaluate('abc')).toEqual('abc'));
+  it('eval list', () => expect(evaluate('(+ 1 2)')).toEqual(3));
+  it('eval nested list', () => expect(evaluate('(+ 1 (+ 2 3))')).toEqual(6));
+  it('def number', () => expect(evaluate('(def a 2) a')).toEqual(2));
+  it('def + ref number', () => expect(evaluate('(def a 2) (* a a)')).toEqual(4));
+  it('def + call lambda', () => expect(evaluate('(def sqr (fn (x) (* x x))) (sqr 3)')).toEqual(9));
+
+  // sicp
+  it('sicp 8.1', () => expect(evaluate('(+ 137 349)')).toEqual(486));
+  it('sicp 8.2', () => expect(evaluate('(- 1000 334)')).toEqual(666));
+  it('sicp 8.3', () => expect(evaluate('(* 5 99)')).toEqual(495));
+  it('sicp 8.4', () => expect(evaluate('(/ 10 5)')).toEqual(2));
+  it('sicp 8.5', () => expect(evaluate('(+ 2.7 10)')).toEqual(12.7));
+  it('sicp 9.1', () => expect(evaluate('(+ 21 35 12 7)')).toEqual(75));
+  it('sicp 9.2', () => expect(evaluate('(* 25 4 12)')).toEqual(1200));
+  it('sicp 9.3', () => expect(evaluate('(+ (* 3 5) (- 10 6))')).toEqual(19));
+  it('sicp 9.4', () =>
+    expect(pretty('(+ (* 3 (+ (* 2 4) (+ 3 5))) (+ (- 10 7) 6))')).toEqual(`(+ 
+ (* 3 
+  (+ 
+   (* 2 4) 
+   (+ 3 5)
+  )
+ ) 
+ (+ 
+  (- 10 7) 6
+ )
+)`)); // this is not exactly pretty printing by convention..
+
+  let scope = {};
+  it('sicp 11.1', () => expect(evaluate('(def size 2) (* 5 size)', scope)).toEqual(10));
+  it('sicp 11.2', () =>
+    expect(evaluate('(def pi 3.14159) (def radius 10) (* pi (* radius radius))', scope)).toEqual(314.159));
+  it('sicp 11.3', () => expect(evaluate('(def circumference (* 2 pi radius))', scope)).toEqual(0));
+  it('sicp 11.4', () => expect(evaluate('circumference', scope)).toEqual(62.8318));
+  it('sicp 13.1', () => expect(evaluate('(* (+ 2 (* 4 6)) (+ 3 5 7))')).toEqual(390));
+  it('sicp 16.1', () => expect(evaluate('(def square (fn (x) (* x x)))', scope)).toEqual(0));
+  // it('sicp 16.1', () => expect(evaluate('(def (square x) (* x x))', scope)).toEqual(0));
+  it('sicp 17.1', () => expect(evaluate('(square 21)', scope)).toEqual(441));
+  it('sicp 17.2', () => expect(evaluate('(square (+ 2 5))', scope)).toEqual(49));
+  it('sicp 17.3', () => expect(evaluate('(square (square 3))', scope)).toEqual(81));
+  it('sicp 17.4', () =>
+    expect(evaluate(`(def sum-of-squares (fn (x y) (+ (square x) (square y))))`, scope)).toEqual(0));
+  it('sicp 17.5', () => expect(evaluate(`(sum-of-squares 3 4)`, scope)).toEqual(25));
+  it('sicp 17.6', () =>
+    expect(evaluate(`(def f (fn (a) (sum-of-squares (+ a 1) (* a 2)))) (f 5)`, scope)).toEqual(136));
+  it('sicp 21.1', () => expect(evaluate(`(sum-of-squares (+ 5 1) (* 5 2))`, scope)).toEqual(136));
+
+  /* it('sicp 11.1', () => expect(evaluate('(* 5 size)', { size: 3 })).toEqual(15));
+  it('sicp 11.1', () => expect(evaluate('(def b 3) (* a b)', scope)).toEqual(12));
+  it('sicp 11.1', () => expect(scope.b).toEqual(3)); */
 });
