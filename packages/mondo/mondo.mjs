@@ -24,7 +24,7 @@ export class MondoParser {
     pipe: /^\./,
     stack: /^[,$]/,
     or: /^[|]/,
-    plain: /^[a-zA-Z0-9-~_^#]+/,
+    plain: /^[a-zA-Z0-9-~_^#+-]+/,
   };
   // matches next token
   next_token(code, offset = 0) {
@@ -88,6 +88,8 @@ export class MondoParser {
   parse_expr() {
     if (!this.tokens[0]) {
       throw new Error(`unexpected end of file`);
+      // TODO: could we allow that? like (((((((( s bd
+      // return { type: 'list', children: [] };
     }
     let next = this.tokens[0]?.type;
     if (next === 'open_list') {
@@ -219,13 +221,17 @@ export class MondoParser {
     return chunks[0];
   }
   parse_pair(open_type, close_type) {
+    const begin = this.tokens[0].loc?.[0];
     this.consume(open_type);
     const children = [];
     while (this.tokens[0]?.type !== close_type) {
       children.push(this.parse_expr());
     }
+    const end = this.tokens[0].loc?.[1];
     this.consume(close_type);
-    return children;
+    const node = { type: 'list', children };
+    begin !== undefined && (node.loc = [begin, end]);
+    return node;
   }
   desugar(children, type) {
     // if type is given, the first element is expected to contain it as plain value
@@ -247,27 +253,27 @@ export class MondoParser {
     return children;
   }
   parse_list() {
-    let children = this.parse_pair('open_list', 'close_list');
-    children = this.desugar(children);
-    return { type: 'list', children };
+    let node = this.parse_pair('open_list', 'close_list');
+    node.children = this.desugar(node.children);
+    return node;
   }
   parse_angle() {
-    let children = this.parse_pair('open_angle', 'close_angle');
-    children = [{ type: 'plain', value: 'angle' }, ...children];
-    children = this.desugar(children, 'angle');
-    return { type: 'list', children };
+    let node = this.parse_pair('open_angle', 'close_angle');
+    node.children.unshift({ type: 'plain', value: 'angle' });
+    node.children = this.desugar(node.children, 'angle');
+    return node;
   }
   parse_square() {
-    let children = this.parse_pair('open_square', 'close_square');
-    children = [{ type: 'plain', value: 'square' }, ...children];
-    children = this.desugar(children, 'square');
-    return { type: 'list', children };
+    let node = this.parse_pair('open_square', 'close_square');
+    node.children.unshift({ type: 'plain', value: 'square' });
+    node.children = this.desugar(node.children, 'square');
+    return node;
   }
   parse_curly() {
-    let children = this.parse_pair('open_curly', 'close_curly');
-    children = [{ type: 'plain', value: 'curly' }, ...children];
-    children = this.desugar(children, 'curly');
-    return { type: 'list', children };
+    let node = this.parse_pair('open_curly', 'close_curly');
+    node.children.unshift({ type: 'plain', value: 'curly' });
+    node.children = this.desugar(node.children, 'curly');
+    return node;
   }
   consume(type) {
     // shift removes first element and returns it
@@ -317,10 +323,10 @@ export class MondoRunner {
       throw new Error(error);
     }
   }
-  run(code, offset = 0) {
+  run(code, scope, offset = 0) {
     const ast = this.parser.parse(code, offset);
     console.log(printAst(ast));
-    return this.evaluate(ast);
+    return this.evaluate(ast, scope);
   }
   evaluate_def(ast, scope) {
     // (def name body)
@@ -330,18 +336,19 @@ export class MondoRunner {
     const name = ast.children[1].value;
     const body = this.evaluate(ast.children[2], scope);
     scope[name] = body;
-    return this.evaluator(ast, scope);
+    // def with fall through
   }
   evaluate_lambda(ast, scope) {
     // (fn (_)   (ply 2 _)
     //     ^args ^ body
-    const [_, args, body] = ast.children;
-    const argNames = args.children.map((child) => child.value);
-    return (x) => {
-      scope = {
-        [argNames[0]]: x, // TODO: merge scope... + support multiple args
+    const [_, formalArgs, body] = ast.children;
+    return (...args) => {
+      const params = Object.fromEntries(formalArgs.children.map((arg, i) => [arg.value, args[i]]));
+      const closure = {
+        ...scope,
+        ...params,
       };
-      return this.evaluate(body, scope);
+      return this.evaluate(body, closure);
     };
   }
   evaluate_list(ast, scope) {
@@ -362,11 +369,11 @@ export class MondoRunner {
     if (ast.type !== 'list') {
       return this.evaluate_leaf(ast, scope);
     }
-    if (ast.children[0]?.value === 'def') {
-      return this.evaluate_def(ast, scope);
-    }
     if (ast.children[0]?.value === 'fn') {
       return this.evaluate_lambda(ast, scope);
+    }
+    if (ast.children[0]?.value === 'def') {
+      this.evaluate_def(ast, scope);
     }
     return this.evaluate_list(ast, scope);
   }

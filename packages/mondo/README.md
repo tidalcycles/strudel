@@ -27,7 +27,7 @@ function evaluator(node) {
   // children in a list will already be evaluated
   // the first child is expected to be a function
   if (typeof fn !== 'function') {
-    throw new Error(`"${fn}" is not a function ${typeof fn}`);
+    throw new Error(`"${fn}" is not a function`);
   }
   return fn(...args);
 }

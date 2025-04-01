@@ -93,7 +93,7 @@ export function mondo(code, offset = 0) {
   if (Array.isArray(code)) {
     code = code.join('');
   }
-  const pat = runner.run(code, offset);
+  const pat = runner.run(code, undefined, offset);
   return pat.markcss('color: var(--caret,--foreground);text-decoration:underline');
 }
 
