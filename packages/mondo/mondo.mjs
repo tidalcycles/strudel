@@ -19,12 +19,12 @@ export class MondoParser {
     open_curly: /^\{/,
     close_curly: /^\}/,
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
-    op: /^[*/:!@%?]|^\.{2}/, // * / : ! @ % ? ..
+    op: /^[*/:!@%?+-]|^\.{2}/, // * / : ! @ % ? ..
     // dollar: /^\$/,
     pipe: /^\./,
     stack: /^[,$]/,
     or: /^[|]/,
-    plain: /^[a-zA-Z0-9-~_^#+-]+/,
+    plain: /^[a-zA-Z0-9-~_^#]+/,
   };
   // matches next token
   next_token(code, offset = 0) {
@@ -230,7 +230,10 @@ export class MondoParser {
     const end = this.tokens[0].loc?.[1];
     this.consume(close_type);
     const node = { type: 'list', children };
-    begin !== undefined && (node.loc = [begin, end]);
+    if (begin !== undefined) {
+      node.loc = [begin, end];
+      node.raw = this.code.slice(begin, end);
+    }
     return node;
   }
   desugar(children, type) {
@@ -338,6 +341,43 @@ export class MondoRunner {
     scope[name] = body;
     // def with fall through
   }
+  evaluate_match(ast, scope) {
+    // (match (p1 e1) (p2 e2) ... (pn en))
+    // = cond in lisp
+    if (ast.children.length < 2) {
+      return;
+    }
+    const [_, ...body] = ast.children;
+    for (let i = 0; i < body.length; ++i) {
+      const [predicate, exp] = body[i].children;
+      if (predicate.value === 'else') {
+        return this.evaluate(exp, scope);
+      }
+      const outcome = this.evaluate(predicate, scope);
+      if (outcome) {
+        return this.evaluate(exp, scope);
+      }
+    }
+    return undefined; // nothing was matched
+  }
+  evaluate_if(ast, scope) {
+    // if is a special case of match
+    if (ast.children.length !== 4) {
+      return;
+    }
+    // (if predicate consequent alternative)
+    const [_, predicate, consequent, alternative] = ast.children;
+    // (match (predicate consequent) (else alternative))
+    const matcher = {
+      type: 'list',
+      children: [
+        { type: 'plain', value: 'match' },
+        { type: 'list', children: [predicate, consequent] },
+        { type: 'list', children: [{ type: 'plain', value: 'else' }, alternative] },
+      ],
+    };
+    return this.evaluate_match(matcher, scope);
+  }
   evaluate_lambda(ast, scope) {
     // (fn (_)   (ply 2 _)
     //     ^args ^ body
@@ -369,10 +409,17 @@ export class MondoRunner {
     if (ast.type !== 'list') {
       return this.evaluate_leaf(ast, scope);
     }
-    if (ast.children[0]?.value === 'fn') {
+    const name = ast.children[0]?.value;
+    if (name === 'fn') {
       return this.evaluate_lambda(ast, scope);
     }
-    if (ast.children[0]?.value === 'def') {
+    if (name === 'match') {
+      return this.evaluate_match(ast, scope);
+    }
+    if (name === 'if') {
+      return this.evaluate_if(ast, scope);
+    }
+    if (name === 'def') {
       this.evaluate_def(ast, scope);
     }
     return this.evaluate_list(ast, scope);

@@ -141,6 +141,12 @@ describe('mondo arithmetic', () => {
     '-': multi((a, b) => a - b),
     '*': multi((a, b) => a * b),
     '/': multi((a, b) => a / b),
+    eq: (a, b) => a === b,
+    lt: (a, b) => a < b,
+    gt: (a, b) => a > b,
+    and: (a, b) => a && b,
+    or: (a, b) => a || b,
+    not: (a) => !a,
     run: (...args) => args[args.length - 1],
     def: () => 0,
     PI: Math.PI,
@@ -204,12 +210,37 @@ describe('mondo arithmetic', () => {
   it('sicp 17.1', () => expect(evaluate('(square 21)', scope)).toEqual(441));
   it('sicp 17.2', () => expect(evaluate('(square (+ 2 5))', scope)).toEqual(49));
   it('sicp 17.3', () => expect(evaluate('(square (square 3))', scope)).toEqual(81));
-  it('sicp 17.4', () =>
-    expect(evaluate(`(def sum-of-squares (fn (x y) (+ (square x) (square y))))`, scope)).toEqual(0));
-  it('sicp 17.5', () => expect(evaluate(`(sum-of-squares 3 4)`, scope)).toEqual(25));
-  it('sicp 17.6', () =>
-    expect(evaluate(`(def f (fn (a) (sum-of-squares (+ a 1) (* a 2)))) (f 5)`, scope)).toEqual(136));
-  it('sicp 21.1', () => expect(evaluate(`(sum-of-squares (+ 5 1) (* 5 2))`, scope)).toEqual(136));
+  it('sicp 17.4', () => expect(evaluate(`(def sumofsquares (fn (x y) (+ (square x) (square y))))`, scope)).toEqual(0));
+  it('sicp 17.5', () => expect(evaluate(`(sumofsquares 3 4)`, scope)).toEqual(25));
+  it('sicp 17.6', () => expect(evaluate(`(def f (fn (a) (sumofsquares (+ a 1) (* a 2)))) (f 5)`, scope)).toEqual(136));
+  it('sicp 21.1', () => expect(evaluate(`(sumofsquares (+ 5 1) (* 5 2))`, scope)).toEqual(136));
+
+  it('sicp 22.1', () =>
+    expect(
+      evaluate(
+        `(def abs (fn (x) 
+        (match 
+         ((gt x 0) x) 
+         ((eq x 0) 0)
+         ((lt x 0) (- 0 x))
+      )))`, // sicp was doing (- x), which doesnt work with our -
+        scope,
+      ),
+    ).toEqual(0));
+
+  it('sicp gt1', () => expect(evaluate(`(gt -12 0)`, scope)).toEqual(false));
+  it('sicp gt2', () => expect(evaluate(`(gt 0 -12)`, scope)).toEqual(true));
+  it('sicp lt1', () => expect(evaluate(`(lt -12 0)`, scope)).toEqual(true));
+  it('sicp lt2', () => expect(evaluate(`(lt 0 -12)`, scope)).toEqual(false));
+
+  it('sicp 24.1', () => expect(evaluate(`(abs (- 3))`, scope)).toEqual(3));
+  it('sicp 24.2', () => expect(evaluate(`(abs (+ 3))`, scope)).toEqual(3));
+  it('sicp 24.3', () => expect(evaluate(`(abs -12)`, scope)).toEqual(12));
+
+  it('sicp 24.4', () => expect(evaluate(`(def abs (fn (x) (if (lt x 0) (- 0 x) x)))`, scope)).toEqual(0));
+  it('sicp 24.5', () => expect(evaluate(`(abs -13)`, scope)).toEqual(13));
+  it('sicp 25.1', () => expect(evaluate(`(and (gt 6 5) (lt 6 10))`, scope)).toEqual(true));
+  it('sicp 25.2', () => expect(evaluate(`(and (gt 4 5) (lt 6 10))`, scope)).toEqual(false));
 
   /* it('sicp 11.1', () => expect(evaluate('(* 5 size)', { size: 3 })).toEqual(15));
   it('sicp 11.1', () => expect(evaluate('(def b 3) (* a b)', scope)).toEqual(12));
