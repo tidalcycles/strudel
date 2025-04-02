@@ -279,6 +279,7 @@ describe('mondo arithmetic', () => {
   it('sicp 31.2', () => expect(evaluate(`(def (sqrt x) (sqrtiter 1.0 x))`, scope)).toEqual(0));
   it('sicp 31.3', () => expect(evaluate(`(sqrt 9)`, scope)).toEqual(3.00009155413138));
   it('sicp 31.4', () => expect(evaluate(`(sqrt (+ 100 37))`, scope)).toEqual(11.704699917758145));
+  // eslint-disable-next-line no-loss-of-precision
   it('sicp 31.5', () => expect(evaluate(`(sqrt (+ (sqrt 2) (sqrt 3)))`, scope)).toEqual(1.77392790232078925));
   it('sicp 31.6', () => expect(evaluate(`(square (sqrt 1000))`, scope)).toEqual(1000.000369924366));
 
