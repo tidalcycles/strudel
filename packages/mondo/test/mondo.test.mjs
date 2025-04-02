@@ -545,19 +545,69 @@ describe('mondo arithmetic', () => {
       ),
     ).toEqual(55));
 
-  // pisum pulled out defs to make it work
+  // pisum
   it('sicp 79.1', () =>
     expect(
       evaluate(
         `
-(def (piterm x)
-(/ 1.0 (* x (+ x 2)))) 
-(def (pinext x) (+ x 4))
 (def (pisum a b) 
+ (def (piterm x)
+  (/ 1.0 (* x (+ x 2)))) 
+(def (pinext x) (+ x 4))
 (sum piterm a pinext b))
 (* 8 (pisum 1 1000))
 `,
         scope,
       ),
     ).toEqual(3.139592655589783));
+
+  // integral
+  it('sicp 79.2', () =>
+    expect(
+      evaluate(
+        `
+(def (integral f a b dx) 
+ (def (adddx x) (+ x dx))
+(* (sum f (+ a (/ dx 2.0)) adddx b) dx))
+(integral cube 0 1 0.01)
+  `,
+        scope,
+      ),
+    ).toEqual(0.24998750000000042));
+  // maximum callstack...
+  //it('sicp 79.3', () => expect(evaluate(`(integral cube 0 1 0.001)`, scope)).toEqual(0.249999875000001));
+
+  //lambdas
+  it('sicp 83.1', () => expect(evaluate(`((fn (x) (+ x 4)) 5)`)).toEqual(9));
+
+  it('sicp 83.2', () =>
+    expect(
+      evaluate(
+        `
+(def (pisum a b)
+  (sum (fn (x) (/ 1.0 (* x (+ x 2))))
+        a
+        (fn (x) (+ x 4)) 
+        b))
+(* 8 (pisum 1 1000))
+`,
+        scope,
+      ),
+    ).toEqual(3.139592655589783));
+  it('sicp 83.3', () =>
+    expect(
+      evaluate(
+        `
+(def (integral f a b dx) 
+ (* (sum f
+         (+ a (/ dx 2.0)) 
+         (fn (x) (+ x dx)) 
+         b)
+    dx))
+(integral cube 0 1 0.01)
+`,
+        scope,
+      ),
+    ).toEqual(0.24998750000000042));
+  it('sicp 84.1', () => expect(evaluate(`((fn (x y z) (+ x y (square z))) 1 2 3)`, scope)).toEqual(12));
 });
