@@ -143,6 +143,7 @@ describe('mondo arithmetic', () => {
     sub: multi((a, b) => a - b),
     '*': multi((a, b) => a * b),
     '/': multi((a, b) => a / b),
+    mod: multi((a, b) => a % b),
     eq: (a, b) => a === b,
     lt: (a, b) => a < b,
     gt: (a, b) => a > b,
@@ -207,25 +208,25 @@ describe('mondo arithmetic', () => {
   it('sicp 11.3', () => expect(evaluate('(def circumference (* 2 pi radius))', scope)).toEqual(0));
   it('sicp 11.4', () => expect(evaluate('circumference', scope)).toEqual(62.8318));
   it('sicp 13.1', () => expect(evaluate('(* (+ 2 (* 4 6)) (+ 3 5 7))')).toEqual(390));
-  it('sicp 16.1', () => expect(evaluate('(def square (fn (x) (* x x)))', scope)).toEqual(0));
+  it('sicp 16.1', () => expect(evaluate('(def (square x) (* x x))', scope)).toEqual(0));
   // it('sicp 16.1', () => expect(evaluate('(def (square x) (* x x))', scope)).toEqual(0));
   it('sicp 17.1', () => expect(evaluate('(square 21)', scope)).toEqual(441));
   it('sicp 17.2', () => expect(evaluate('(square (+ 2 5))', scope)).toEqual(49));
   it('sicp 17.3', () => expect(evaluate('(square (square 3))', scope)).toEqual(81));
-  it('sicp 17.4', () => expect(evaluate(`(def sumofsquares (fn (x y) (+ (square x) (square y))))`, scope)).toEqual(0));
+  it('sicp 17.4', () => expect(evaluate(`(def (sumofsquares x y) (+ (square x) (square y)))`, scope)).toEqual(0));
   it('sicp 17.5', () => expect(evaluate(`(sumofsquares 3 4)`, scope)).toEqual(25));
-  it('sicp 17.6', () => expect(evaluate(`(def f (fn (a) (sumofsquares (+ a 1) (* a 2)))) (f 5)`, scope)).toEqual(136));
+  it('sicp 17.6', () => expect(evaluate(`(def (f a) (sumofsquares (+ a 1) (* a 2))) (f 5)`, scope)).toEqual(136));
   it('sicp 21.1', () => expect(evaluate(`(sumofsquares (+ 5 1) (* 5 2))`, scope)).toEqual(136));
 
   it('sicp 22.1', () =>
     expect(
       evaluate(
-        `(def abs (fn (x) 
+        `(def (abs x) 
         (match 
          ((gt x 0) x) 
          ((eq x 0) 0)
          ((lt x 0) (- 0 x))
-      )))`, // sicp was doing (- x), which doesnt work with our -
+      ))`, // sicp was doing (- x), which doesnt work with our -
         scope,
       ),
     ).toEqual(0));
@@ -239,7 +240,7 @@ describe('mondo arithmetic', () => {
   it('sicp 24.2', () => expect(evaluate(`(abs (+ 3))`, scope)).toEqual(3));
   it('sicp 24.3', () => expect(evaluate(`(abs -12)`, scope)).toEqual(12));
 
-  it('sicp 24.4', () => expect(evaluate(`(def abs (fn (x) (if (lt x 0) (- 0 x) x)))`, scope)).toEqual(0));
+  it('sicp 24.4', () => expect(evaluate(`(def (abs x) (if (lt x 0) (- 0 x) x))`, scope)).toEqual(0));
   it('sicp 24.5', () => expect(evaluate(`(abs -13)`, scope)).toEqual(13));
   it('sicp 25.1', () => expect(evaluate(`(and (gt 6 5) (lt 6 10))`, scope)).toEqual(true));
   it('sicp 25.2', () => expect(evaluate(`(and (gt 4 5) (lt 6 10))`, scope)).toEqual(false));
@@ -254,68 +255,73 @@ describe('mondo arithmetic', () => {
     expect(evaluate(`(* (match ((gt a b) a) ((lt a b) b) (else -1)) (+ a 1))`, scope)).toEqual(16));
 
   // .. cant use "+" and "-" as standalone expressions, because they are parsed as operators...
-  it('sicp ex1.4.1', () => expect(evaluate(`(def foo (fn (a b) ((if (gt b 0) add sub) a b)))`, scope)).toEqual(0));
+  it('sicp ex1.4.1', () => expect(evaluate(`(def (foo a b) ((if (gt b 0) add sub) a b))`, scope)).toEqual(0));
   it('sicp ex1.4.1', () => expect(evaluate(`(foo 3 1)`, scope)).toEqual(4));
   it('sicp ex1.4.2', () => expect(evaluate(`(foo 3 -1)`, scope)).toEqual(4));
 
   // 1.1.7 Example: Square Roots by Newton’s Method
   it('sicp 30.1', () =>
-    expect(evaluate(`(def goodenuf (fn (guess x) (lt (abs (- (square guess) x)) 0.001)))`, scope)).toEqual(0));
+    expect(evaluate(`(def (goodenuf guess x) (lt (abs (- (square guess) x)) 0.001))`, scope)).toEqual(0));
   it('sicp 30.2', () => expect(evaluate(`(goodenuf 1 1.001)`, scope)).toEqual(true));
   it('sicp 30.3', () => expect(evaluate(`(goodenuf 1 1.002)`, scope)).toEqual(false));
-  it('sicp 30.4', () => expect(evaluate(`(def average (fn (x y) (/ (+ x y) 2)))`, scope)).toEqual(0));
+  it('sicp 30.4', () => expect(evaluate(`(def (average x y) (/ (+ x y) 2))`, scope)).toEqual(0));
   it('sicp 30.5', () => expect(evaluate(`(average 18 20)`, scope)).toEqual(19));
-  it('sicp 30.6', () => expect(evaluate(`(def improve (fn (guess x) (average guess (/ x guess))))`, scope)).toEqual(0));
+  it('sicp 30.6', () => expect(evaluate(`(def (improve guess x) (average guess (/ x guess)))`, scope)).toEqual(0));
   it('sicp 31.1', () =>
     expect(
       evaluate(
-        `(def sqrtiter (fn (guess x) (if (goodenuf guess x)
+        `(def (sqrtiter guess x) (if (goodenuf guess x)
       guess
-      (sqrtiter (improve guess x) x))))`,
+      (sqrtiter (improve guess x) x)))`,
         scope,
       ),
     ).toEqual(0));
-  it('sicp 31.2', () => expect(evaluate(`(def sqrt (fn (x) (sqrtiter 1.0 x)))`, scope)).toEqual(0));
+  it('sicp 31.2', () => expect(evaluate(`(def (sqrt x) (sqrtiter 1.0 x))`, scope)).toEqual(0));
   it('sicp 31.3', () => expect(evaluate(`(sqrt 9)`, scope)).toEqual(3.00009155413138));
   it('sicp 31.4', () => expect(evaluate(`(sqrt (+ 100 37))`, scope)).toEqual(11.704699917758145));
   it('sicp 31.5', () => expect(evaluate(`(sqrt (+ (sqrt 2) (sqrt 3)))`, scope)).toEqual(1.77392790232078925));
   it('sicp 31.6', () => expect(evaluate(`(square (sqrt 1000))`, scope)).toEqual(1000.000369924366));
 
   // lexical scoping
-  // doesnt work...
-  /* it('sicp 39.1', () =>
+  it('sicp 39.1', () =>
     expect(
       evaluate(
-        `(def sqrt (fn (x)
-(def (goodenuf guess)
-(lt (abs (- (square guess) x)) 0.001)) (def (improve guess)
-(average guess (/ x guess))) (def sqrtiter (fn (guess)
-(if (goodenuf guess) guess
-        (sqrtiter (improve guess)))))
-  (sqrtiter 1.0))) (sqrt 7)`,
-        scope,
-      ),
-    ).toEqual(0)); */
-
-  // recursive fac
-  it('sicp 41.1', () => expect(evaluate(`(def fac (fn (n) (if (eq n 1) 1 (* n (fac (- n 1))))))`, scope)).toEqual(0));
-  it('sicp 41.2', () => expect(evaluate(`(fac 4)`, scope)).toEqual(24));
-
-  // iterative fac
-  // uses lexical scoping -> doesnt work
-  /* it('sicp 41.3', () =>
-    expect(
-      evaluate(
-        `(def fac (fn (n) (faciter 1 1 n)))
-(def faciter (fn (product counter maxcount) (if (gt counter maxcount)
-      product
-      (faciter (* counter product)
-                 (+ counter 1)
-                 max-count))))`,
+        `
+(def (sqrt x)
+ (def (goodenough guess)
+  (lt (abs (- (square guess) x)) 0.001)) 
+(def (improve guess)
+ (average guess (/ x guess))) 
+(def (sqrt-iter guess)
+ (if (goodenough guess) guess (sqrt-iter (improve guess))))
+(sqrtiter 1.0))
+  
+  `,
         scope,
       ),
     ).toEqual(0));
-  it('sicp 41.4', () => expect(evaluate(`(fac 4)`, scope)).toEqual(24)); */
+
+  // recursive fac
+  it('sicp 41.1', () => expect(evaluate(`(def (fac n) (if (eq n 1) 1 (* n (fac (- n 1)))))`, scope)).toEqual(0));
+  it('sicp 41.2', () => expect(evaluate(`(fac 4)`, scope)).toEqual(24));
+
+  // iterative fac
+  it('sicp 41.3', () =>
+    expect(
+      evaluate(
+        `
+(def (factorial n) (factiter 1 1 n))
+(def (factiter product counter maxcount) 
+ (if (gt counter maxcount)
+  product
+  (factiter (* counter product)
+             (+ counter 1)
+             maxcount)))
+`,
+        scope,
+      ),
+    ).toEqual(0));
+  it('sicp 41.4', () => expect(evaluate(`(fac 4)`, scope)).toEqual(24));
 
   // 46.1
   /* (define (+ a b)
@@ -329,10 +335,10 @@ describe('mondo arithmetic', () => {
     expect(
       evaluate(
         `
-(def A (fn (x y) (match ((eq y 0) 0) 
+(def (A x y) (match ((eq y 0) 0) 
 ((eq x 0) (* 2 y))
 ((eq y 1) 2)
-(else (A (- x 1) (A x (- y 1)))))))
+(else (A (- x 1) (A x (- y 1))))))
 `,
         scope,
       ),
@@ -344,13 +350,213 @@ describe('mondo arithmetic', () => {
     expect(
       evaluate(
         `
-(def f (fn (n) (A 0 n)))
-(def g (fn (n) (A 1 n))) 
-(def h (fn (n) (A 2 n)))
-(def k (fn (n) (* 5 n n)))
+(def (f n) (A 0 n))
+(def (g n) (A 1 n)))
+(def (h n) (A 2 n))
+(def (k n) (* 5 n n))
     `,
         scope,
       ),
     ).toEqual(0));
+
   // Tree Recursion
+  // recursive process
+  it('sicp 48.1', () =>
+    expect(
+      evaluate(
+        `
+(def (fib n) (match ((eq n 0) 0) ((eq n 1) 1)
+(else (+ (fib (- n 1)) (fib (- n 2))))))
+(fib 7)
+    `,
+        scope,
+      ),
+    ).toEqual(13));
+
+  // iterative process
+  it('sicp 48.2', () =>
+    expect(
+      evaluate(
+        `
+(def (fib n) (fibiter 1 0 n))
+(def (fibiter a b count) (if (eq count 0)
+      b
+      (fibiter (+ a b) a (- count 1))))
+(fib 7)
+    `,
+        scope,
+      ),
+    ).toEqual(13));
+
+  // example: counting change
+  it('sicp 52.2', () =>
+    expect(
+      evaluate(
+        `
+(def (countchange amount) (cc amount 5))
+(def (cc amount kindsofcoins)
+ (match 
+  ((eq amount 0) 1)
+  ((or (lt amount 0) (eq kindsofcoins 0)) 0)
+  (else (+ 
+   (cc amount (- kindsofcoins 1))
+   (cc (- amount (firstdenomination kindsofcoins)) kindsofcoins)))))
+
+(def (firstdenomination kindsofcoins)
+(match 
+ ((eq kindsofcoins 1) 1) 
+ ((eq kindsofcoins 2) 5)
+ ((eq kindsofcoins 3) 10)
+ ((eq kindsofcoins 4) 25)
+ ((eq kindsofcoins 5) 50)))
+
+(countchange 100)
+    `,
+        scope,
+      ),
+    ).toEqual(292));
+
+  // todo: pascals triangle
+  it('sicp 57.1', () =>
+    expect(
+      evaluate(
+        `
+(def (cube x) (* x x x))
+(def (p x) (sub (* 3 x) (* 4 (cube x))))
+(def (sine angle)
+(if (not (gt (abs angle) 0.1)) angle
+(p (sine (/ angle 3.0)))))
+
+(sine 12.15)
+    `,
+        scope,
+      ),
+    ).toEqual(-0.39980345741334));
+
+  // exponentiation recursive
+  it('sicp 57.2', () =>
+    expect(
+      evaluate(
+        `
+(def (expt b n) (if (eq n 0) 1 (* b (expt b (- n 1)))))
+(expt 2 4)
+`,
+        scope,
+      ),
+    ).toEqual(16));
+
+  // exponentiation iterative
+  it('sicp 58.1b', () =>
+    expect(
+      evaluate(
+        `
+(def (expt b n) (exptiter b n 1))
+(def (exptiter b counter product) (if (eq counter 0)
+      product
+      (exptiter b (- counter 1) (* b product))))
+(expt 2 5)
+  `,
+        scope,
+      ),
+    ).toEqual(32));
+
+  // exponentiation fast
+  it('sicp 58.2', () =>
+    expect(
+      evaluate(
+        `
+(def (fastexpt b n) (match ((eq n 0) 1)
+((iseven n) (square (fastexpt b (/ n 2)))) (else (* b (fastexpt b (- n 1))))))
+(def (iseven n)
+(eq (mod n 2) 0))
+(fastexpt 2 5)
+   `,
+        scope,
+      ),
+    ).toEqual(32));
+
+  // * = repeated addition
+  it('sicp 60.1', () =>
+    expect(
+      evaluate(
+        `(def (mult a b) (if (eq b 0)
+        0
+        (+ a (* a (- b 1)))))
+        (mult 3 15)
+   `,
+      ),
+    ).toEqual(45));
+
+  // gcd / euclid
+  it('sicp 63.1', () =>
+    expect(
+      evaluate(
+        `(def (gcd a b) (if (eq b 0)
+      a
+      (gcd b (mod a b))))
+      (gcd 20 6)
+     `,
+      ),
+    ).toEqual(2));
+
+  // 65 smallest divisor
+  // 67 fermat test
+  // ....
+
+  // higher order procedures
+
+  it('sicp 77.1', () =>
+    expect(
+      evaluate(
+        `
+(def (sum term a next b)
+(if (gt a b) 0 (+ (term a)
+(sum term (next a) next b))))
+`,
+        scope,
+      ),
+    ).toEqual(0));
+
+  it('sicp 78.1', () =>
+    expect(
+      evaluate(
+        `
+(def (inc n) (+ n 1))
+(def (cube a) (* a a a))
+(def (sumcubes a b)
+(sum cube a inc b))
+(sumcubes 1 10)
+  `,
+        scope,
+      ),
+    ).toEqual(3025));
+
+  it('sicp 78.2', () =>
+    expect(
+      evaluate(
+        `
+    (def (identity x) x)
+    (def (sumintegers a b)
+    (sum identity a inc b))
+    (sumintegers 1 10)
+    `,
+        scope,
+      ),
+    ).toEqual(55));
+
+  // pisum pulled out defs to make it work
+  it('sicp 79.1', () =>
+    expect(
+      evaluate(
+        `
+(def (piterm x)
+(/ 1.0 (* x (+ x 2)))) 
+(def (pinext x) (+ x 4))
+(def (pisum a b) 
+(sum piterm a pinext b))
+(* 8 (pisum 1 1000))
+`,
+        scope,
+      ),
+    ).toEqual(3.139592655589783));
 });

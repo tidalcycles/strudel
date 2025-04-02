@@ -328,10 +328,29 @@ export class MondoRunner {
   }
   run(code, scope, offset = 0) {
     const ast = this.parser.parse(code, offset);
-    console.log(printAst(ast));
+    //console.log(printAst(ast));
     return this.evaluate(ast, scope);
   }
   evaluate_def(ast, scope) {
+    // function definition special form?
+    if (ast.children[1].type === 'list') {
+      // (def (add a b) (+ a b))
+      // => (def add (fn (a b) (+ a b)) )
+      const args = ast.children[1].children.slice(1);
+      const lambda = {
+        // lambda
+        type: 'list',
+        children: [
+          { type: 'plain', value: 'fn' },
+          { type: 'list', children: args },
+          ...ast.children.slice(2), // body
+        ],
+      };
+      // we mutate to make sure the old ast wont make a mess later
+      ast.children[1] = ast.children[1].children[0];
+      ast.children[2] = lambda;
+      ast.children = ast.children.slice(0, 3); // throw away rest
+    }
     // (def name body)
     if (ast.children.length !== 3) {
       throw new Error(`expected "def" to have 3 children, but got ${ast.children.length}`);
@@ -381,14 +400,17 @@ export class MondoRunner {
   evaluate_lambda(ast, scope) {
     // (fn (_)   (ply 2 _)
     //     ^args ^ body
-    const [_, formalArgs, body] = ast.children;
+    const [_, formalArgs, ...body] = ast.children;
     return (...args) => {
       const params = Object.fromEntries(formalArgs.children.map((arg, i) => [arg.value, args[i]]));
       const closure = {
         ...scope,
         ...params,
       };
-      return this.evaluate(body, closure);
+      // body can have multiple expressions
+      const res = body.map((exp) => this.evaluate(exp, closure));
+      // last expression is the return value
+      return res[res.length - 1];
     };
   }
   evaluate_list(ast, scope) {
