@@ -152,6 +152,7 @@ describe('mondo arithmetic', () => {
     not: (a) => !a,
     run: (...args) => args[args.length - 1],
     def: () => 0,
+    sin: Math.sin,
     PI: Math.PI,
   };
   function evaluator(node, scope) {
@@ -647,10 +648,48 @@ describe('mondo arithmetic', () => {
     expect(
       evaluate(
         `
-(def (f g) (g 2))
-(f (fn (z) (* z (+ z 1))))
-          `,
+  (def (f g) (g 2))
+  (f (fn (z) (* z (+ z 1))))
+            `,
         scope,
       ),
     ).toEqual(6));
+
+  // Finding roots of equations by the half-interval method
+  it('sicp 89.1', () =>
+    expect(
+      evaluate(
+        `
+(def (search f negpoint pospoint)
+ (let ((midpoint (average negpoint pospoint)))
+ (if (closeenough negpoint pospoint) 
+  midpoint
+  (let ((testvalue (f midpoint))) 
+   (match ((positive testvalue)
+           (search f negpoint midpoint))
+          ((negative testvalue)
+           (search f midpoint pospoint)) 
+          (else midpoint))))))
+
+(def (closeenough x y) (lt (abs (- x y)) 0.001))
+
+(def (negative x) (lt x 0))
+(def (positive x) (gt x 0))
+
+(def (halfintervalmethod f a b) (let ((avalue (f a))
+(bvalue (f b)))
+(match ((and (negative avalue) (positive bvalue))
+(search f a b))
+((and (negative bvalue) (positive avalue))
+(search f b a)) (else
+(error "Values are not of opposite sign" a b)))))
+
+(halfintervalmethod sin 2.0 4.0)
+`,
+        scope,
+      ),
+    ).toEqual(3.14111328125));
+
+  it('sicp 89.1', () =>
+    expect(evaluate(`(halfintervalmethod (fn (x) (- (* x x x) (* 2 x) 3)) 1.0 2.0)`, scope)).toEqual(1.89306640625));
 });
