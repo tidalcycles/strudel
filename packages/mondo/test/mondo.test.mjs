@@ -153,6 +153,7 @@ describe('mondo arithmetic', () => {
     run: (...args) => args[args.length - 1],
     def: () => 0,
     sin: Math.sin,
+    cos: Math.cos,
     PI: Math.PI,
   };
   function evaluator(node, scope) {
@@ -692,4 +693,69 @@ describe('mondo arithmetic', () => {
 
   it('sicp 89.1', () =>
     expect(evaluate(`(halfintervalmethod (fn (x) (- (* x x x) (* 2 x) 3)) 1.0 2.0)`, scope)).toEqual(1.89306640625));
+
+  // Finding fixed points of functions
+  it('sicp 92.1', () =>
+    expect(
+      evaluate(
+        `
+(def tolerance 0.00001)
+(def (fixedpoint f first-guess)
+ (def (closeenough v1 v2) (lt (abs (- v1 v2)) tolerance)) 
+ (def (try guess)
+  (let ((next (f guess)))
+  (if (closeenough guess next) next (try next))))
+ (try first-guess))
+
+(fixedpoint cos 1.0)
+`,
+        scope,
+      ),
+    ).toEqual(0.7390822985224023));
+  it('sicp 93.1', () =>
+    expect(evaluate(`(fixedpoint (fn (y) (+ (sin y) (cos y))) 1.0)`, scope)).toEqual(1.2587315962971173));
+  // Maximum call stack size exceeded (expected)
+  /* it('sicp 93.2', () =>
+    expect(evaluate(`(def (sqrt x) (fixedpoint (fn (y) (/ x y)) 1.0)) (sqrt 4)`, scope)).toEqual(0)); */
+  it('sicp 93.3', () =>
+    expect(evaluate(`(def (sqrt x) (fixedpoint (fn (y) (average y (/ x y))) 1.0)) (sqrt 7)`, scope)).toEqual(
+      2.6457513110645907,
+    ));
+  // Procedures as Returned Values
+  it('sicp 97.1', () =>
+    expect(evaluate(`(def (averagedamp f) (fn (x) (average x (f x)))) ((averagedamp square) 10)`, scope)).toEqual(55));
+  it('sicp 98.1', () =>
+    expect(evaluate(`(def (sqrt x) (fixedpoint (averagedamp (fn (y) (/ x y))) 1.0)) (sqrt 7)`, scope)).toEqual(
+      2.6457513110645907,
+    ));
+  it('sicp 98.2', () =>
+    expect(
+      evaluate(`(def (cuberoot x) (fixedpoint (averagedamp (fn (y) (/ x (square y)))) 1.0)) (cuberoot 7)`, scope),
+    ).toEqual(1.912934258514886));
+  it('sicp 99.1', () =>
+    expect(
+      evaluate(
+        `
+        (def (deriv g) (fn (x) (/ (- (g (+ x dx)) (g x)) dx))) 
+        (def dx 0.00001)
+        (def (cube x) (* x x x))
+        ((deriv cube) 5)
+        `,
+        scope,
+      ),
+    ).toEqual(75.00014999664018));
+  // With the aid of deriv, we can express Newton’s method as a fixed-point process:
+  it('sicp 100.1', () =>
+    expect(
+      evaluate(
+        `
+(def (newtontransform g)
+(fn (x) (- x (/ (g x) ((deriv g) x)))))
+(def (newtonsmethod g guess) (fixedpoint (newtontransform g) guess))
+(def (sqrt x) (newtonsmethod (fn (y) (- (square y) x)) 1.0))
+(sqrt 7)
+          `,
+        scope,
+      ),
+    ).toEqual(2.6457513110645907));
 });
