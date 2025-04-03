@@ -17,7 +17,9 @@ import { loadBuffer } from './sampler.mjs';
 export const soundMap = map();
 
 export function registerSound(key, onTrigger, data = {}) {
-  soundMap.setKey(key.toLowerCase(), { onTrigger, data });
+  key = key.toLowerCase().replace(/\s+/g, '_')
+  console.info(key, data)
+  soundMap.setKey(key, { onTrigger, data });
 }
 
 function aliasBankMap(aliasMap) {
