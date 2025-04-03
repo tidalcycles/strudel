@@ -610,4 +610,47 @@ describe('mondo arithmetic', () => {
       ),
     ).toEqual(0.24998750000000042));
   it('sicp 84.1', () => expect(evaluate(`((fn (x y z) (+ x y (square z))) 1 2 3)`, scope)).toEqual(12));
+
+  // let expressions
+  it('sicp 87.1', () =>
+    expect(
+      evaluate(
+        `
+(+ (let ((x 3))
+(+ x (* x 10))) x)
+`,
+        { x: 5 },
+      ),
+    ).toEqual(38));
+  it('sicp 87.2', () =>
+    expect(
+      evaluate(
+        `
+(let ((x 3)
+(y (+ x 2)))
+(* x y))
+  `,
+        { x: 2 },
+      ),
+    ).toEqual(12));
+  it('sicp 88.1', () =>
+    expect(
+      evaluate(
+        `
+(def (f g) (g 2))
+(f square)
+      `,
+        scope,
+      ),
+    ).toEqual(4));
+  it('sicp 88.2', () =>
+    expect(
+      evaluate(
+        `
+(def (f g) (g 2))
+(f (fn (z) (* z (+ z 1))))
+          `,
+        scope,
+      ),
+    ).toEqual(6));
 });

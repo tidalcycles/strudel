@@ -331,6 +331,19 @@ export class MondoRunner {
     //console.log(printAst(ast));
     return this.evaluate(ast, scope);
   }
+  evaluate_let(ast, scope) {
+    // (let ((x 3) (y 4)) ...body)
+    // = ((fn (x y) ...body) 3 4)
+    const defs = ast.children[1].children;
+    const args = defs.map((pair) => pair.children[0]);
+    const vals = defs.map((pair) => pair.children[1]);
+    const body = ast.children.slice(2);
+    const lambda = {
+      type: 'list',
+      children: [{ type: 'plain', value: 'fn' }, { type: 'list', children: args }, ...body],
+    };
+    return this.evaluate({ type: 'list', children: [lambda, ...vals] }, scope);
+  }
   evaluate_def(ast, scope) {
     // function definition special form?
     if (ast.children[1].type === 'list') {
@@ -440,6 +453,9 @@ export class MondoRunner {
     }
     if (name === 'if') {
       return this.evaluate_if(ast, scope);
+    }
+    if (name === 'let') {
+      return this.evaluate_let(ast, scope);
     }
     if (name === 'def') {
       this.evaluate_def(ast, scope);
