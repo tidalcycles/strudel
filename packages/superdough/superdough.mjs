@@ -17,8 +17,7 @@ import { loadBuffer } from './sampler.mjs';
 export const soundMap = map();
 
 export function registerSound(key, onTrigger, data = {}) {
-  key = key.toLowerCase().replace(/\s+/g, '_')
-  console.info(key, data)
+  key = key.toLowerCase().replace(/\s+/g, '_');
   soundMap.setKey(key, { onTrigger, data });
 }
 
