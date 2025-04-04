@@ -8,6 +8,16 @@ export function registerWidgetType(type) {
   widgetMethods.push(type);
 }
 
+let languages = new Map();
+// config = { getLocations: (code: string, offset?: number) => number[][] }
+// see mondough.mjs for example use
+// the language will kick in when the code contains a template literal of type
+// example: mondo`...` will use language of type "mondo"
+// TODO: refactor tidal.mjs to use this
+export function registerLanguage(type, config) {
+  languages.set(type, config);
+}
+
 export function transpiler(input, options = {}) {
   const { wrapAsync = false, addReturn = true, emitMiniLocations = true, emitWidgets = true } = options;
 
@@ -19,14 +29,33 @@ export function transpiler(input, options = {}) {
 
   let miniLocations = [];
   const collectMiniLocations = (value, node) => {
-    const leafLocs = getLeafLocations(`"${value}"`, node.start, input);
-    miniLocations = miniLocations.concat(leafLocs);
+    const minilang = languages.get('minilang');
+    if (minilang) {
+      const code = `[${value}]`;
+      const locs = minilang.getLocations(code, node.start);
+      miniLocations = miniLocations.concat(locs);
+    } else {
+      const leafLocs = getLeafLocations(`"${value}"`, node.start, input);
+      miniLocations = miniLocations.concat(leafLocs);
+    }
   };
   let widgets = [];
 
   walk(ast, {
     enter(node, parent /* , prop, index */) {
-      if (isTidalTeplateLiteral(node)) {
+      if (isLanguageLiteral(node)) {
+        const { name } = node.tag;
+        const language = languages.get(name);
+        const code = node.quasi.quasis[0].value.raw;
+        const offset = node.quasi.start + 1;
+        if (emitMiniLocations) {
+          const locs = language.getLocations(code, offset);
+          miniLocations = miniLocations.concat(locs);
+        }
+        this.skip();
+        return this.replace(languageWithLocation(name, code, offset));
+      }
+      if (isTemplateLiteral(node, 'tidal')) {
         const raw = node.quasi.quasis[0].value.raw;
         const offset = node.quasi.start + 1;
         if (emitMiniLocations) {
@@ -120,11 +149,18 @@ function isBackTickString(node, parent) {
 
 function miniWithLocation(value, node) {
   const { start: fromOffset } = node;
+
+  const minilang = languages.get('minilang');
+  let name = 'm';
+  if (minilang && minilang.name) {
+    name = minilang.name; // name is expected to be exported from the package of the minilang
+  }
+
   return {
     type: 'CallExpression',
     callee: {
       type: 'Identifier',
-      name: 'm',
+      name,
     },
     arguments: [
       { type: 'Literal', value },
@@ -219,12 +255,16 @@ function labelToP(node) {
   };
 }
 
+function isLanguageLiteral(node) {
+  return node.type === 'TaggedTemplateExpression' && languages.has(node.tag.name);
+}
+
 // tidal highlighting
 // this feels kind of stupid, when we also know the location inside the string op (tidal.mjs)
 // but maybe it's the only way
 
-function isTidalTeplateLiteral(node) {
-  return node.type === 'TaggedTemplateExpression' && node.tag.name === 'tidal';
+function isTemplateLiteral(node, value) {
+  return node.type === 'TaggedTemplateExpression' && node.tag.name === value;
 }
 
 function collectHaskellMiniLocations(haskellCode, offset) {
@@ -254,6 +294,21 @@ function tidalWithLocation(value, offset) {
     callee: {
       type: 'Identifier',
       name: 'tidal',
+    },
+    arguments: [
+      { type: 'Literal', value },
+      { type: 'Literal', value: offset },
+    ],
+    optional: false,
+  };
+}
+
+function languageWithLocation(name, value, offset) {
+  return {
+    type: 'CallExpression',
+    callee: {
+      type: 'Identifier',
+      name: name,
     },
     arguments: [
       { type: 'Literal', value },
