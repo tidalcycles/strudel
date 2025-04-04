@@ -155,6 +155,13 @@ describe('mondo arithmetic', () => {
     sin: Math.sin,
     cos: Math.cos,
     PI: Math.PI,
+    cons: (a, b) => [a, b],
+    car: (pair) => pair[0],
+    cdr: (pair) => pair[1],
+    concat: (...msgs) => msgs.join(''),
+    error: (...msgs) => {
+      throw new Error(msgs.join(' '));
+    },
   };
   function evaluator(node, scope) {
     if (node.type !== 'list') {
@@ -164,7 +171,7 @@ describe('mondo arithmetic', () => {
     // is list
     const [fn, ...args] = node.children;
     if (typeof fn !== 'function') {
-      throw new Error(`"${fn}": expected function, got ${typeof fn} "${JSON.stringify(fn)}"`);
+      throw new Error(`"${fn}": expected function, got ${typeof fn} "${fn}"`);
     }
     return fn(...args);
   }
@@ -327,9 +334,9 @@ describe('mondo arithmetic', () => {
   it('sicp 41.4', () => expect(evaluate(`(fac 4)`, scope)).toEqual(24));
 
   // 46.1
-  /* (define (+ a b)
+  /* (def (+ a b)
 (if (= a 0) b (inc (+ (dec a) b))))
-(define (+ a b)
+(def (+ a b)
 (if (= a 0) b (+ (dec a) (inc b)))) */
 
   // Exercise 1.10
@@ -499,6 +506,7 @@ describe('mondo arithmetic', () => {
       (gcd b (mod a b))))
       (gcd 20 6)
      `,
+        scope,
       ),
     ).toEqual(2));
 
@@ -758,4 +766,103 @@ describe('mondo arithmetic', () => {
         scope,
       ),
     ).toEqual(2.6457513110645907));
+  // whatever this is
+  it('sicp 101.1', () =>
+    expect(
+      evaluate(
+        `
+  (def (fixedpointoftransform g transform guess) (fixedpoint (transform g) guess))
+  (def (sqrt x) (fixedpointoftransform
+  (fn (y) (/ x y)) averagedamp 1.0))
+  (sqrt 7)
+  `,
+        scope,
+      ),
+    ).toEqual(2.6457513110645907));
+  it('sicp 101.2', () =>
+    expect(
+      evaluate(
+        `
+(def (sqrt x) (fixedpointoftransform
+(fn (y) (- (square y) x)) newtontransform 1.0))
+(sqrt 7)
+    `,
+        scope,
+      ),
+    ).toEqual(2.6457513110645907));
+
+  // data abstraction
+
+  // rational arithmetic
+  it('sicp 114.1', () =>
+    expect(
+      evaluate(
+        `
+(def (addrat x y)
+ (makerat (+ (* 
+   (numer x) (denom y))
+   (* (numer y) (denom x)))
+  (* (denom x) (denom y))))
+(def (subrat x y)
+ (makerat (- (* (numer x) (denom y))
+   (* (numer y) (denom x)))
+  (* (denom x) (denom y))))
+(def (mulrat x y)
+ (makerat (* (numer x) (numer y))
+  (* (denom x) (denom y)))) 
+(def (divrat x y)
+  (makerat (* (numer x) (denom y))
+   (* (denom x) (numer y))))
+(def (equalrat x y)
+  (eq (* (numer x) (denom y))
+     (* (numer y) (denom x))))
+        `,
+        scope,
+      ),
+    ).toEqual(0));
+
+  // markerat number denom
+  it('sicp 117.1', () =>
+    expect(
+      evaluate(
+        `
+(def (makerat n d) (cons n d)) 
+(def (numer x) (car x))
+(def (denom x) (cdr x))
+(def (printrat x) (concat (numer x) ':' (denom x)))
+      `,
+        scope,
+      ),
+    ).toEqual(0));
+
+  it('sicp 117.1', () => expect(evaluate(`(def onehalf (makerat 1 2)) (printrat onehalf)`, scope)).toEqual('1:2'));
+  it('sicp 117.2', () =>
+    expect(evaluate(`(def onethird (makerat 1 3)) (printrat (addrat onehalf onethird))`, scope)).toEqual('5:6'));
+  it('sicp 117.3', () => expect(evaluate(`(printrat (mulrat onehalf onethird))`, scope)).toEqual('1:6'));
+  it('sicp 117.4', () => expect(evaluate(`(printrat (addrat onethird onethird))`, scope)).toEqual('6:9'));
+  it('sicp 118.1', () =>
+    expect(evaluate(`(def (makerat n d) (let ((g (gcd n d))) (cons (/ n g) (/ d g))))`, scope)).toEqual(0));
+  it('sicp 118.1', () => expect(evaluate(`(printrat (addrat onethird onethird))`, scope)).toEqual('2:3'));
+
+  let lscope = {};
+  // pairs with lambda
+  it('sicp 124.1', () =>
+    expect(
+      evaluate(
+        `
+(def (cons x y) 
+ (def (dispatch m)
+  (match 
+   ((eq m 0) x) 
+   ((eq m 1) y)
+   (else (error "argument not 0 or 1: CONS" m)))
+  ) dispatch)
+ (def (car z) (z 0)) 
+ (def (cdr z) (z 1))
+      `,
+        lscope,
+      ),
+    ).toEqual(0));
+  it('sicp 124.1', () => expect(evaluate(`(car (cons first second))`, lscope)).toEqual('first'));
+  it('sicp 124.2', () => expect(evaluate(`(cdr (cons first second))`, lscope)).toEqual('second'));
 });

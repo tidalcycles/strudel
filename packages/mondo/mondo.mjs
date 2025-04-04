@@ -437,6 +437,7 @@ export class MondoRunner {
       ast.value = Number(ast.value);
     } else if (['quotes_double', 'quotes_single'].includes(ast.type)) {
       ast.value = ast.value.slice(1, -1);
+      ast.type = 'plain'; // is this problematic?
     }
     return this.evaluator(ast, scope);
   }
