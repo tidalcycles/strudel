@@ -1795,7 +1795,7 @@ export const as = register('as', (mapping, pat) => {
  * s("amen/4").fit().scrub("{0@3 0@2 4@3}%8".div(16))
  */
 
-register(
+export const scrub = register(
   'scrub',
   (beginPat, pat) => {
     return beginPat.outerBind((v) => {
