@@ -21,6 +21,7 @@ import {
   numeralArgs,
   parseNumeral,
   pairs,
+  listifyOp,
 } from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
@@ -1049,7 +1050,8 @@ function _composeOp(a, b, func) {
   const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart', 'Poly'];
 
   // generate methods to do what and how
-  for (const [what, [op, preprocess]] of Object.entries(composers)) {
+  for (const [what, [_op, preprocess]] of Object.entries(composers)) {
+    const op = listifyOp(_op);
     // make plain version, e.g. pat._add(value) adds that plain value
     // to all the values in pat
     Pattern.prototype['_' + what] = function (value) {
