@@ -1780,3 +1780,32 @@ export const as = register('as', (mapping, pat) => {
     return v;
   });
 });
+
+/**
+ * Allows you to scrub an audio file like a tape loop by passing values that represents the position in the audio file
+ * in the optional array syntax ex: "0.5:2", the second value controls the speed of playback
+ * @name scrub
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * samples('github:switchangel/pad')
+ * s("swpad:0").scrub("{0.1!2 .25@3 0.7!2 <0.8:1.5>}%8")
+ * @example
+ * samples('github:yaxu/clean-breaks/main');
+ * s("amen/4").fit().scrub("{0@3 0@2 4@3}%8".div(16))
+ */
+
+register(
+  'scrub',
+  (beginPat, pat) => {
+    return beginPat.outerBind((v) => {
+      if (!Array.isArray(v)) {
+        v = [v];
+      }
+      const [beginVal, speedMultiplier = 1] = v;
+
+      return pat.begin(beginVal).mul(speed(speedMultiplier)).clip(1);
+    });
+  },
+  false,
+);
