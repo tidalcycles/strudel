@@ -150,7 +150,7 @@ export class Drawer {
         this.lastFrame = phase;
         this.visibleHaps = (this.visibleHaps || [])
           // filter out haps that are too far in the past (think left edge of screen for pianoroll)
-          .filter((h) => h.endClipped >= phase - lookbehind - lookahead)
+          .filter((h) => h.whole && h.endClipped >= phase - lookbehind - lookahead)
           // add new haps with onset (think right edge bars scrolling in)
           .concat(haps.filter((h) => h.hasOnset()));
         const time = phase - lookahead;
@@ -175,7 +175,7 @@ export class Drawer {
     // +0.1 = workaround for weird holes in query..
     const [begin, end] = [Math.max(t, 0), t + lookahead + 0.1];
     // remove all future haps
-    this.visibleHaps = this.visibleHaps.filter((h) => h.whole.begin < t);
+    this.visibleHaps = this.visibleHaps.filter((h) => h.whole?.begin < t);
     this.painters = []; // will get populated by .onPaint calls attached to the pattern
     // query future haps
     const futureHaps = scheduler.pattern.queryArc(begin, end, { painters: this.painters });

@@ -71,7 +71,6 @@ export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
 
 /**
  *  A sine signal between 0 and 1.
- *
  * @return {Pattern}
  * @example
  * n(sine.segment(16).range(0,15))
@@ -100,7 +99,6 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
 
 /**
  *  A square signal between 0 and 1.
- *
  * @return {Pattern}
  * @example
  * n(square.segment(4).range(0,7)).scale("C:minor")
@@ -279,26 +277,26 @@ const _rearrangeWith = (ipat, n, pat) => {
 };
 
 /**
- * @name shuffle
  * Slices a pattern into the given number of parts, then plays those parts in random order.
  * Each part will be played exactly once per cycle.
+ * @name shuffle
  * @example
  * note("c d e f").sound("piano").shuffle(4)
  * @example
- * note("c d e f".shuffle(4), "g").sound("piano")
+ * seq("c d e f".shuffle(4), "g").note().sound("piano")
  */
 export const shuffle = register('shuffle', (n, pat) => {
   return _rearrangeWith(randrun(n), n, pat);
 });
 
 /**
- * @name scramble
  * Slices a pattern into the given number of parts, then plays those parts at random. Similar to `shuffle`,
  * but parts might be played more than once, or not at all, per cycle.
+ * @name scramble
  * @example
  * note("c d e f").sound("piano").scramble(4)
  * @example
- * note("c d e f".scramble(4), "g").sound("piano")
+ * seq("c d e f".scramble(4), "g").note().sound("piano")
  */
 export const scramble = register('scramble', (n, pat) => {
   return _rearrangeWith(_irand(n)._segment(n), n, pat);
@@ -397,6 +395,10 @@ export const chooseInWith = (pat, xs) => {
  * note("c2 g2!2 d2 f1").s(choose("sine", "triangle", "bd:6"))
  */
 export const choose = (...xs) => chooseWith(rand, xs);
+
+// todo: doc
+export const chooseIn = (...xs) => chooseInWith(rand, xs);
+export const chooseOut = choose;
 
 /**
  * Chooses from the given list of values (or patterns of values), according
