@@ -105,26 +105,6 @@ export const getAudioDevices = async () => {
   return devicesMap;
 };
 
-export const setAudioDevice = async (id) => {
-  let audioCtx = getAudioContext();
-  if (audioCtx.sinkId === id) {
-    return;
-  }
-  await audioCtx.suspend();
-  await audioCtx.close();
-  audioCtx = setDefaultAudioContext();
-  await audioCtx.resume();
-  const isValidID = (id ?? '').length > 0;
-  if (isValidID) {
-    try {
-      await audioCtx.setSinkId(id);
-    } catch {
-      logger('failed to set audio interface', 'warning');
-    }
-  }
-  initializeAudioOutput();
-};
-
 const defaultDefaultValues = {
   s: 'triangle',
   gain: 0.8,
