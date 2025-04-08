@@ -2,8 +2,7 @@ import { persistentMap } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel/core';
 import { isUdels } from './repl/util.mjs';
-
-export const defaultAudioDeviceName = 'System Standard';
+import { DEFAULT_AUDIO_DEVICE_NAME } from '@strudel/webaudio';
 
 export const audioEngineTargets = {
   webaudio: 'webaudio',
@@ -36,7 +35,7 @@ export const defaultSettings = {
   isPanelOpen: true,
   togglePanelTrigger: 'click', //click | hover
   userPatterns: '{}',
-  audioDeviceName: defaultAudioDeviceName,
+  audioDeviceName: DEFAULT_AUDIO_DEVICE_NAME,
   audioEngineTarget: audioEngineTargets.webaudio,
   isButtonRowHidden: false,
   isCSSAnimationDisabled: false,
