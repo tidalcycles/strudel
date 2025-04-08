@@ -15,7 +15,7 @@ import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
 
 export const DEFAULT_MAX_POLYPHONY = 128;
-export const DEFAULT_AUDIO_DEVICE_NAME = 'System Standard';
+const DEFAULT_AUDIO_DEVICE_NAME = 'System Standard';
 
 let maxPolyphony = DEFAULT_MAX_POLYPHONY;
 export function setMaxPolyphony(polyphony) {
@@ -184,7 +184,7 @@ function loadWorklets() {
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
-  const { disableWorklets = false, maxPolyphony, audioDeviceName } = options;
+  const { disableWorklets = false, maxPolyphony, audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME } = options;
   setMaxPolyphony(maxPolyphony);
   if (typeof window === 'undefined') {
     return;
