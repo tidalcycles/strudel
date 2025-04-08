@@ -3,8 +3,6 @@ import { useStore } from '@nanostores/react';
 import { register } from '@strudel/core';
 import { isUdels } from './repl/util.mjs';
 
-export const defaultAudioDeviceName = 'System Standard';
-
 export const audioEngineTargets = {
   webaudio: 'webaudio',
   osc: 'osc',
@@ -36,7 +34,6 @@ export const defaultSettings = {
   isPanelOpen: true,
   togglePanelTrigger: 'click', //click | hover
   userPatterns: '{}',
-  audioDeviceName: defaultAudioDeviceName,
   audioEngineTarget: audioEngineTargets.webaudio,
   isButtonRowHidden: false,
   isCSSAnimationDisabled: false,

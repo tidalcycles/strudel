@@ -15,6 +15,8 @@ import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
 
 export const DEFAULT_MAX_POLYPHONY = 128;
+const DEFAULT_AUDIO_DEVICE_NAME = 'System Standard';
+
 let maxPolyphony = DEFAULT_MAX_POLYPHONY;
 export function setMaxPolyphony(polyphony) {
   maxPolyphony = parseInt(polyphony) ?? DEFAULT_MAX_POLYPHONY;
@@ -91,6 +93,18 @@ export function getSound(s) {
   return soundMap.get()[s.toLowerCase()];
 }
 
+export const getAudioDevices = async () => {
+  await navigator.mediaDevices.getUserMedia({ audio: true });
+  let mediaDevices = await navigator.mediaDevices.enumerateDevices();
+  mediaDevices = mediaDevices.filter((device) => device.kind === 'audiooutput' && device.deviceId !== 'default');
+  const devicesMap = new Map();
+  devicesMap.set(DEFAULT_AUDIO_DEVICE_NAME, '');
+  mediaDevices.forEach((device) => {
+    devicesMap.set(device.label, device.deviceId);
+  });
+  return devicesMap;
+};
+
 const defaultDefaultValues = {
   s: 'triangle',
   gain: 0.8,
@@ -161,19 +175,40 @@ export function getAudioContextCurrentTime() {
 let workletsLoading;
 function loadWorklets() {
   if (!workletsLoading) {
-    workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
+    const audioCtx = getAudioContext();
+    workletsLoading = audioCtx.audioWorklet.addModule(workletsUrl);
   }
+
   return workletsLoading;
 }
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
-  const { disableWorklets = false, maxPolyphony } = options;
+  const { disableWorklets = false, maxPolyphony, audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME } = options;
   setMaxPolyphony(maxPolyphony);
   if (typeof window === 'undefined') {
     return;
   }
-  await getAudioContext().resume();
+
+  const audioCtx = getAudioContext();
+
+  if (audioDeviceName != null && audioDeviceName != DEFAULT_AUDIO_DEVICE_NAME) {
+    try {
+      const devices = await getAudioDevices();
+      const id = devices.get(audioDeviceName);
+      const isValidID = (id ?? '').length > 0;
+      if (audioCtx.sinkId !== id && isValidID) {
+        await audioCtx.setSinkId(id);
+      }
+      logger(
+        `[superdough] Audio Device set to ${audioDeviceName}, it might take a few seconds before audio plays on all output channels`,
+      );
+    } catch {
+      logger('[superdough] failed to set audio interface', 'warning');
+    }
+  }
+
+  await audioCtx.resume();
   if (disableWorklets) {
     logger('[superdough]: AudioWorklets disabled with disableWorklets');
     return;
