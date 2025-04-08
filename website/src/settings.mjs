@@ -40,6 +40,7 @@ export const defaultSettings = {
   audioEngineTarget: audioEngineTargets.webaudio,
   isButtonRowHidden: false,
   isCSSAnimationDisabled: false,
+  maxPolyphony: 128,
 };
 
 let search = null;
