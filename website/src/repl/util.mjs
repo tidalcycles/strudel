@@ -1,6 +1,6 @@
 import { evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns } from '../settings.mjs';
-import {  setVersionDefaults } from '@strudel/webaudio';
+import { setVersionDefaults } from '@strudel/webaudio';
 import { getMetadata } from '../metadata_parser';
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
@@ -158,7 +158,6 @@ export const isUdels = () => {
   }
   return window.top?.location?.pathname.includes('udels');
 };
-
 
 export function setVersionDefaultsFrom(code) {
   try {
