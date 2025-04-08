@@ -175,8 +175,8 @@ export function getAudioContextCurrentTime() {
 let workletsLoading;
 function loadWorklets() {
   if (!workletsLoading) {
-    const contextPromise = getAudioContext();
-    workletsLoading = contextPromise.audioWorklet.addModule(workletsUrl);
+    const audioCtx = getAudioContext();
+    workletsLoading = audioCtx.audioWorklet.addModule(workletsUrl);
   }
 
   return workletsLoading;
