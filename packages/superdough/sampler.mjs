@@ -300,12 +300,12 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   // destructure adsr here, because the default should be different for synths and samples
   let [attack, decay, sustain, release] = getADSRValues([value.attack, value.decay, value.sustain, value.release]);
 
-  const { bufferSource, sliceDuration, offset } = await getSampleBufferSource(value, bank, resolveUrl);
+  const sbs = await getSampleBufferSource(value, bank, resolveUrl);
+  const { bufferSource, sliceDuration, offset, bufferDuration } = sbs;
 
-  // asny stuff above took too long?
+  // any stuff above took too long?
   if (ac.currentTime > t) {
     logger(`[sampler] still loading sound "${s}:${n}"`, 'highlight');
-    // console.warn('sample still loading:', s, n);
     return;
   }
   if (!bufferSource) {
@@ -317,13 +317,16 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, t);
 
   const time = t + nudge;
+
   bufferSource.start(time, offset);
 
   const envGain = ac.createGain();
   const node = bufferSource.connect(envGain);
 
+  const clipDeltaSeconds = 1.5;
+
   // if none of these controls is set, the duration of the sound will be set to the duration of the sample slice
-  if (clip == null && loop == null && value.release == null) {
+  if (clip == null && loop == null && value.release == null && bufferDuration < clipDeltaSeconds) {
     duration = sliceDuration;
   }
   let holdEnd = t + duration;
