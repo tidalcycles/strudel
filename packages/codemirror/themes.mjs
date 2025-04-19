@@ -5,16 +5,15 @@ import whitescreen, { settings as whitescreenSettings } from './themes/whitescre
 import teletext, { settings as teletextSettings } from './themes/teletext.mjs';
 import algoboy, { settings as algoboySettings } from './themes/algoboy.mjs';
 import CutiePi, { settings as CutiePiSettings } from './themes/CutiePi.mjs';
-import terminal, { settings as terminalSettings } from './themes/terminal.mjs';
-import abcdef, { settings as abcdefSettings } from './themes/abcdef.mjs';
+import sonicPink, { settings as sonicPinkSettings } from './themes/sonic-pink.mjs';
+import redText, { settings as redTextSettings } from './themes/red-text.mjs';
+import greenText, { settings as greenTextSettings } from './themes/green-text.mjs';
 import androidstudio, { settings as androidstudioSettings } from './themes/androidstudio.mjs';
 import atomone, { settings as atomOneSettings } from './themes/atomone.mjs';
 import aura, { settings as auraSettings } from './themes/aura.mjs';
-import bespin, { settings as bespinSettings } from './themes/bespin.mjs';
 import darcula, { settings as darculaSettings } from './themes/darcula.mjs';
 import dracula, { settings as draculaSettings } from './themes/dracula.mjs';
 import duotoneDark, { settings as duotoneDarkSettings } from './themes/duotoneDark.mjs';
-import duotoneLight, { settings as duotoneLightSettings } from './themes/duotoneLight.mjs';
 import eclipse, { settings as eclipseSettings } from './themes/eclipse.mjs';
 import githubDark, { settings as githubDarkSettings } from './themes/githubDark.mjs';
 import githubLight, { settings as githubLightSettings } from './themes/githubLight.mjs';
@@ -38,46 +37,45 @@ import bbedit, { settings as bbeditSettings } from './themes/bbedit.mjs';
 import noctisLilac, { settings as noctisLilacSettings } from './themes/noctisLilac.mjs';
 
 import { setTheme } from '@strudel/draw';
-
 export const themes = {
   strudelTheme,
-  bluescreen,
-  blackscreen,
-  whitescreen,
-  teletext,
   algoboy,
+  androidstudio,
   atomone,
   aura,
-  darcula,
-  dracula,
   // todo: optimize
   // bespin,
   //abcdef,
-  androidstudio,
-  duotoneDark,
-  githubDark,
+  bbedit,
+  blackscreen,
+  bluescreen,
   CutiePi,
+  darcula,
+  dracula,
+  duotoneDark,
+  eclipse,
+  githubDark,
+  githubLight,
+  greenText,
   gruvboxDark,
+  gruvboxLight,
+  sonicPink,
   materialDark,
-  nord,
+  materialLight,
   monokai,
+  noctisLilac,
+  nord,
+  redText,
   solarizedDark,
+  solarizedLight,
   sublime,
+  teletext,
   tokyoNight,
+  tokyoNightDay,
   tokyoNightStorm,
   vscodeDark,
-  //xcodeDark,
-  // LIGHT
-  bbedit,
-  //duotoneLight,
-  eclipse,
-  githubLight,
-  gruvboxLight,
-  materialLight,
   vscodeLight,
-  noctisLilac,
-  solarizedLight,
-  tokyoNightDay,
+  whitescreen,
   xcodeLight,
 };
 
@@ -88,21 +86,19 @@ export const settings = {
   whitescreen: whitescreenSettings,
   teletext: teletextSettings,
   algoboy: algoboySettings,
-  terminal: terminalSettings,
-  abcdef: abcdefSettings,
   androidstudio: androidstudioSettings,
   atomone: atomOneSettings,
   aura: auraSettings,
   bbedit: bbeditSettings,
-  bespin: bespinSettings,
   darcula: darculaSettings,
   dracula: draculaSettings,
-  duotoneLight: duotoneLightSettings,
   duotoneDark: duotoneDarkSettings,
   eclipse: eclipseSettings,
   CutiePi: CutiePiSettings,
+  sonicPink: sonicPinkSettings,
   githubLight: githubLightSettings,
   githubDark: githubDarkSettings,
+  greenText: greenTextSettings,
   gruvboxDark: gruvboxDarkSettings,
   gruvboxLight: gruvboxLightSettings,
   materialDark: materialDarkSettings,
@@ -110,6 +106,7 @@ export const settings = {
   noctisLilac: noctisLilacSettings,
   nord: nordSettings,
   monokai: monokaiSettings,
+  redText: redTextSettings,
   solarizedLight: solarizedLightSettings,
   solarizedDark: solarizedDarkSettings,
   sublime: sublimeSettings,
@@ -118,7 +115,6 @@ export const settings = {
   vscodeDark: vscodeDarkSettings,
   vscodeLight: vscodeLightSettings,
   xcodeLight: xcodeLightSettings,
-  //xcodeDark: xcodeDarkSettings,
   tokyoNightDay: tokyoNightDaySettings,
 };
 

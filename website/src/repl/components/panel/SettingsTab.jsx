@@ -20,7 +20,7 @@ function Checkbox({ label, value, onChange, disabled = false }) {
 function SelectInput({ value, options, onChange }) {
   return (
     <select
-      className="p-2 bg-background rounded-md text-foreground"
+      className="p-2 bg-background rounded-md text-foreground  border-foreground"
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >

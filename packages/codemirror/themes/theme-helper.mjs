@@ -1,6 +1,9 @@
 import { EditorView } from '@codemirror/view';
+import { tags as t } from '@lezer/highlight';
 import { syntaxHighlighting } from '@codemirror/language';
 import { HighlightStyle } from '@codemirror/language';
+
+
 
 export const createTheme = ({ theme, settings, styles }) => {
   const _theme = EditorView.theme(
