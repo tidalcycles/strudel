@@ -17,7 +17,7 @@ export default createTheme({
   theme: 'dark',
   settings,
   styles: [
-    { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#89ddff'},
+    { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#89ddff' },
     { tag: t.labelName, color: '#89ddff' },
     { tag: t.keyword, color: '#c792ea' },
     { tag: t.operator, color: '#89ddff' },

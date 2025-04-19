@@ -31,7 +31,6 @@ import tokyoNightStorm, { settings as tokyoNightStormSettings } from './themes/t
 import tokyoNightDay, { settings as tokyoNightDaySettings } from './themes/tokyoNightDay.mjs';
 import vscodeDark, { settings as vscodeDarkSettings } from './themes/vscodeDark.mjs';
 import vscodeLight, { settings as vscodeLightSettings } from './themes/vscodeLight.mjs';
-// import xcodeDark, { settings as xcodeDarkSettings } from './themes/xcodeDark.mjs';
 import xcodeLight, { settings as xcodeLightSettings } from './themes/xcodeLight.mjs';
 import bbedit, { settings as bbeditSettings } from './themes/bbedit.mjs';
 import noctisLilac, { settings as noctisLilacSettings } from './themes/noctisLilac.mjs';
@@ -43,9 +42,6 @@ export const themes = {
   androidstudio,
   atomone,
   aura,
-  // todo: optimize
-  // bespin,
-  //abcdef,
   bbedit,
   blackscreen,
   bluescreen,
