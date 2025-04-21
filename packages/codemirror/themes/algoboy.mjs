@@ -54,6 +54,7 @@ export default createTheme({
       tag: [t.keyword, t.tagName, t.arithmeticOperator],
       color: palette[1],
     },
+    { tag: [t.atom, t.bool, t.special(t.variableName)], color: palette[0] },
     { tag: [t.function(t.variableName), t.propertyName], color: palette[0] },
     { tag: t.atom, color: palette[1] },
   ],

@@ -5,7 +5,7 @@ export function SelectInput({ value, options, onChange, onClick, isDisabled }) {
     <select
       disabled={isDisabled}
       onClick={onClick}
-      className="p-2 bg-background rounded-md text-foreground"
+      className="p-2 bg-background rounded-md text-foreground  border-foreground"
       value={value ?? ''}
       onChange={(e) => onChange(e.target.value)}
     >
