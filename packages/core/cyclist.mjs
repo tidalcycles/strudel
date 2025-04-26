@@ -96,7 +96,7 @@ export class Cyclist {
           (phase, duration, _, t) => {
             try {
               const start = Math.max(t, this.preparedUntil);
-              end = t + this.prepareTime;
+              const end = t + this.prepareTime;
               this.preparedUntil = end;
 
               const haps = this.pattern.queryArc(start, end, { _cps: 1 });
