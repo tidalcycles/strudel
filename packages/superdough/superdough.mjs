@@ -23,10 +23,9 @@ export function setMaxPolyphony(polyphony) {
 }
 export const soundMap = map();
 
-export function registerSound(key, onTrigger, data = {}, onPrepare = (() => {})) {
+export function registerSound(key, onTrigger, data = {}, onPrepare = () => {}) {
   key = key.toLowerCase().replace(/\s+/g, '_');
   soundMap.setKey(key, { onTrigger, data, onPrepare });
-
 }
 
 function aliasBankMap(aliasMap) {
@@ -724,13 +723,11 @@ export const superdoughTrigger = (t, hap, ct, cps) => {
 };
 
 export const prepare = (value) => {
-  const {
-    onPrepare,
-  } = getSound(value.s);
+  const { onPrepare } = getSound(value.s);
   if (onPrepare) {
     if (value.bank && value.s) {
       value.s = `${value.bank}_${value.s}`;
     }
     onPrepare(value);
   }
-}
+};

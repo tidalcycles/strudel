@@ -90,30 +90,32 @@ export class Cyclist {
       clearInterval,
     );
 
-    onPrepare? this.prepClock = createClock(
-      getTime,
-      (phase, duration, _, t) => {
-        try {
-          const start = Math.max(t, this.preparedUntil);
-          end = t + this.prepareTime;
-          this.preparedUntil = end;
+    onPrepare
+      ? (this.prepClock = createClock(
+          getTime,
+          (phase, duration, _, t) => {
+            try {
+              const start = Math.max(t, this.preparedUntil);
+              end = t + this.prepareTime;
+              this.preparedUntil = end;
 
-          const haps = this.pattern.queryArc(start, end, { _cps: 1 });
+              const haps = this.pattern.queryArc(start, end, { _cps: 1 });
 
-          haps.forEach((hap) => {
-            onPrepare?.(hap);
-          })
-        } catch (e) {
-          logger(`[cyclist] error: ${e.message}`);
-          onError?.(e);
-        }
-      },
-      1, // duration of each cycle
-      1,
-      0,
-      setInterval,
-      clearInterval,
-    ) : null;
+              haps.forEach((hap) => {
+                onPrepare?.(hap);
+              });
+            } catch (e) {
+              logger(`[cyclist] error: ${e.message}`);
+              onError?.(e);
+            }
+          },
+          1, // duration of each cycle
+          1,
+          0,
+          setInterval,
+          clearInterval,
+        ))
+      : null;
   }
   now() {
     if (!this.started) {

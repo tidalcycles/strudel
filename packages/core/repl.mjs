@@ -242,11 +242,11 @@ export const getTrigger =
   };
 
 export const getPrepare =
-  ({defaultPrepare}) =>
+  ({ defaultPrepare }) =>
   async (hap) => {
     try {
       await defaultPrepare(hap);
     } catch (err) {
       logger(`[cyclist] error: ${err.message}`, 'error');
     }
-  }
+  };
