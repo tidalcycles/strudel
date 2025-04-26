@@ -265,18 +265,27 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
   processSampleMap(
     sampleMap,
     (key, bank) =>
-      registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, bank), {
-        type: 'sample',
-        samples: bank,
-        baseUrl,
-        prebake,
-        tag,
-      }),
+      registerSound(
+        key,
+        (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, bank),
+        {
+          type: 'sample',
+          samples: bank,
+          baseUrl,
+          prebake,
+          tag,
+        },
+        (hapValue) => onPrepareSample(hapValue, bank),
+      ),
     baseUrl,
   );
 };
 
 const cutGroups = [];
+
+export async function onPrepareSample(hapValue, bank, resolveUrl) {
+  await getSampleBuffer(hapValue, bank, resolveUrl);
+}
 
 export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let {
