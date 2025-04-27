@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { getAudioDevices, setAudioDevice } from '../../util.mjs';
+
 import { SelectInput } from './SelectInput';
+import { getAudioDevices } from '@strudel/webaudio';
 
 const initdevices = new Map();
 
@@ -21,9 +22,7 @@ export function AudioDeviceSelector({ audioDeviceName, onChange, isDisabled }) {
     if (!devicesInitialized) {
       return;
     }
-    const deviceID = devices.get(deviceName);
     onChange(deviceName);
-    setAudioDevice(deviceID);
   };
   const options = new Map();
   Array.from(devices.keys()).forEach((deviceName) => {

@@ -38,12 +38,14 @@ export default createTheme({
       tag: [t.function(t.variableName), t.function(t.propertyName), t.url, t.processingInstruction],
       color: 'hsl(207, 82%, 66%)',
     },
+    { tag: [t.atom, t.bool, t.special(t.variableName)], color: 'hsl( 29, 54%, 61%)' },
     { tag: [t.tagName, t.heading], color: '#e06c75' },
     { tag: t.comment, color: '#54636D' },
     { tag: [t.variableName, t.propertyName, t.labelName], color: 'hsl(220, 14%, 71%)' },
     { tag: [t.attributeName, t.number], color: 'hsl( 29, 54%, 61%)' },
     { tag: t.className, color: 'hsl( 39, 67%, 69%)' },
     { tag: t.keyword, color: 'hsl(286, 60%, 67%)' },
+
     { tag: [t.string, t.regexp, t.special(t.propertyName)], color: '#98c379' },
   ],
 });

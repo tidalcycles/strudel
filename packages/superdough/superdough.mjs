@@ -14,13 +14,21 @@ import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
 
+export const DEFAULT_MAX_POLYPHONY = 128;
+const DEFAULT_AUDIO_DEVICE_NAME = 'System Standard';
+
+let maxPolyphony = DEFAULT_MAX_POLYPHONY;
+export function setMaxPolyphony(polyphony) {
+  maxPolyphony = parseInt(polyphony) ?? DEFAULT_MAX_POLYPHONY;
+}
 export const soundMap = map();
 
 export function registerSound(key, onTrigger, data = {}) {
-  soundMap.setKey(key.toLowerCase(), { onTrigger, data });
+  key = key.toLowerCase().replace(/\s+/g, '_');
+  soundMap.setKey(key, { onTrigger, data });
 }
 
-let gainCurveFunc = (val) => Math.pow(val, 2);
+let gainCurveFunc = (val) => Math.pow(val, 1);
 
 export function applyGainCurve(val) {
   return gainCurveFunc(val);
@@ -95,9 +103,21 @@ export function getSound(s) {
   return soundMap.get()[s.toLowerCase()];
 }
 
+export const getAudioDevices = async () => {
+  await navigator.mediaDevices.getUserMedia({ audio: true });
+  let mediaDevices = await navigator.mediaDevices.enumerateDevices();
+  mediaDevices = mediaDevices.filter((device) => device.kind === 'audiooutput' && device.deviceId !== 'default');
+  const devicesMap = new Map();
+  devicesMap.set(DEFAULT_AUDIO_DEVICE_NAME, '');
+  mediaDevices.forEach((device) => {
+    devicesMap.set(device.label, device.deviceId);
+  });
+  return devicesMap;
+};
+
 const defaultDefaultValues = {
   s: 'triangle',
-  gain: 1,
+  gain: .8,
   postgain: 1,
   density: '.03',
   ftype: '12db',
@@ -165,18 +185,40 @@ export function getAudioContextCurrentTime() {
 let workletsLoading;
 function loadWorklets() {
   if (!workletsLoading) {
-    workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
+    const audioCtx = getAudioContext();
+    workletsLoading = audioCtx.audioWorklet.addModule(workletsUrl);
   }
+
   return workletsLoading;
 }
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
-  const { disableWorklets = false } = options;
+  const { disableWorklets = false, maxPolyphony, audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME } = options;
+  setMaxPolyphony(maxPolyphony);
   if (typeof window === 'undefined') {
     return;
   }
-  await getAudioContext().resume();
+
+  const audioCtx = getAudioContext();
+
+  if (audioDeviceName != null && audioDeviceName != DEFAULT_AUDIO_DEVICE_NAME) {
+    try {
+      const devices = await getAudioDevices();
+      const id = devices.get(audioDeviceName);
+      const isValidID = (id ?? '').length > 0;
+      if (audioCtx.sinkId !== id && isValidID) {
+        await audioCtx.setSinkId(id);
+      }
+      logger(
+        `[superdough] Audio Device set to ${audioDeviceName}, it might take a few seconds before audio plays on all output channels`,
+      );
+    } catch {
+      logger('[superdough] failed to set audio interface', 'warning');
+    }
+  }
+
+  await audioCtx.resume();
   if (disableWorklets) {
     logger('[superdough]: AudioWorklets disabled with disableWorklets');
     return;
@@ -384,6 +426,8 @@ export function resetGlobalEffects() {
   analysersData = {};
 }
 
+let activeSoundSources = new Map();
+
 export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
@@ -487,14 +531,26 @@ export const superdough = async (value, t, hapDuration) => {
   distortvol = applyGainCurve(distortvol);
   delay = applyGainCurve(delay);
   velocity = applyGainCurve(velocity);
+  gain *= velocity; // velocity currently only multiplies with gain. it might do other things in the future
+
+  const chainID = Math.round(Math.random() * 1000000);
+
+  // oldest audio nodes will be destroyed if maximum polyphony is exceeded
+  for (let i = 0; i <= activeSoundSources.size - maxPolyphony; i++) {
+    const ch = activeSoundSources.entries().next();
+    const source = ch.value[1];
+    const chainID = ch.value[0];
+    const endTime = t + 0.25;
+    source?.node?.gain?.linearRampToValueAtTime(0, endTime);
+    source?.stop?.(endTime);
+    activeSoundSources.delete(chainID);
+  }
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
+  
+  let audioNodes = [];
 
-  let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
-  const onended = () => {
-    toDisconnect.forEach((n) => n?.disconnect());
-  };
   if (bank && s) {
     s = `${bank}_${s}`;
     value.s = s;
@@ -506,10 +562,15 @@ export const superdough = async (value, t, hapDuration) => {
     sourceNode = source(t, value, hapDuration);
   } else if (getSound(s)) {
     const { onTrigger } = getSound(s);
-    const soundHandle = await onTrigger(t, value, onended);
+    const onEnded = () => {
+      audioNodes.forEach((n) => n?.disconnect());
+      activeSoundSources.delete(chainID);
+    };
+    const soundHandle = await onTrigger(t, value, onEnded);
+
     if (soundHandle) {
       sourceNode = soundHandle.node;
-      soundHandle.stop(t + hapDuration);
+      activeSoundSources.set(chainID, soundHandle);
     }
   } else {
     throw new Error(`sound ${s} not found! Is it loaded?`);
@@ -640,6 +701,7 @@ export const superdough = async (value, t, hapDuration) => {
   if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
     const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
     delaySend = effectSend(post, delyNode, delay);
+    audioNodes.push(delaySend);
   }
   // reverb
   let reverbSend;
@@ -657,6 +719,7 @@ export const superdough = async (value, t, hapDuration) => {
     }
     const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, roomIR);
     reverbSend = effectSend(post, reverbNode, room);
+    audioNodes.push(reverbSend);
   }
 
   // analyser
@@ -664,14 +727,12 @@ export const superdough = async (value, t, hapDuration) => {
   if (analyze) {
     const analyserNode = getAnalyserById(analyze, 2 ** (fft + 5));
     analyserSend = effectSend(post, analyserNode, 1);
+    audioNodes.push(analyserSend);
   }
 
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
-
-  // toDisconnect = all the node that should be disconnected in onended callback
-  // this is crucial for performance
-  toDisconnect = chain.concat([delaySend, reverbSend, analyserSend]);
+  audioNodes = audioNodes.concat(chain);
 };
 
 export const superdoughTrigger = (t, hap, ct, cps) => {
