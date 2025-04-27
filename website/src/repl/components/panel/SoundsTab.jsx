@@ -110,7 +110,7 @@ export function SoundsTab() {
             <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
             <p>
               To import sounds into strudel, they must be contained{' '}
-              <a href={`${baseNoTrailing}/learn/samples/#from-disk-via-import-sounds`} target="_blank">
+              <a href={`${baseNoTrailing}/learn/samples/#from-disk-via-import-sounds-folder`} target="_blank">
                 within a folder or subfolder
               </a>
               . The best way to do this is to upload a “samples” folder containing subfolders of individual sounds or
@@ -134,7 +134,7 @@ export function SoundsTab() {
             </p>
             <p>
               For more information, and other ways to use your own sounds in strudel,{' '}
-              <a href={`${baseNoTrailing}/learn/samples/#from-disk-via-import-sounds`} target="_blank">
+              <a href={`${baseNoTrailing}/learn/samples/#from-disk-via-import-sounds-folder`} target="_blank">
                 check out the docs
               </a>
               !
