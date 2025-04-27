@@ -56,20 +56,21 @@ export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete =
 
             return blobToDataUrl(blob).then((soundPath) => {
               const titlePathMap = sounds.get(parentDirectory) ?? new Map();
-          
-              titlePathMap.set(title,soundPath)
-               
+
+              titlePathMap.set(title, soundPath);
+
               sounds.set(parentDirectory, titlePathMap);
               return;
             });
           }),
       )
         .then(() => {
-        
           sounds.forEach((titlePathMap, key) => {
-            const value = Array.from(titlePathMap.keys()).sort((a,b) => {
-            return  a.localeCompare(b)
-            }).map(title => titlePathMap.get(title));
+            const value = Array.from(titlePathMap.keys())
+              .sort((a, b) => {
+                return a.localeCompare(b);
+              })
+              .map((title) => titlePathMap.get(title));
 
             registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
               type: 'sample',
