@@ -29,7 +29,7 @@ export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key, { onTrigger, data });
 }
 
-let gainCurveFunc = (val) => Math.pow(val, 1);
+let gainCurveFunc = (val) => val;
 
 export function applyGainCurve(val) {
   return gainCurveFunc(val);
