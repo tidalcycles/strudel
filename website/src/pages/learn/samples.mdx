@@ -66,7 +66,7 @@ While it saves resources, it can also lead to sounds not being audible the first
 
 # Sound Banks
 
-If we open the `sounds` tab and then `drum machines`, we can see that the drum samples are all prefixed with drum machine names: `RolandTR808_bd`, `RolandTR808_sd`, `RolandTR808_hh` etc..
+If we open the `sounds` tab and then `drum-machines`, we can see that the drum samples are all prefixed with drum machine names: `RolandTR808_bd`, `RolandTR808_sd`, `RolandTR808_hh` etc..
 
 We _could_ use them like this:
 
@@ -180,11 +180,12 @@ It assumes a `strudel.json` file to be present at the root of the repository:
 https://raw.githubusercontent.com/<user>/<repo>/<branch>/strudel.json
 ```
 
-## From Disk via "Import Sounds"
+## From Disk via "Import Sounds Folder"
 
 If you don't want to upload your samples to the internet, you can also load them from your local disk.
-Go to the `sounds` tab in the REPL and press "import sounds".
-Then you can select a folder that contains audio files. The folder you select can also contain subfolders with audio files.
+Go to the `sounds` tab in the REPL and open the `import-sounds` tab below the search bar.
+Press the "import sounds folder" button and select a folder that contains audio files.
+The folder you select can also contain subfolders with audio files.
 Example:
 
 ```
@@ -200,12 +201,13 @@ Example:
 ```
 
 In the above example the folder `samples` contains 2 subfolders `swoop` and `smash`, which contain audio files.
-If you select that `samples` folder, the `user` tab (next to the import sounds button) will then contain 2 new sounds: `swoop(3) smash(3)`
+If you select that `samples` folder, the `user` tab (next to the `import-sounds` tab) will then contain 2 new sounds: `swoop(3) smash(3)`
 The individual samples can the be played normally like `s("swoop:0 swoop:1 smash:2")`.
+The samples within each sound use zero-based indexing in alphabetical order.
 
 ## From Disk via @strudel/sampler
 
-Instead of loading your samples into your browser with the "import sounds" button, you can also serve the samples from a local file server.
+Instead of loading your samples into your browser with the "import sounds folder" button, you can also serve the samples from a local file server.
 The easiest way to do this is using [@strudel/sampler](https://www.npmjs.com/package/@strudel/sampler):
 
 ```sh
