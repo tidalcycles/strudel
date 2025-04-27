@@ -18,6 +18,7 @@ export const DEFAULT_MAX_POLYPHONY = 128;
 const DEFAULT_AUDIO_DEVICE_NAME = 'System Standard';
 
 let maxPolyphony = DEFAULT_MAX_POLYPHONY;
+
 export function setMaxPolyphony(polyphony) {
   maxPolyphony = parseInt(polyphony) ?? DEFAULT_MAX_POLYPHONY;
 }
@@ -117,7 +118,7 @@ export const getAudioDevices = async () => {
 
 const defaultDefaultValues = {
   s: 'triangle',
-  gain: .8,
+  gain: 0.8,
   postgain: 1,
   density: '.03',
   ftype: '12db',
@@ -548,7 +549,7 @@ export const superdough = async (value, t, hapDuration) => {
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
-  
+
   let audioNodes = [];
 
   if (bank && s) {
