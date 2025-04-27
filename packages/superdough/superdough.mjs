@@ -592,7 +592,6 @@ export const superdough = async (value, t, hapDuration) => {
 
   // gain stage
   chain.push(gainNode(gain));
-  chain.push(gainNode(0.8 * velocity));
 
   //filter
   const ftype = getFilterType(value.ftype);
