@@ -203,7 +203,8 @@ const timeToIntSeed = (x) => xorwise(Math.trunc(_frac(x / 300) * 536870912));
 
 const intSeedToRand = (x) => (x % 536870912) / 536870912;
 
-const timeToRand = (x) => Math.abs(intSeedToRand(timeToIntSeed(x)));
+// Set first random value to be 0.5, otherwise it would be 0. https://github.com/tidalcycles/strudel/issues/1293
+const timeToRand = (x) => (x === 0 ? 0.5 : Math.abs(intSeedToRand(timeToIntSeed(x))));
 
 const timeToRandsPrime = (seed, n) => {
   const result = [];
