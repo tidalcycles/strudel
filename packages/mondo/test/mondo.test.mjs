@@ -155,9 +155,12 @@ describe('mondo arithmetic', () => {
     sin: Math.sin,
     cos: Math.cos,
     PI: Math.PI,
-    cons: (a, b) => [a, b],
+    cons: (a, b) => [a, ...(Array.isArray(b) ? b : [b])],
     car: (pair) => pair[0],
-    cdr: (pair) => pair[1],
+    cdr: (pair) => pair.slice(1),
+    list: (...items) => items,
+    nil: [],
+    isnull: (items) => items.length === 0,
     concat: (...msgs) => msgs.join(''),
     error: (...msgs) => {
       throw new Error(msgs.join(' '));
@@ -865,4 +868,103 @@ describe('mondo arithmetic', () => {
     ).toEqual(0));
   it('sicp 124.1', () => expect(evaluate(`(car (cons first second))`, lscope)).toEqual('first'));
   it('sicp 124.2', () => expect(evaluate(`(cdr (cons first second))`, lscope)).toEqual('second'));
+  // lists
+  it('sicp 135.1', () => expect(evaluate(`(list 1 2 3 4)`)).toEqual([1, 2, 3, 4]));
+  it('sicp 137.1', () => expect(evaluate(`(car (list 1 2 3 4))`)).toEqual(1));
+  it('sicp 137.2', () => expect(evaluate(`(cdr (list 1 2 3 4))`)).toEqual([2, 3, 4]));
+  it('sicp 137.3', () => expect(evaluate(`(car (cdr (list 1 2 3 4)))`)).toEqual(2));
+  it('sicp 137.4', () => expect(evaluate(`(cons 10 (list 1 2 3 4))`)).toEqual([10, 1, 2, 3, 4]));
+  // listref
+  it('sicp 138.1', () =>
+    expect(
+      evaluate(
+        `
+(def (listref items n) (if (eq n 0) (car items) 
+ (listref (cdr items) (- n 1)))) 
+(def squares (list 1 4 9 16 25)) 
+(listref squares 3)`,
+        scope,
+      ),
+    ).toEqual(16));
+  // length recursive
+  it('sicp 138.2', () =>
+    expect(
+      evaluate(
+        `
+  (def (length items) 
+   (if (isnull items) 0
+    (+ 1 (length (cdr items))))) 
+  (def odds (list 1 3 5 7)) 
+  (length odds)`,
+      ),
+    ).toEqual(4));
+  // length iterative
+  it('sicp 139.1', () =>
+    expect(
+      evaluate(
+        `
+  (def (length items)
+  (def (lengthiter a count)
+   (if (isnull a) count
+    (lengthiter (cdr a) (+ 1 count))))
+    (lengthiter items 0))
+  (def odds (list 1 3 5 7)) 
+  (length odds)
+  `,
+        scope,
+      ),
+    ).toEqual(4));
+  // append
+  it('sicp 139.1', () =>
+    expect(
+      evaluate(
+        `
+(def (append list1 list2) 
+(if (isnull list1)
+  list2
+  (cons (car list1) (append (cdr list1) list2))))
+  (append squares odds)
+    `,
+        scope,
+      ),
+    ).toEqual([1, 4, 9, 16, 25, 1, 3, 5, 7]));
+  // (define (f x y . z) ⟨body⟩) <- tbd: variable argument count
+  // Mapping over lists
+
+  it('sicp 143.1', () =>
+    expect(
+      evaluate(
+        `
+(def (scalelist items factor) (if (isnull items) nil
+    (cons (* (car items) factor)
+          (scalelist (cdr items) factor))))
+(scalelist (list 1 2 3 4 5) 10)
+    `,
+        scope,
+      ),
+    ).toEqual([10, 20, 30, 40, 50]));
+
+  it('sicp 143.1', () =>
+    expect(
+      evaluate(
+        `
+  (def (map proc items) (if (isnull items) nil
+        (cons (proc (car items))
+              (map proc (cdr items)))))
+  (map abs (list -10 2.5 -11.6 17))
+  `,
+        scope,
+      ),
+    ).toEqual([10, 2.5, 11.6, 17]));
+  it('sicp 143.1', () => expect(evaluate(`(map (fn (x) (* x x)) (list 1 2 3 4))`, scope)).toEqual([1, 4, 9, 16]));
+  it('sicp 143.1', () =>
+    expect(
+      evaluate(
+        `
+(def (scalelist items factor) (map (fn (x) (* x factor)) items))
+(scalelist (list 1 2 3 4 5) 10)
+`,
+        scope,
+      ),
+    ).toEqual([10, 20, 30, 40, 50]));
 });
