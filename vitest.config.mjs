@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import bundleAudioWorkletPlugin from './packages/vite-plugin-bundle-audioworklet/vite-plugin-bundle-audioworklet';
+import bundleAudioWorkletPlugin from 'vite-plugin-bundle-audioworklet';
 
 /// <reference types="vitest" />
 export default defineConfig({

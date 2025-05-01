@@ -75,6 +75,9 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:packages/vite-plugin-bundle-audioworklet
       vitest:
         specifier: ^3.0.4
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
