@@ -710,6 +710,9 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
   }
 
   process(inputs, outputs, params) {
+    if (this.disconnected) {
+      return false;
+    }
     if (currentTime <= params.begin[0]) {
       return true;
     }

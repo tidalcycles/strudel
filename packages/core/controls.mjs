@@ -1,5 +1,5 @@
 /*
-controls.mjs - <short description TODO>
+controls.mjs - Registers audio controls for pattern manipulation and effects.
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/controls.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -1523,22 +1523,11 @@ export const { scram } = registerControl('scram');
 export const { binshift } = registerControl('binshift');
 export const { hbrick } = registerControl('hbrick');
 export const { lbrick } = registerControl('lbrick');
-export const { midichan } = registerControl('midichan');
-export const { midimap } = registerControl('midimap');
-export const { midiport } = registerControl('midiport');
-export const { control } = registerControl('control');
-export const { ccn } = registerControl('ccn');
-export const { ccv } = registerControl('ccv');
-export const { polyTouch } = registerControl('polyTouch');
-export const { midibend } = registerControl('midibend');
-export const { miditouch } = registerControl('miditouch');
-export const { ctlNum } = registerControl('ctlNum');
+
 export const { frameRate } = registerControl('frameRate');
 export const { frames } = registerControl('frames');
 export const { hours } = registerControl('hours');
-export const { midicmd } = registerControl('midicmd');
 export const { minutes } = registerControl('minutes');
-export const { progNum } = registerControl('progNum');
 export const { seconds } = registerControl('seconds');
 export const { songPtr } = registerControl('songPtr');
 export const { uid } = registerControl('uid');
@@ -1631,6 +1620,151 @@ export const ar = register('ar', (t, pat) => {
   return pat.set({ attack, release });
 });
 
+//MIDI
+
+/**
+ * MIDI channel: Sets the MIDI channel for the event.
+ *
+ * @name midichan
+ * @param {number | Pattern} channel MIDI channel number (0-15)
+ * @example
+ * note("c4").midichan(1).midi()
+ */
+export const { midichan } = registerControl('midichan');
+
+export const { midimap } = registerControl('midimap');
+
+/**
+ * MIDI port: Sets the MIDI port for the event.
+ *
+ * @name midiport
+ * @param {number | Pattern} port MIDI port
+ * @example
+ * note("c a f e").midiport("<0 1 2 3>").midi()
+ */
+export const { midiport } = registerControl('midiport');
+
+/**
+ * MIDI command: Sends a MIDI command message.
+ *
+ * @name midicmd
+ * @param {number | Pattern} command MIDI command
+ * @example
+ * midicmd("clock*48,<start stop>/2").midi()
+ */
+export const { midicmd } = registerControl('midicmd');
+
+/**
+ * MIDI control: Sends a MIDI control change message.
+ *
+ * @name control
+ * @param {number | Pattern}  MIDI control number (0-127)
+ * @param {number | Pattern}  MIDI controller value (0-127)
+ */
+export const control = register('control', (args, pat) => {
+  if (!Array.isArray(args)) {
+    throw new Error('control expects an array of [ccn, ccv]');
+  }
+  const [_ccn, _ccv] = args;
+  return pat.ccn(_ccn).ccv(_ccv);
+});
+
+/**
+ * MIDI control number: Sends a MIDI control change message.
+ *
+ * @name ccn
+ * @param {number | Pattern}  MIDI control number (0-127)
+ */
+export const { ccn } = registerControl('ccn');
+/**
+ * MIDI control value: Sends a MIDI control change message.
+ *
+ * @name ccv
+ * @param {number | Pattern}  MIDI control value (0-127)
+ */
+export const { ccv } = registerControl('ccv');
+export const { ctlNum } = registerControl('ctlNum');
+// TODO: ctlVal?
+
+/**
+ * MIDI NRPN non-registered parameter number: Sends a MIDI NRPN non-registered parameter number message.
+ * @name nrpnn
+ * @param {number | Pattern} nrpnn MIDI NRPN non-registered parameter number (0-127)
+ * @example
+ * note("c4").nrpnn("1:8").nrpv("123").midichan(1).midi()
+ */
+export const { nrpnn } = registerControl('nrpnn');
+/**
+ * MIDI NRPN non-registered parameter value: Sends a MIDI NRPN non-registered parameter value message.
+ * @name nrpv
+ * @param {number | Pattern} nrpv MIDI NRPN non-registered parameter value (0-127)
+ * @example
+ * note("c4").nrpnn("1:8").nrpv("123").midichan(1).midi()
+ */
+export const { nrpv } = registerControl('nrpv');
+
+/**
+ * MIDI program number: Sends a MIDI program change message.
+ *
+ * @name progNum
+ * @param {number | Pattern} program MIDI program number (0-127)
+ * @example
+ * note("c4").progNum(10).midichan(1).midi()
+ */
+export const { progNum } = registerControl('progNum');
+
+/**
+ * MIDI sysex: Sends a MIDI sysex message.
+ * @name sysex
+ * @param {number | Pattern} id Sysex ID
+ * @param {number | Pattern} data Sysex data
+ * @example
+ * note("c4").sysex(["0x77", "0x01:0x02:0x03:0x04"]).midichan(1).midi()
+ */
+export const sysex = register('sysex', (args, pat) => {
+  if (!Array.isArray(args)) {
+    throw new Error('sysex expects an array of [id, data]');
+  }
+  const [id, data] = args;
+  return pat.sysexid(id).sysexdata(data);
+});
+/**
+ * MIDI sysex ID: Sends a MIDI sysex identifier message.
+ * @name sysexid
+ * @param {number | Pattern} id Sysex ID
+ * @example
+ * note("c4").sysexid("0x77").sysexdata("0x01:0x02:0x03:0x04").midichan(1).midi()
+ */
+export const { sysexid } = registerControl('sysexid');
+/**
+ * MIDI sysex data: Sends a MIDI sysex message.
+ * @name sysexdata
+ * @param {number | Pattern} data Sysex data
+ * @example
+ * note("c4").sysexid("0x77").sysexdata("0x01:0x02:0x03:0x04").midichan(1).midi()
+ */
+export const { sysexdata } = registerControl('sysexdata');
+
+/**
+ * MIDI pitch bend: Sends a MIDI pitch bend message.
+ * @name midibend
+ * @param {number | Pattern} midibend MIDI pitch bend (-1 - 1)
+ * @example
+ * note("c4").midibend(sine.slow(4).range(-0.4,0.4)).midi()
+ */
+export const { midibend } = registerControl('midibend');
+/**
+ * MIDI key after touch: Sends a MIDI key after touch message.
+ * @name miditouch
+ * @param {number | Pattern} miditouch MIDI key after touch (0-1)
+ * @example
+ * note("c4").miditouch(sine.slow(4).range(0,1)).midi()
+ */
+export const { miditouch } = registerControl('miditouch');
+
+// TODO: what is this?
+export const { polyTouch } = registerControl('polyTouch');
+
 export const getControlName = (alias) => {
   if (controlAlias.has(alias)) {
     return controlAlias.get(alias);
@@ -1642,14 +1776,46 @@ export const getControlName = (alias) => {
  * Sets properties in a batch.
  *
  * @name as
- * @param {Array} mapping the control names that are set
+ * @param {String | Array} mapping the control names that are set
  * @example
  * "c:.5 a:1 f:.25 e:.8".as("note:clip")
+ * @example
+ * "{0@2 0.25 0 0.5 .3 .5}%8".as("begin").s("sax_vib").clip(1)
  */
 export const as = register('as', (mapping, pat) => {
+  mapping = Array.isArray(mapping) ? mapping : [mapping];
   return pat.fmap((v) => {
     v = Array.isArray(v) ? v : [v];
     v = Object.fromEntries(mapping.map((prop, i) => [getControlName(prop), v[i]]));
     return v;
   });
 });
+
+/**
+ * Allows you to scrub an audio file like a tape loop by passing values that represents the position in the audio file
+ * in the optional array syntax ex: "0.5:2", the second value controls the speed of playback
+ * @name scrub
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * samples('github:switchangel/pad')
+ * s("swpad:0").scrub("{0.1!2 .25@3 0.7!2 <0.8:1.5>}%8")
+ * @example
+ * samples('github:yaxu/clean-breaks/main');
+ * s("amen/4").fit().scrub("{0@3 0@2 4@3}%8".div(16))
+ */
+
+export const scrub = register(
+  'scrub',
+  (beginPat, pat) => {
+    return beginPat.outerBind((v) => {
+      if (!Array.isArray(v)) {
+        v = [v];
+      }
+      const [beginVal, speedMultiplier = 1] = v;
+
+      return pat.begin(beginVal).mul(speed(speedMultiplier)).clip(1);
+    });
+  },
+  false,
+);
