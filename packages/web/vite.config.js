@@ -8,7 +8,6 @@ import bundleAudioWorkletPlugin from 'vite-plugin-bundle-audioworklet';
 export default defineConfig({
   plugins: [bundleAudioWorkletPlugin()],
   base: './',
-  plugins: [],
   build: {
     lib: {
       entry: resolve(__dirname, 'web.mjs'),
