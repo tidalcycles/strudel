@@ -32,7 +32,8 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "devDependencies": {
-    "vite": "^6.0.11"
+    "vite": "^6.0.11",
+    "vite-plugin-bundle-audioworklet": "workspace:*"
   },
   "dependencies": {
     "nanostores": "^0.11.3"

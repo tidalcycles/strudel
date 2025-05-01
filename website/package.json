@@ -73,6 +73,7 @@
     "@vite-pwa/astro": "^0.5.0",
     "html-escaper": "^3.0.3",
     "sharp": "^0.33.5",
-    "workbox-window": "^7.3.0"
+    "workbox-window": "^7.3.0",
+    "vite-plugin-bundle-audioworklet": "workspace:*"
   }
 }
