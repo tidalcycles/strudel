@@ -8,7 +8,7 @@ import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
 import { clamp, nanFallback, _mod } from './util.mjs';
-import workletsUrl from './worklets.mjs?worker&url';
+import workletsUrl from './worklets.mjs?audioworklet';
 import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
