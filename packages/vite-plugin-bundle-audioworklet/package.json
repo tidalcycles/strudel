@@ -4,14 +4,11 @@
   "version": "0.1.0",
   "description": "",
   "keywords": [
-    "tidalcycles",
-    "strudel",
-    "pattern",
-    "livecoding",
-    "algorave"
+    "vite",
+    "audioworklet"
   ],
   "author": "Felix Roos <flix91@gmail.com>",
-  "license": "AGPL-3.0-or-later",
+  "license": "MIT",
   "type": "module",
   "devDependencies": {
     "vite": "^6.0.11"
