@@ -2,12 +2,12 @@ import { createLogger, build } from 'vite';
 
 const end = '?audioworklet';
 
-export function bundleAudioWorkletPlugin() /* : PluginOption */ {
+function bundleAudioWorkletPlugin() /* : PluginOption */ {
   let viteConfig /* : UserConfig */;
 
   return {
     name: 'vite-plugin-bundle-audioworklet',
-    apply: 'build',
+    /* apply: 'build', */
     enforce: 'post',
 
     config(config) {
@@ -44,3 +44,5 @@ export function bundleAudioWorkletPlugin() /* : PluginOption */ {
     },
   };
 }
+
+export default bundleAudioWorkletPlugin;
