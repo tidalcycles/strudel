@@ -8,6 +8,7 @@ This program is free software: you can redistribute it and/or modify it under th
 export class MondoParser {
   // these are the tokens we expect
   token_types = {
+    comment: /^\/\/(.*?)(?=\n|$)/,
     quotes_double: /^"(.*?)"/,
     quotes_single: /^'(.*?)'/,
     open_list: /^\(/,
@@ -428,7 +429,9 @@ export class MondoRunner {
   }
   evaluate_list(ast, scope) {
     // evaluate all children before evaluating list (dont mutate!!!)
-    const args = ast.children.map((arg) => this.evaluate(arg, scope));
+    const args = ast.children
+      .filter((child) => child.type !== 'comment') // ignore comments
+      .map((arg) => this.evaluate(arg, scope));
     const node = { type: 'list', children: args };
     return this.evaluator(node, scope);
   }

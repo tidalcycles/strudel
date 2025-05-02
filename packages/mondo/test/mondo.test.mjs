@@ -67,6 +67,14 @@ describe('mondo s-expressions parser', () => {
         { type: 'number', value: '22.3' },
       ],
     }));
+  it('should parse comments', () =>
+    expect(p('a // hello')).toEqual({
+      type: 'list',
+      children: [
+        { type: 'plain', value: 'a' },
+        { type: 'comment', value: '// hello' },
+      ],
+    }));
 });
 
 let desguar = (a) => {
