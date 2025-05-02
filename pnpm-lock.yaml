@@ -75,6 +75,9 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:packages/vite-plugin-bundle-audioworklet
       vitest:
         specifier: ^3.0.4
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
@@ -456,6 +459,9 @@ importers:
       vite:
         specifier: ^6.0.11
         version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../vite-plugin-bundle-audioworklet
 
   packages/sampler:
     dependencies:
@@ -504,6 +510,9 @@ importers:
       vite:
         specifier: ^6.0.11
         version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../vite-plugin-bundle-audioworklet
 
   packages/tidal:
     dependencies:
@@ -568,6 +577,12 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
 
+  packages/vite-plugin-bundle-audioworklet:
+    devDependencies:
+      vite:
+        specifier: ^6.0.11
+        version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+
   packages/web:
     dependencies:
       '@strudel/core':
@@ -592,6 +607,9 @@ importers:
       vite:
         specifier: ^6.0.11
         version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../vite-plugin-bundle-audioworklet
 
   packages/webaudio:
     dependencies:
@@ -811,6 +829,9 @@ importers:
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../packages/vite-plugin-bundle-audioworklet
       workbox-window:
         specifier: ^7.3.0
         version: 7.3.0

@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import { dependencies } from './package.json';
 import { resolve } from 'path';
+import bundleAudioWorkletPlugin from 'vite-plugin-bundle-audioworklet';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [],
+  plugins: [bundleAudioWorkletPlugin()],
   build: {
     lib: {
       entry: resolve(__dirname, 'index.mjs'),

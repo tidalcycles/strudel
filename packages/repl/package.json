@@ -1,6 +1,6 @@
 {
   "name": "@strudel/repl",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Strudel REPL as a Web Component",
   "module": "index.mjs",
   "publishConfig": {
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^6.0.2",
-    "vite": "^6.0.11"
+    "vite": "^6.0.11",
+    "vite-plugin-bundle-audioworklet": "workspace:*"
   }
 }
