@@ -1,6 +1,9 @@
 # mondo
 
-an experimental parser for a maxi notation, a custom dsl for patterns that can stand on its own feet. more info:
+a lisp-based language intended to be used as a custom dsl for patterns that can stand on its own feet. 
+see the `test` folder for usage examples
+
+more info:
 
 - [uzulang I](https://garten.salat.dev/uzu/uzulang1.html)
 - [uzulang II](https://garten.salat.dev/uzu/uzulang2.html)
