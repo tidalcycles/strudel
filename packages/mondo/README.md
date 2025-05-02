@@ -1,6 +1,6 @@
 # mondo
 
-an experimental parser for an *uzulang*, a custom dsl for patterns that can stand on its own feet. more info:
+an experimental parser for a maxi notation, a custom dsl for patterns that can stand on its own feet. more info:
 
 - [uzulang I](https://garten.salat.dev/uzu/uzulang1.html)
 - [uzulang II](https://garten.salat.dev/uzu/uzulang2.html)
