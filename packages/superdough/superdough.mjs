@@ -101,6 +101,10 @@ export async function aliasBank(...args) {
 }
 
 export function getSound(s) {
+  if (typeof s !== 'string') {
+    console.warn(`getSound: expected string got "${s}". fall back to triangle`);
+    return soundMap.get().triangle; // is this good?
+  }
   return soundMap.get()[s.toLowerCase()];
 }
 
