@@ -49,6 +49,10 @@ function evaluator(node, scope) {
   if (type === 'list') {
     const { children } = node;
     const [name, ...args] = children;
+    // some functions wont be reified to make sure they work (e.g. see extend below)
+    if (typeof name === 'function') {
+      return name(...args);
+    }
     if (name.value === 'def') {
       return silence;
     }
@@ -56,7 +60,7 @@ function evaluator(node, scope) {
     const first = name.firstCycle(true)[0];
     const type = typeof first?.value;
     if (type !== 'function') {
-      throw new Error(`[mondough] "${first}" is not a function, got ${type} ...`);
+      throw new Error(`[mondough] expected function, got "${first?.value}"`);
     }
     return name
       .fmap((fn) => {
@@ -73,10 +77,14 @@ function evaluator(node, scope) {
     return reify(scope[value]); // -> local scope has no location
   }
   const variable = lib[value] ?? strudelScope[value];
+  // problem: collisions when we want a string that happens to also be a variable name
+  // example: "s sine" -> sine is also a variable
   let pat;
   if (type === 'plain' && typeof variable !== 'undefined') {
-    // problem: collisions when we want a string that happens to also be a variable name
-    // example: "s sine" -> sine is also a variable
+    // some function names are not patternable, so we skip reification here
+    if (['!', 'extend', '@', 'expand'].includes(value)) {
+      return variable;
+    }
     pat = reify(variable);
   } else {
     pat = reify(value);
