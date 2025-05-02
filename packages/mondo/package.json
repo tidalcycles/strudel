@@ -1,5 +1,5 @@
 {
-  "name": "mondo",
+  "name": "mondolang",
   "version": "1.1.0",
   "description": "a language for functional composition that translates to js",
   "main": "mondo.mjs",

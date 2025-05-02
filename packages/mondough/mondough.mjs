@@ -13,7 +13,7 @@ import {
   silence,
 } from '@strudel/core';
 import { registerLanguage } from '@strudel/transpiler';
-import { MondoRunner } from '../mondo/mondo.mjs';
+import { MondoRunner } from 'mondolang';
 
 const tail = (friend, pat) => pat.fmap((a) => (b) => (Array.isArray(a) ? [...a, b] : [a, b])).appLeft(friend);
 

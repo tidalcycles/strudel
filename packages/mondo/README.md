@@ -11,7 +11,7 @@ more info:
 ## Example Usage
 
 ```js
-import { MondoRunner } from 'mondo'
+import { MondoRunner } from 'mondolang'
 // define our library of functions and variables
 let lib = {
   add: (a, b) => a + b,

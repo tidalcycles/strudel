@@ -364,6 +364,9 @@ importers:
       '@strudel/transpiler':
         specifier: workspace:*
         version: link:../transpiler
+      mondolang:
+        specifier: workspace:*
+        version: link:../mondo
     devDependencies:
       mondo:
         specifier: '*'
