@@ -22,7 +22,7 @@ export class MondoParser {
     number: /^-?[0-9]*\.?[0-9]+/, // before pipe!
     op: /^[*/:!@%?+-]|^\.{2}/, // * / : ! @ % ? ..
     // dollar: /^\$/,
-    pipe: /^\#/,
+    pipe: /^#/,
     stack: /^[,$]/,
     or: /^[|]/,
     plain: /^[a-zA-Z0-9-~_^#]+/,
@@ -309,9 +309,8 @@ export function printAst(ast, compact = false, lvl = 0) {
   const br = compact ? '' : '\n';
   const spaces = compact ? '' : Array(lvl).fill(' ').join('');
   if (ast.type === 'list') {
-    return `${lvl ? br : ''}${spaces}(${ast.children.map((child) => printAst(child, compact, lvl + 1)).join(' ')}${
-      ast.children.find((child) => child.type === 'list') ? `${br}${spaces})` : ')'
-    }`;
+    return `${lvl ? br : ''}${spaces}(${ast.children.map((child) => printAst(child, compact, lvl + 1)).join(' ')}${ast.children.find((child) => child.type === 'list') ? `${br}${spaces})` : ')'
+      }`;
   }
   return `${ast.value}`;
 }
