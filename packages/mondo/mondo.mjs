@@ -155,7 +155,9 @@ export class MondoParser {
       if (opIndex === -1) break;
       const op = { type: 'plain', value: children[opIndex].value };
       if (opIndex === children.length - 1) {
-        throw new Error(`cannot use operator as last child.`);
+        //throw new Error(`cannot use operator as last child.`);
+        children[opIndex] = op; // ignore operator if last child.. e.g. "note [c -]"
+        continue;
       }
       if (opIndex === 0) {
         // regular function call (assuming each operator exists as function)
