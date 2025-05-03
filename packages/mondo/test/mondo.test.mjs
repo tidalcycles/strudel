@@ -89,13 +89,13 @@ describe('mondo sugar', () => {
   it('should desugar mixed [] <>', () => expect(desguar('[a <b c>]')).toEqual('(square a (angle b c))'));
   it('should desugar mixed <> []', () => expect(desguar('<a [b c]>')).toEqual('(angle a (square b c))'));
 
-  it('should desugar .', () => expect(desguar('s jazz . fast 2')).toEqual('(fast 2 (s jazz))'));
-  it('should desugar . square', () => expect(desguar('[bd cp . fast 2]')).toEqual('(fast 2 (square bd cp))'));
-  it('should desugar . twice', () => expect(desguar('s jazz . fast 2 . slow 2')).toEqual('(slow 2 (fast 2 (s jazz)))'));
-  it('should desugar . nested', () => expect(desguar('(s cp . fast 2)')).toEqual('(fast 2 (s cp))'));
-  it('should desugar . within []', () => expect(desguar('[bd cp . fast 2]')).toEqual('(fast 2 (square bd cp))'));
-  it('should desugar . within , within []', () =>
-    expect(desguar('[bd cp . fast 2, x]')).toEqual('(stack (fast 2 (square bd cp)) x)'));
+  it('should desugar #', () => expect(desguar('s jazz # fast 2')).toEqual('(fast 2 (s jazz))'));
+  it('should desugar # square', () => expect(desguar('[bd cp # fast 2]')).toEqual('(fast 2 (square bd cp))'));
+  it('should desugar # twice', () => expect(desguar('s jazz # fast 2 # slow 2')).toEqual('(slow 2 (fast 2 (s jazz)))'));
+  it('should desugar # nested', () => expect(desguar('(s cp # fast 2)')).toEqual('(fast 2 (s cp))'));
+  it('should desugar # within []', () => expect(desguar('[bd cp # fast 2]')).toEqual('(fast 2 (square bd cp))'));
+  it('should desugar # within , within []', () =>
+    expect(desguar('[bd cp # fast 2, x]')).toEqual('(stack (fast 2 (square bd cp)) x)'));
 
   // it('should desugar .(.', () => expect(desguar('[jazz hh.(.fast 2)]')).toEqual('(square jazz (fast 2 hh))'));
 
@@ -123,15 +123,15 @@ describe('mondo sugar', () => {
   it('should desugar x $ y . z', () => expect(desguar('x $ y . z')).toEqual('(z (x y))')); */
 
   it('should desugar README example', () =>
-    expect(desguar('s [bd hh*2 (cp.crush 4) <mt ht lt>] . speed .8')).toEqual(
+    expect(desguar('s [bd hh*2 (cp # crush 4) <mt ht lt>] # speed .8')).toEqual(
       '(speed .8 (s (square bd (* 2 hh) (crush 4 cp) (angle mt ht lt))))',
     ));
 
-  it('should desugar (.)', () => expect(desguar('(.)')).toEqual('(fn (_) _)'));
-  it('should desugar lambda', () => expect(desguar('(.fast 2)')).toEqual('(fn (_) (fast 2 _))'));
-  it('should desugar lambda call', () => expect(desguar('((.mul 2) 2)')).toEqual('((fn (_) (mul 2 _)) 2)'));
+  it('should desugar (#)', () => expect(desguar('(#)')).toEqual('(fn (_) _)'));
+  it('should desugar lambda', () => expect(desguar('(# fast 2)')).toEqual('(fn (_) (fast 2 _))'));
+  it('should desugar lambda call', () => expect(desguar('((# mul 2) 2)')).toEqual('((fn (_) (mul 2 _)) 2)'));
   it('should desugar lambda with pipe', () =>
-    expect(desguar('(.fast 2 .room 1)')).toEqual('(fn (_) (room 1 (fast 2 _)))'));
+    expect(desguar('(# fast 2 # room 1)')).toEqual('(fn (_) (room 1 (fast 2 _)))'));
   /* const lambda = parser.parse('(lambda (_) (fast 2 _))');
   const target = { type: 'plain', value: 'xyz' };
   it('should desugar_lambda', () =>
@@ -141,8 +141,8 @@ describe('mondo sugar', () => {
 describe('mondo arithmetic', () => {
   let multi =
     (op) =>
-    (init, ...rest) =>
-      rest.reduce((acc, arg) => op(acc, arg), init);
+      (init, ...rest) =>
+        rest.reduce((acc, arg) => op(acc, arg), init);
 
   let lib = {
     '+': multi((a, b) => a + b),
