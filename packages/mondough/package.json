@@ -1,0 +1,44 @@
+{
+  "name": "@strudel/mondo",
+  "version": "1.1.0",
+  "description": "mondo notation for strudel",
+  "main": "mondough.mjs",
+  "type": "module",
+  "publishConfig": {
+    "main": "dist/mondough.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "bench": "vitest bench",
+    "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs",
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@strudel/core": "workspace:*",
+    "@strudel/transpiler": "workspace:*",
+    "mondolang": "workspace:*"
+  },
+  "devDependencies": {
+    "mondo": "*",
+    "vite": "^6.0.11",
+    "vitest": "^3.0.4"
+  }
+}
