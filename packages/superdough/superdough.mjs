@@ -123,9 +123,9 @@ const defaultDefaultValues = {
   density: '.03',
   ftype: '12db',
   fanchor: 0,
-  resonance: 1,
-  hresonance: 1,
-  bandq: 1,
+  resonance: .183,
+  hresonance: .183,
+  bandq: .183,
   channels: [1, 2],
   phaserdepth: 0.75,
   shapevol: 1,
@@ -181,6 +181,10 @@ export const getAudioContext = () => {
 
 export function getAudioContextCurrentTime() {
   return getAudioContext().currentTime;
+}
+function applyResonanceCurve(res) {
+  return Math.min(30.03, Math.pow(res * 5.48, 2))
+
 }
 
 let workletsLoading;
@@ -526,6 +530,10 @@ export const superdough = async (value, t, hapDuration) => {
     compressorRelease,
   } = value;
 
+  resonance = applyResonanceCurve(resonance)
+  hresonance = applyResonanceCurve(hresonance)
+  bandq = applyResonanceCurve(bandq)
+  
   gain = applyGainCurve(nanFallback(gain, 1));
   postgain = applyGainCurve(postgain);
   shapevol = applyGainCurve(shapevol);
