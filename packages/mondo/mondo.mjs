@@ -309,8 +309,9 @@ export function printAst(ast, compact = false, lvl = 0) {
   const br = compact ? '' : '\n';
   const spaces = compact ? '' : Array(lvl).fill(' ').join('');
   if (ast.type === 'list') {
-    return `${lvl ? br : ''}${spaces}(${ast.children.map((child) => printAst(child, compact, lvl + 1)).join(' ')}${ast.children.find((child) => child.type === 'list') ? `${br}${spaces})` : ')'
-      }`;
+    return `${lvl ? br : ''}${spaces}(${ast.children.map((child) => printAst(child, compact, lvl + 1)).join(' ')}${
+      ast.children.find((child) => child.type === 'list') ? `${br}${spaces})` : ')'
+    }`;
   }
   return `${ast.value}`;
 }

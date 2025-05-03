@@ -14,20 +14,25 @@ Here's an example:
 <MiniRepl
   mondo
   client:idle
-  tune={`$ note (c2 .euclid <3 6 3> <8 16>) . *2 
-.s "sine" .add (note [0 <12 24>]*2)
-.dec(sine .range .2 2) .room .5
-.lpf(sine/3.range 120 400)
-.lpenv(rand .range .5 4)
-.lpq(perlin .range 5 12 . * 2)
-.dist 1 .fm 4 .fmh 5.01 .fmdecay <.1 .2>
-.postgain .6 .delay .1 .clip 5
+  tune={`$ note (c2 # euclid <3 6 3> <8 16>) # *2 
+  # s "sine" # add (note [0 <12 24>]*2)
+  # dec(sine # range .2 2) 
+  # room .5
+  # lpf (sine/3 # range 120 400)
+  # lpenv (rand # range .5 4)
+  # lpq (perlin # range 5 12 # * 2)
+  # dist 1 # fm 4 # fmh 5.01 # fmdecay <.1 .2>
+  # postgain .6 # delay .1 # clip 5
 
-$ s [bd bd bd bd] .bank tr909.clip.5
-.ply<1 [1 [2 4]]>
+$ s [bd bd bd bd] # bank tr909 # clip .5
 
-$ s oh*4 .press .bank tr909 .speed.8
-.dec (<.02 .05>*2 .add (saw/8.range 0 1))`}
+# ply <1 [1 [2 4]]>
+
+$ s oh\*4 # press # bank tr909 # speed.8
+
+# dec (<.02 .05>\*2 # add (saw/8 # range 0 1))
+
+`}
 />
 
 ## Mondo in the REPL
@@ -95,16 +100,16 @@ Besides function calling with round parens, Mondo Notation has a lot in common w
 
 ## Chaining Functions
 
-Similar to how it works in JS, we can chain functions calls with the "." operator:
+Similar to how "." works in javascript (JS), we can chain functions calls with the "#" operator:
 
 <MiniRepl
   mondo
   client:idle
   tune={`n <0 2 4 [3 1] -1>*4 
-.scale C4:minor 
-.jux rev 
-.dec .2
-.delay .5`}
+ # scale C4:minor 
+ # jux rev 
+ # dec .2
+ # delay .5`}
 />
 
 Here's the same written in JS:
@@ -112,29 +117,29 @@ Here's the same written in JS:
 <MiniRepl
   client:idle
   tune={`n("<0 2 4 [3 1] -1>*4")
-.scale("C4:minor")
-.jux(rev)
-.dec(.2)
-.delay(.5)`}
+ # scale("C4:minor")
+ # jux(rev)
+ # dec(.2)
+ # delay(.5)`}
 />
 
 ### Chaining Functions Locally
 
-A function can be applied "locally" by wrapping it in round parens:
+A function can be applied to a single element by wrapping it in round parens:
 
-<MiniRepl mondo client:idle tune={`s [bd hh bd cp.(delay .6)] .bank tr909`} />
+<MiniRepl mondo client:idle tune={`s [bd hh bd (cp # delay .6)] # bank tr909`} />
 
 in this case, `delay .6` will only be applied to `cp`. compare this with the JS version:
 
 <MiniRepl client:idle tune={`s(seq("bd", "hh", "bd", "cp".delay(.6))).bank('tr909')`} />
 
-here we can see much we can save when there's no boundary between mini notation and function calls!
+here we can see how much we can save when there's no boundary between mini notation and function calls!
 
 ### Chaining Infix Operators
 
 Infix operators exist as regular functions, so they can be chained as well:
 
-<MiniRepl client:idle mondo tune={`s [bd hh] .bank tr909 .*2`} />
+<MiniRepl client:idle mondo tune={`s [bd hh] # bank tr909 # *2`} />
 
 In this case, the \*2 will be applied to the whole pattern.
 
@@ -146,17 +151,17 @@ Some functions in strudel expect a function as input, for example:
 
 in mondo, the `x=>x.` can be shortened to:
 
-<MiniRepl client:idle mondo tune={`n 0..7 .scale C:minor .sometimes (.dec .1)`} />
+<MiniRepl client:idle mondo tune={`n 0..7 # scale C:minor # sometimes (# dec .1)`} />
 
 chaining works as expected:
 
-<MiniRepl client:idle mondo tune={`n 0..7 .scale C:minor .sometimes (.dec .1 .jux rev)`} />
+<MiniRepl client:idle mondo tune={`n 0..7 # scale C:minor # sometimes (# dec .1 # jux rev)`} />
 
 ## Strings
 
 You can use "double quotes" and 'single quotes' to get a string:
 
-<MiniRepl client:idle mondo tune={`n 0..7 .scale 'C minor'`} />
+<MiniRepl client:idle mondo tune={`n 0..7 # scale 'C minor'`} />
 
 ## Multiple Patterns
 
@@ -165,9 +170,9 @@ The `$` sign can be used to separate multiple patterns:
 <MiniRepl
   client:idle
   mondo
-  tune={`$ s [bd rim [- bd] rim] .bank tr707
-$ chord <Dm9!3 Db7>.voicing
-.struct[x - - x - x - -].delay.5`}
+  tune={`$ s [bd rim [~ bd] rim] # bank tr707
+$ chord <Dm9!3 Db7> # voicing
+  # struct[x ~ ~ x ~ x ~ ~] # delay .5`}
 />
 
 The `$` sign is an alias for `,` so it will create a stack behind the scenes.

@@ -141,8 +141,8 @@ describe('mondo sugar', () => {
 describe('mondo arithmetic', () => {
   let multi =
     (op) =>
-      (init, ...rest) =>
-        rest.reduce((acc, arg) => op(acc, arg), init);
+    (init, ...rest) =>
+      rest.reduce((acc, arg) => op(acc, arg), init);
 
   let lib = {
     '+': multi((a, b) => a + b),
