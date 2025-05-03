@@ -295,7 +295,7 @@ class LadderProcessor extends AudioWorkletProcessor {
     cutoff = (cutoff * 2 * _PI) / sampleRate;
     cutoff = cutoff > 1 ? 1 : cutoff;
 
-    const k = Math.min(8, resonance * 0.4);
+    const k = Math.min(8, resonance * 0.13);
     //               drive makeup  * resonance volume loss makeup
     let makeupgain = (1 / drive) * Math.min(1.75, 1 + k);
 
