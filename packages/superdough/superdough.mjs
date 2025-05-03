@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
-import { clamp, nanFallback, _mod } from './util.mjs';
+import { clamp, nanFallback, _mod, cycleToSeconds } from './util.mjs';
 import workletsUrl from './worklets.mjs?audioworklet';
 import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
@@ -132,7 +132,7 @@ const defaultDefaultValues = {
   distortvol: 1,
   delay: 0,
   delayfeedback: 0.5,
-  delaytime: 0.25,
+  delaytime: 3 / 16,
   orbit: 1,
   i: 1,
   velocity: 1,
@@ -429,7 +429,7 @@ export function resetGlobalEffects() {
 
 let activeSoundSources = new Map();
 
-export const superdough = async (value, t, hapDuration) => {
+export const superdough = async (value, t, hapDuration, cps = 1) => {
   const ac = getAudioContext();
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   let { stretch } = value;
@@ -699,7 +699,7 @@ export const superdough = async (value, t, hapDuration) => {
   // delay
   let delaySend;
   if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
-    const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
+    const delyNode = getDelay(orbit, cycleToSeconds(delaytime, cps), delayfeedback, t);
     delaySend = effectSend(post, delyNode, delay);
     audioNodes.push(delaySend);
   }
