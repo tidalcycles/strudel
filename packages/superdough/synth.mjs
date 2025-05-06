@@ -26,6 +26,9 @@ const getFrequencyFromValue = (value) => {
   return Number(freq);
 };
 function destroyAudioWorkletNode(node) {
+  if (node == null) {
+    return
+  }
   node.disconnect();
   node.parameters.get('end')?.setValueAtTime(0, 0);
 }
@@ -189,9 +192,9 @@ export function registerSynthSounds() {
       envGain = o.connect(envGain);
 
       getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
-
+      let lfo;
       if (pwsweep != 0) {
-        let lfo = getLfo(ac, begin, end, { frequency: pwrate, depth: pwsweep });
+        lfo = getLfo(ac, begin, end, { frequency: pwrate, depth: pwsweep });
         lfo.connect(o.parameters.get('pulsewidth'));
       }
       let timeoutNode = webAudioTimeout(
