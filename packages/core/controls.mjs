@@ -468,9 +468,7 @@ export const { channels, ch } = registerControl('channels', 'ch');
  * @example
  * n(run(8)).scale("D:pentatonic").s("pulse").pw("0 .75 .5 1")
  */
-export const { pw } = registerControl(
-  ['pw', 'pwrate', 'pwsweep'],
-);
+export const { pw } = registerControl(['pw', 'pwrate', 'pwsweep']);
 
 /**
  * controls the lfo rate for the pulsewidth of the pulse oscillator
@@ -482,10 +480,7 @@ export const { pw } = registerControl(
 
  *
  */
-export const { pwrate } = registerControl(
-  'pwrate'
-);
-
+export const { pwrate } = registerControl('pwrate');
 
 /**
  * controls the lfo sweep for the pulsewidth of the pulse oscillator
@@ -496,10 +491,7 @@ export const { pwrate } = registerControl(
  * n(run(8)).scale("D:pentatonic").s("pulse").pw("0.5").pwrate("<5 .1 25>").pwsweep("<0.3 .8>")
  *
  */
-export const { pwsweep } = registerControl(
-  'pwsweep'
-);
-
+export const { pwsweep } = registerControl('pwsweep');
 
 /**
  * Phaser audio effect that approximates popular guitar pedals.

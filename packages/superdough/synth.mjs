@@ -148,17 +148,17 @@ export function registerSynthSounds() {
       let { pwrate, pwsweep } = value;
       if (pwsweep == null) {
         if (pwrate != null) {
-          pwsweep = 0.3
+          pwsweep = 0.3;
         } else {
-          pwsweep = 0
+          pwsweep = 0;
         }
-      } 
-
-      if (pwrate == null && pwsweep != null) {
-        pwrate = 1
       }
 
-      let { duration, pw: pulsewidth = value.n ?? 0.5, } = value;
+      if (pwrate == null && pwsweep != null) {
+        pwrate = 1;
+      }
+
+      let { duration, pw: pulsewidth = value.n ?? 0.5 } = value;
       const frequency = getFrequencyFromValue(value);
 
       const [attack, decay, sustain, release] = getADSRValues(
@@ -190,10 +190,9 @@ export function registerSynthSounds() {
 
       getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
 
-
       if (pwsweep != 0) {
-        let lfo = getLfo(ac, begin, end, { frequency: pwrate, depth: pwsweep, })
-        lfo.connect(o.parameters.get('pulsewidth'))
+        let lfo = getLfo(ac, begin, end, { frequency: pwrate, depth: pwsweep });
+        lfo.connect(o.parameters.get('pulsewidth'));
       }
       let timeoutNode = webAudioTimeout(
         ac,

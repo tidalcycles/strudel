@@ -317,13 +317,13 @@ export function getLfo(audioContext, time, end, properties = {}) {
     end,
     shape: 1,
     dcoffset: -0.5,
-    ...properties
+    ...properties,
   });
 }
 
 function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
   const ac = getAudioContext();
-  const lfoGain = getLfo(ac, time, end, { frequency, depth: sweep * 2 })
+  const lfoGain = getLfo(ac, time, end, { frequency, depth: sweep * 2 });
 
   //filters
   const numStages = 2; //num of filters in series
