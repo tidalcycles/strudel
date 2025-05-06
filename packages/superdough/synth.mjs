@@ -27,7 +27,7 @@ const getFrequencyFromValue = (value) => {
 };
 function destroyAudioWorkletNode(node) {
   if (node == null) {
-    return
+    return;
   }
   node.disconnect();
   node.parameters.get('end')?.setValueAtTime(0, 0);
