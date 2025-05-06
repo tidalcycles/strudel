@@ -1,5 +1,5 @@
 import { clamp, midiToFreq, noteToMidi } from './util.mjs';
-import { registerSound, getAudioContext } from './superdough.mjs';
+import { registerSound, getAudioContext, getLfo } from './superdough.mjs';
 import {
   applyFM,
   gainNode,
@@ -145,7 +145,20 @@ export function registerSynthSounds() {
     'pulse',
     (begin, value, onended) => {
       const ac = getAudioContext();
-      let { duration, n: pulsewidth = 0.5 } = value;
+      let { pwrate, pwsweep } = value;
+      if (pwsweep == null) {
+        if (pwrate != null) {
+          pwsweep = 0.3
+        } else {
+          pwsweep = 0
+        }
+      } 
+
+      if (pwrate == null && pwsweep != null) {
+        pwrate = 1
+      }
+
+      let { duration, pw: pulsewidth = value.n ?? 0.5, } = value;
       const frequency = getFrequencyFromValue(value);
 
       const [attack, decay, sustain, release] = getADSRValues(
@@ -153,10 +166,8 @@ export function registerSynthSounds() {
         'linear',
         [0.001, 0.05, 0.6, 0.01],
       );
-
       const holdend = begin + duration;
       const end = holdend + release + 0.01;
-
       let o = getWorklet(
         ac,
         'pulse-oscillator',
@@ -179,10 +190,16 @@ export function registerSynthSounds() {
 
       getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
 
+
+      if (pwsweep != 0) {
+        let lfo = getLfo(ac, begin, end, { frequency: pwrate, depth: pwsweep, })
+        lfo.connect(o.parameters.get('pulsewidth'))
+      }
       let timeoutNode = webAudioTimeout(
         ac,
         () => {
           destroyAudioWorkletNode(o);
+          destroyAudioWorkletNode(lfo);
           envGain.disconnect();
           onended();
           fm?.stop();
