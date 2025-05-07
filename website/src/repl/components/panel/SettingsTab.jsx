@@ -168,8 +168,13 @@ export function SettingsTab({ started }) {
           label="Multi Channel Orbits"
           onChange={(cbEvent) => {
             const val = cbEvent.target.checked;
-            settingsMap.setKey('multiChannelOrbits', val);
-            setMultiChannelOrbits(val);
+            confirmDialog(RELOAD_MSG).then((r) => {
+              if (r == true) {
+                settingsMap.setKey('multiChannelOrbits', val);
+                setMultiChannelOrbits(val);
+                return window.location.reload();
+              }
+            });
           }}
           value={multiChannelOrbits}
         />

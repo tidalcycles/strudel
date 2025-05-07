@@ -441,6 +441,11 @@ export function resetGlobalEffects() {
 }
 
 let activeSoundSources = new Map();
+//music programs/audio gear usually increments inputs/outputs from 1, we need to subtract 1 from the input because the webaudio API channels start at 0
+
+function mapChannelNumbers(channels) {
+  return (Array.isArray(channels) ? channels : [value.channels]).map((ch) => ch - 1);
+}
 
 export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
@@ -539,14 +544,10 @@ export const superdough = async (value, t, hapDuration) => {
     compressorRelease,
   } = value;
 
-  //music programs/audio gear usually increments inputs/outputs from 1, we need to subtract 1 from the input because the webaudio API channels start at 0
-  const orbitChannels = (
-    multiChannelOrbits && orbit > 0 ? [orbit * 2 - 1, orbit * 2] : getDefaultValue('channels')
-  ).map((ch) => ch - 1);
-  const channels =
-    value.channels != null
-      ? (Array.isArray(value.channels) ? value.channels : [value.channels]).map((ch) => ch - 1)
-      : orbitChannels;
+  const orbitChannels = mapChannelNumbers(
+    multiChannelOrbits && orbit > 0 ? [orbit * 2 - 1, orbit * 2] : getDefaultValue('channels'),
+  );
+  const channels = value.channels != null ? mapChannelNumbers(value.channels) : orbitChannels;
 
   gain = applyGainCurve(nanFallback(gain, 1));
   postgain = applyGainCurve(postgain);
