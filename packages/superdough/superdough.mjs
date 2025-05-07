@@ -23,9 +23,9 @@ export function setMaxPolyphony(polyphony) {
   maxPolyphony = parseInt(polyphony) ?? DEFAULT_MAX_POLYPHONY;
 }
 
-let multiChannelOrbits = false
+let multiChannelOrbits = false;
 export function setMultiChannelOrbits(bool) {
-  multiChannelOrbits = (bool == true);
+  multiChannelOrbits = bool == true;
 }
 
 export const soundMap = map();
@@ -201,8 +201,15 @@ function loadWorklets() {
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
-  const { disableWorklets = false, maxPolyphony, audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME, multiChannelOrbits = false } = options;
+  const {
+    disableWorklets = false,
+    maxPolyphony,
+    audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME,
+    multiChannelOrbits = false,
+  } = options;
+
   setMaxPolyphony(maxPolyphony);
+  setMultiChannelOrbits(multiChannelOrbits);
   if (typeof window === 'undefined') {
     return;
   }
@@ -496,7 +503,7 @@ export const superdough = async (value, t, hapDuration) => {
     bpsustain,
     bprelease,
     bandq = getDefaultValue('bandq'),
-    
+
     //phaser
     phaserrate: phaser,
     phaserdepth = getDefaultValue('phaserdepth'),
@@ -532,8 +539,14 @@ export const superdough = async (value, t, hapDuration) => {
     compressorRelease,
   } = value;
 
-  const orbitChannels = multiChannelOrbits ? [(orbit * 2) - 1, orbit * 2] : getDefaultValue('channels')
-  const channels = value.channels ?? orbitChannels;
+  //music programs/audio gear usually increments inputs/outputs from 1, we need to subtract 1 from the input because the webaudio API channels start at 0
+  const orbitChannels = (
+    multiChannelOrbits && orbit > 0 ? [orbit * 2 - 1, orbit * 2] : getDefaultValue('channels')
+  ).map((ch) => ch - 1);
+  const channels =
+    value.channels != null
+      ? (Array.isArray(value.channels) ? value.channels : [value.channels]).map((ch) => ch - 1)
+      : orbitChannels;
 
   gain = applyGainCurve(nanFallback(gain, 1));
   postgain = applyGainCurve(postgain);
@@ -555,9 +568,6 @@ export const superdough = async (value, t, hapDuration) => {
     source?.stop?.(endTime);
     activeSoundSources.delete(chainID);
   }
-
-  //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
-  channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
   let audioNodes = [];
 
