@@ -18,7 +18,7 @@ import { setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { clearHydra } from '@strudel/hydra';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { settingsMap, useSettings } from '../settings.mjs';
+import { parseBoolean, settingsMap, useSettings } from '../settings.mjs';
 import {
   setActivePattern,
   setLatestCode,
@@ -36,11 +36,15 @@ import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
 import { getMetadata } from '../metadata_parser';
 
-const { latestCode, maxPolyphony, audioDeviceName } = settingsMap.get();
+const { latestCode, maxPolyphony, audioDeviceName, multiChannelOrbits } = settingsMap.get();
 let modulesLoading, presets, drawContext, clearCanvas, audioReady;
 
 if (typeof window !== 'undefined') {
-  audioReady = initAudioOnFirstClick({ maxPolyphony, audioDeviceName });
+  audioReady = initAudioOnFirstClick({
+    maxPolyphony,
+    audioDeviceName,
+    multiChannelOrbits: parseBoolean(multiChannelOrbits),
+  });
   modulesLoading = loadModules();
   presets = prebake();
   drawContext = getDrawContext();

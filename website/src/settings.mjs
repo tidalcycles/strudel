@@ -38,6 +38,7 @@ export const defaultSettings = {
   isButtonRowHidden: false,
   isCSSAnimationDisabled: false,
   maxPolyphony: 128,
+  multiChannelOrbits: false,
 };
 
 let search = null;
@@ -50,7 +51,7 @@ const settings_key = `strudel-settings${instance > 0 ? instance : ''}`;
 
 export const settingsMap = persistentMap(settings_key, defaultSettings);
 
-const parseBoolean = (booleanlike) => ([true, 'true'].includes(booleanlike) ? true : false);
+export const parseBoolean = (booleanlike) => ([true, 'true'].includes(booleanlike) ? true : false);
 
 export function useSettings() {
   const state = useStore(settingsMap);
@@ -81,6 +82,7 @@ export function useSettings() {
     isPanelPinned: parseBoolean(state.isPanelPinned),
     isPanelOpen: parseBoolean(state.isPanelOpen),
     userPatterns: userPatterns,
+    multiChannelOrbits: parseBoolean(state.multiChannelOrbits),
   };
 }
 

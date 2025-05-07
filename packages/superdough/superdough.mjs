@@ -22,6 +22,12 @@ let maxPolyphony = DEFAULT_MAX_POLYPHONY;
 export function setMaxPolyphony(polyphony) {
   maxPolyphony = parseInt(polyphony) ?? DEFAULT_MAX_POLYPHONY;
 }
+
+let multiChannelOrbits = false;
+export function setMultiChannelOrbits(bool) {
+  multiChannelOrbits = bool == true;
+}
+
 export const soundMap = map();
 
 export function registerSound(key, onTrigger, data = {}) {
@@ -195,8 +201,15 @@ function loadWorklets() {
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
-  const { disableWorklets = false, maxPolyphony, audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME } = options;
+  const {
+    disableWorklets = false,
+    maxPolyphony,
+    audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME,
+    multiChannelOrbits = false,
+  } = options;
+
   setMaxPolyphony(maxPolyphony);
+  setMultiChannelOrbits(multiChannelOrbits);
   if (typeof window === 'undefined') {
     return;
   }
@@ -277,7 +290,7 @@ export const connectToDestination = (input, channels = [0, 1]) => {
   });
   stereoMix.connect(splitter);
   channels.forEach((ch, i) => {
-    splitter.connect(channelMerger, i % stereoMix.channelCount, clamp(ch, 0, ctx.destination.channelCount - 1));
+    splitter.connect(channelMerger, i % stereoMix.channelCount, ch % ctx.destination.channelCount);
   });
 };
 
@@ -290,7 +303,7 @@ export const panic = () => {
   channelMerger == null;
 };
 
-function getDelay(orbit, delaytime, delayfeedback, t) {
+function getDelay(orbit, delaytime, delayfeedback, t, channels) {
   if (delayfeedback > maxfeedback) {
     //logger(`delayfeedback was clamped to ${maxfeedback} to save your ears`);
   }
@@ -299,7 +312,7 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
     const ac = getAudioContext();
     const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
     dly.start?.(t); // for some reason, this throws when audion extension is installed..
-    connectToDestination(dly, [0, 1]);
+    connectToDestination(dly, channels);
     delays[orbit] = dly;
   }
   delays[orbit].delayTime.value !== delaytime && delays[orbit].delayTime.setValueAtTime(delaytime, t);
@@ -356,12 +369,12 @@ function getFilterType(ftype) {
 
 let reverbs = {};
 let hasChanged = (now, before) => now !== undefined && now !== before;
-function getReverb(orbit, duration, fade, lp, dim, ir) {
+function getReverb(orbit, duration, fade, lp, dim, ir, channels) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
     const reverb = ac.createReverb(duration, fade, lp, dim, ir);
-    connectToDestination(reverb, [0, 1]);
+    connectToDestination(reverb, channels);
     reverbs[orbit] = reverb;
   }
   if (
@@ -428,6 +441,11 @@ export function resetGlobalEffects() {
 }
 
 let activeSoundSources = new Map();
+//music programs/audio gear usually increments inputs/outputs from 1, we need to subtract 1 from the input because the webaudio API channels start at 0
+
+function mapChannelNumbers(channels) {
+  return (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
+}
 
 export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
@@ -490,7 +508,7 @@ export const superdough = async (value, t, hapDuration) => {
     bpsustain,
     bprelease,
     bandq = getDefaultValue('bandq'),
-    channels = getDefaultValue('channels'),
+
     //phaser
     phaserrate: phaser,
     phaserdepth = getDefaultValue('phaserdepth'),
@@ -526,6 +544,11 @@ export const superdough = async (value, t, hapDuration) => {
     compressorRelease,
   } = value;
 
+  const orbitChannels = mapChannelNumbers(
+    multiChannelOrbits && orbit > 0 ? [orbit * 2 - 1, orbit * 2] : getDefaultValue('channels'),
+  );
+  const channels = value.channels != null ? mapChannelNumbers(value.channels) : orbitChannels;
+
   gain = applyGainCurve(nanFallback(gain, 1));
   postgain = applyGainCurve(postgain);
   shapevol = applyGainCurve(shapevol);
@@ -546,9 +569,6 @@ export const superdough = async (value, t, hapDuration) => {
     source?.stop?.(endTime);
     activeSoundSources.delete(chainID);
   }
-
-  //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
-  channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
   let audioNodes = [];
 
@@ -699,7 +719,7 @@ export const superdough = async (value, t, hapDuration) => {
   // delay
   let delaySend;
   if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
-    const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
+    const delyNode = getDelay(orbit, delaytime, delayfeedback, t, orbitChannels);
     delaySend = effectSend(post, delyNode, delay);
     audioNodes.push(delaySend);
   }
@@ -717,7 +737,7 @@ export const superdough = async (value, t, hapDuration) => {
       }
       roomIR = await loadBuffer(url, ac, ir, 0);
     }
-    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, roomIR);
+    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, roomIR, orbitChannels);
     reverbSend = effectSend(post, reverbNode, room);
     audioNodes.push(reverbSend);
   }
