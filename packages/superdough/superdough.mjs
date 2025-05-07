@@ -444,7 +444,7 @@ let activeSoundSources = new Map();
 //music programs/audio gear usually increments inputs/outputs from 1, we need to subtract 1 from the input because the webaudio API channels start at 0
 
 function mapChannelNumbers(channels) {
-  return (Array.isArray(channels) ? channels : [value.channels]).map((ch) => ch - 1);
+  return (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 }
 
 export const superdough = async (value, t, hapDuration) => {
