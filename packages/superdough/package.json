@@ -1,6 +1,6 @@
 {
   "name": "superdough",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "simple web audio synth and sampler intended for live coding. inspired by superdirt and webdirt.",
   "main": "index.mjs",
   "type": "module",
@@ -32,7 +32,8 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "devDependencies": {
-    "vite": "^6.0.11"
+    "vite": "^6.0.11",
+    "vite-plugin-bundle-audioworklet": "workspace:*"
   },
   "dependencies": {
     "nanostores": "^0.11.3"

@@ -344,7 +344,9 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   };
   let envEnd = holdEnd + release + 0.01;
   bufferSource.stop(envEnd);
-  const stop = (endTime, playWholeBuffer) => {};
+  const stop = (endTime) => {
+    bufferSource.stop(endTime);
+  };
   const handle = { node: out, bufferSource, stop };
 
   // cut groups

@@ -1766,14 +1766,46 @@ export const getControlName = (alias) => {
  * Sets properties in a batch.
  *
  * @name as
- * @param {Array} mapping the control names that are set
+ * @param {String | Array} mapping the control names that are set
  * @example
  * "c:.5 a:1 f:.25 e:.8".as("note:clip")
+ * @example
+ * "{0@2 0.25 0 0.5 .3 .5}%8".as("begin").s("sax_vib").clip(1)
  */
 export const as = register('as', (mapping, pat) => {
+  mapping = Array.isArray(mapping) ? mapping : [mapping];
   return pat.fmap((v) => {
     v = Array.isArray(v) ? v : [v];
     v = Object.fromEntries(mapping.map((prop, i) => [getControlName(prop), v[i]]));
     return v;
   });
 });
+
+/**
+ * Allows you to scrub an audio file like a tape loop by passing values that represents the position in the audio file
+ * in the optional array syntax ex: "0.5:2", the second value controls the speed of playback
+ * @name scrub
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * samples('github:switchangel/pad')
+ * s("swpad:0").scrub("{0.1!2 .25@3 0.7!2 <0.8:1.5>}%8")
+ * @example
+ * samples('github:yaxu/clean-breaks/main');
+ * s("amen/4").fit().scrub("{0@3 0@2 4@3}%8".div(16))
+ */
+
+export const scrub = register(
+  'scrub',
+  (beginPat, pat) => {
+    return beginPat.outerBind((v) => {
+      if (!Array.isArray(v)) {
+        v = [v];
+      }
+      const [beginVal, speedMultiplier = 1] = v;
+
+      return pat.begin(beginVal).mul(speed(speedMultiplier)).clip(1);
+    });
+  },
+  false,
+);

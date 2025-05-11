@@ -14,7 +14,7 @@ import {
   resetLoadedSounds,
   initAudioOnFirstClick,
 } from '@strudel/webaudio';
-import { getAudioDevices, setAudioDevice, setVersionDefaultsFrom } from './util.mjs';
+import { setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { clearHydra } from '@strudel/hydra';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -28,7 +28,7 @@ import {
   setViewingPatternData,
 } from '../user_pattern_utils.mjs';
 import { superdirtOutput } from '@strudel/osc/superdirtoutput';
-import { audioEngineTargets, defaultAudioDeviceName } from '../settings.mjs';
+import { audioEngineTargets } from '../settings.mjs';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
@@ -36,11 +36,11 @@ import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
 import { getMetadata } from '../metadata_parser';
 
-const { latestCode } = settingsMap.get();
+const { latestCode, maxPolyphony, audioDeviceName } = settingsMap.get();
 let modulesLoading, presets, drawContext, clearCanvas, audioReady;
 
 if (typeof window !== 'undefined') {
-  audioReady = initAudioOnFirstClick();
+  audioReady = initAudioOnFirstClick({ maxPolyphony, audioDeviceName });
   modulesLoading = loadModules();
   presets = prebake();
   drawContext = getDrawContext();
@@ -158,20 +158,6 @@ export function useReplContext() {
     });
     editorRef.current?.updateSettings(editorSettings);
   }, [_settings]);
-
-  // on first load, set stored audio device if possible
-  useEffect(() => {
-    const { audioDeviceName } = _settings;
-    if (audioDeviceName !== defaultAudioDeviceName) {
-      getAudioDevices().then((devices) => {
-        const deviceID = devices.get(audioDeviceName);
-        if (deviceID == null) {
-          return;
-        }
-        setAudioDevice(deviceID);
-      });
-    }
-  }, []);
 
   //
   // UI Actions

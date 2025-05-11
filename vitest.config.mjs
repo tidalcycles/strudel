@@ -1,7 +1,9 @@
-import { configDefaults, defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
+import bundleAudioWorkletPlugin from 'vite-plugin-bundle-audioworklet';
 
 /// <reference types="vitest" />
 export default defineConfig({
+  plugins: [bundleAudioWorkletPlugin()],
   test: {
     reporters: 'verbose',
     isolate: false,
