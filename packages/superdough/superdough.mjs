@@ -320,16 +320,9 @@ function getDelay(orbit, delaytime, delayfeedback, t, channels) {
   return delays[orbit];
 }
 
-function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
-  //gain
-  const ac = getAudioContext();
-  const lfoGain = ac.createGain();
-  lfoGain.gain.value = sweep * 2;
-  // centerFrequency = centerFrequency * 2;
-  // sweep = sweep * 1.5;
-
-  const lfo = getWorklet(ac, 'lfo-processor', {
-    frequency,
+export function getLfo(audioContext, time, end, properties = {}) {
+  return getWorklet(audioContext, 'lfo-processor', {
+    frequency: 1,
     depth: 1,
     skew: 0,
     phaseoffset: 0,
@@ -337,8 +330,13 @@ function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000
     end,
     shape: 1,
     dcoffset: -0.5,
+    ...properties,
   });
-  lfo.connect(lfoGain);
+}
+
+function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
+  const ac = getAudioContext();
+  const lfoGain = getLfo(ac, time, end, { frequency, depth: sweep * 2 });
 
   //filters
   const numStages = 2; //num of filters in series
