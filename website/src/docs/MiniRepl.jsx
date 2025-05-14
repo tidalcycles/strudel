@@ -30,6 +30,7 @@ export function MiniRepl({
   maxHeight,
   autodraw,
   drawTime,
+  mondo = false,
 }) {
   const code = tunes ? tunes[0] : tune;
   const id = useMemo(() => s4(), []);
@@ -85,6 +86,7 @@ export function MiniRepl({
       },
       beforeStart: () => audioReady,
       afterEval: ({ code }) => setVersionDefaultsFrom(code),
+      mondo,
     });
     // init settings
     editor.setCode(code);

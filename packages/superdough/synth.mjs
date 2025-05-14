@@ -1,5 +1,5 @@
 import { clamp, midiToFreq, noteToMidi } from './util.mjs';
-import { registerSound, getAudioContext } from './superdough.mjs';
+import { registerSound, getAudioContext, soundMap } from './superdough.mjs';
 import {
   applyFM,
   gainNode,
@@ -31,6 +31,12 @@ function destroyAudioWorkletNode(node) {
 }
 
 const waveforms = ['triangle', 'square', 'sawtooth', 'sine'];
+const waveformAliases = [
+  ['tri', 'triangle'],
+  ['sqr', 'square'],
+  ['saw', 'sawtooth'],
+  ['sin', 'sine'],
+];
 const noises = ['pink', 'white', 'brown', 'crackle'];
 
 export function registerSynthSounds() {
@@ -247,6 +253,7 @@ export function registerSynthSounds() {
       { type: 'synth', prebake: true },
     );
   });
+  waveformAliases.forEach(([alias, actual]) => soundMap.set({ ...soundMap.get(), [alias]: soundMap.get()[actual] }));
 }
 
 export function waveformN(partials, type) {

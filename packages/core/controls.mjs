@@ -4,13 +4,14 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, register, sequence } from './pattern.mjs';
+import { Pattern, register, reify } from './pattern.mjs';
 
 export function createParam(names) {
   let isMulti = Array.isArray(names);
   names = !isMulti ? [names] : names;
   const name = names[0];
 
+  // todo: make this less confusing
   const withVal = (xs) => {
     let bag;
     // check if we have an object with an unnamed control (.value)
@@ -35,25 +36,34 @@ export function createParam(names) {
     }
   };
 
-  const func = (...pats) => sequence(...pats).withValue(withVal);
-
-  const setter = function (...pats) {
-    if (!pats.length) {
-      return this.fmap(withVal);
+  // todo: make this less confusing
+  const func = function (value, pat) {
+    if (!pat) {
+      return reify(value).withValue(withVal);
     }
-    return this.set(func(...pats));
+    if (typeof value === 'undefined') {
+      return pat.fmap(withVal);
+    }
+    return pat.set(reify(value).withValue(withVal));
   };
-  Pattern.prototype[name] = setter;
+  Pattern.prototype[name] = function (value) {
+    return func(value, this);
+  };
   return func;
 }
 
 // maps control alias names to the "main" control name
 const controlAlias = new Map();
 
+export function isControlName(name) {
+  return controlAlias.has(name);
+}
+
 export function registerControl(names, ...aliases) {
   const name = Array.isArray(names) ? names[0] : names;
   let bag = {};
   bag[name] = createParam(names);
+  controlAlias.set(name, name);
   aliases.forEach((alias) => {
     bag[alias] = bag[name];
     controlAlias.set(alias, name);

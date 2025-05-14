@@ -25,28 +25,28 @@ describe('tonal', () => {
   });
   it('scale with n values', () => {
     expect(
-      n(0, 1, 2)
+      n(seq(0, 1, 2))
         .scale('C major')
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C3', 'D3', 'E3']);
   });
   it('scale with colon', () => {
     expect(
-      n(0, 1, 2)
+      n(seq(0, 1, 2))
         .scale('C:major')
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C3', 'D3', 'E3']);
   });
   it('scale with mininotation colon', () => {
     expect(
-      n(0, 1, 2)
+      n(seq(0, 1, 2))
         .scale(mini('C:major'))
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C3', 'D3', 'E3']);
   });
   it('transposes note numbers with interval numbers', () => {
     expect(
-      note(40, 40, 40)
+      note(seq(40, 40, 40))
         .transpose(0, 1, 2)
         .firstCycleValues.map((h) => h.note),
     ).toEqual([40, 41, 42]);
@@ -54,7 +54,7 @@ describe('tonal', () => {
   });
   it('transposes note numbers with interval strings', () => {
     expect(
-      note(40, 40, 40)
+      note(seq(40, 40, 40))
         .transpose('1P', '2M', '3m')
         .firstCycleValues.map((h) => h.note),
     ).toEqual([40, 42, 43]);
@@ -62,7 +62,7 @@ describe('tonal', () => {
   });
   it('transposes note strings with interval numbers', () => {
     expect(
-      note('c', 'c', 'c')
+      note(seq('c', 'c', 'c'))
         .transpose(0, 1, 2)
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C', 'Db', 'D']);
@@ -70,7 +70,7 @@ describe('tonal', () => {
   });
   it('transposes note strings with interval strings', () => {
     expect(
-      note('c', 'c', 'c')
+      note(seq('c', 'c', 'c'))
         .transpose('1P', '2M', '3m')
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C', 'D', 'Eb']);
