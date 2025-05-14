@@ -161,7 +161,7 @@ export function registerSynthSounds() {
         pwrate = 1;
       }
 
-      let { duration, pw: pulsewidth = value.n ?? 0.5 } = value;
+      let { duration, pw: pulsewidth = 0.5 } = value;
       const frequency = getFrequencyFromValue(value);
 
       const [attack, decay, sustain, release] = getADSRValues(
