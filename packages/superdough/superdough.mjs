@@ -30,9 +30,9 @@ export function setMultiChannelOrbits(bool) {
 
 export const soundMap = map();
 
-export function registerSound(key, onTrigger, data = {}) {
+export function registerSound(key, onTrigger, data = {}, onPrepare = () => {}) {
   key = key.toLowerCase().replace(/\s+/g, '_');
-  soundMap.setKey(key, { onTrigger, data });
+  soundMap.setKey(key, { onTrigger, data, onPrepare });
 }
 
 let gainCurveFunc = (val) => val;
@@ -755,4 +755,14 @@ export const superdough = async (value, t, hapDuration) => {
 
 export const superdoughTrigger = (t, hap, ct, cps) => {
   superdough(hap, t - ct, hap.duration / cps, cps);
+};
+
+export const prepare = (value) => {
+  const { onPrepare } = getSound(value.s);
+  if (onPrepare) {
+    if (value.bank && value.s) {
+      value.s = `${value.bank}_${value.s}`;
+    }
+    onPrepare(value);
+  }
 };

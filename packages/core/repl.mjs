@@ -8,6 +8,7 @@ import { register, Pattern, isPattern, silence, stack } from './pattern.mjs';
 
 export function repl({
   defaultOutput,
+  defaultPrepare,
   onEvalError,
   beforeEval,
   beforeStart,
@@ -47,6 +48,7 @@ export function repl({
 
   const schedulerOptions = {
     onTrigger: getTrigger({ defaultOutput, getTime }),
+    onPrepare: getPrepare({ defaultPrepare }),
     getTime,
     onToggle: (started) => {
       updateState({ started });
@@ -234,6 +236,16 @@ export const getTrigger =
         // call signature of output / onTrigger is different...
         await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps, t);
       }
+    } catch (err) {
+      logger(`[cyclist] error: ${err.message}`, 'error');
+    }
+  };
+
+export const getPrepare =
+  ({ defaultPrepare }) =>
+  async (hap) => {
+    try {
+      await defaultPrepare(hap);
     } catch (err) {
       logger(`[cyclist] error: ${err.message}`, 'error');
     }
