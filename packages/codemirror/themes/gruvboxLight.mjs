@@ -1,7 +1,6 @@
-/**
- * @name gruvbox-light
- * @author morhetz
- * Name: Gruvbox
+/*
+ * gruvbox-light
+ * author morhetz
  * From github.com/codemirror/codemirror5/blob/master/theme/gruvbox-light.css
  */
 import { tags as t } from '@lezer/highlight';

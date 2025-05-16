@@ -156,8 +156,7 @@ export const pickmodReset = register('pickmodReset', function (lookup, pat) {
   return _pick(lookup, pat, true).resetJoin();
 });
 
-/**
-  /** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+/** Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
    * Similar to `pick`, but cycles are squeezed into the target ('inhabited') pattern.
    * @name inhabit
    * @synonyms pickSqueeze

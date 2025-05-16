@@ -1,6 +1,6 @@
-/**
- * @name duotone
- * @author Bram de Haan
+/*
+ * duotone
+ * author Bram de Haan
  * by Bram de Haan, adapted from DuoTone themes by Simurai (http://simurai.com/projects/2016/01/01/duotone-themes)
  */
 import { tags as t } from '@lezer/highlight';

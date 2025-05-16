@@ -1496,7 +1496,7 @@ export const { vowel } = registerControl('vowel');
  * @name waveloss
  */
 export const { waveloss } = registerControl('waveloss');
-/*
+/**
  * Noise crackle density
  *
  * @name density
