@@ -1,6 +1,5 @@
-/**
- * @name darcula
- * @author darcula
+/*
+ * darcula
  * Name: IntelliJ IDEA darcula theme
  * From IntelliJ IDEA by JetBrains
  */

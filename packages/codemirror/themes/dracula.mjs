@@ -1,6 +1,5 @@
-/**
+/*
  * @name dracula
- * @author dracula
  * Michael Kaminsky (http://github.com/mkaminsky11)
  * Original dracula color scheme by Zeno Rocha (https://github.com/zenorocha/dracula-theme)
  */

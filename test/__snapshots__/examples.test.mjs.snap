@@ -2403,6 +2403,27 @@ exports[`runs examples > example "delaytime" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "density" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:crackle density:0.01 ]",
+  "[ 1/4 → 1/2 | s:crackle density:0.01 ]",
+  "[ 1/2 → 3/4 | s:crackle density:0.01 ]",
+  "[ 3/4 → 1/1 | s:crackle density:0.01 ]",
+  "[ 1/1 → 5/4 | s:crackle density:0.01 ]",
+  "[ 5/4 → 3/2 | s:crackle density:0.01 ]",
+  "[ 3/2 → 7/4 | s:crackle density:0.01 ]",
+  "[ 7/4 → 2/1 | s:crackle density:0.01 ]",
+  "[ 2/1 → 9/4 | s:crackle density:0.01 ]",
+  "[ 9/4 → 5/2 | s:crackle density:0.01 ]",
+  "[ 5/2 → 11/4 | s:crackle density:0.01 ]",
+  "[ 11/4 → 3/1 | s:crackle density:0.01 ]",
+  "[ 3/1 → 13/4 | s:crackle density:0.01 ]",
+  "[ 13/4 → 7/2 | s:crackle density:0.01 ]",
+  "[ 7/2 → 15/4 | s:crackle density:0.01 ]",
+  "[ 15/4 → 4/1 | s:crackle density:0.01 ]",
+]
+`;
+
 exports[`runs examples > example "detune" example index 0 1`] = `
 [
   "[ 0/1 → 1/12 | note:d s:supersaw detune:0.1 ]",
@@ -8051,6 +8072,52 @@ but parts might be played more than once, or not at all, per cycle." example ind
 ]
 `;
 
+exports[`runs examples > example "scramble" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:c s:piano ]",
+  "[ 1/4 → 1/2 | note:d s:piano ]",
+  "[ 1/2 → 3/4 | note:d s:piano ]",
+  "[ 3/4 → 1/1 | note:c s:piano ]",
+  "[ 1/1 → 5/4 | note:e s:piano ]",
+  "[ 5/4 → 3/2 | note:e s:piano ]",
+  "[ 3/2 → 7/4 | note:e s:piano ]",
+  "[ 7/4 → 2/1 | note:c s:piano ]",
+  "[ 2/1 → 9/4 | note:f s:piano ]",
+  "[ 9/4 → 5/2 | note:d s:piano ]",
+  "[ 5/2 → 11/4 | note:d s:piano ]",
+  "[ 11/4 → 3/1 | note:e s:piano ]",
+  "[ 3/1 → 13/4 | note:c s:piano ]",
+  "[ 13/4 → 7/2 | note:f s:piano ]",
+  "[ 7/2 → 15/4 | note:d s:piano ]",
+  "[ 15/4 → 4/1 | note:f s:piano ]",
+]
+`;
+
+exports[`runs examples > example "scramble" example index 1 1`] = `
+[
+  "[ 0/1 → 1/8 | note:c s:piano ]",
+  "[ 1/8 → 1/4 | note:d s:piano ]",
+  "[ 1/4 → 3/8 | note:d s:piano ]",
+  "[ 3/8 → 1/2 | note:c s:piano ]",
+  "[ 1/2 → 1/1 | note:g s:piano ]",
+  "[ 1/1 → 9/8 | note:e s:piano ]",
+  "[ 9/8 → 5/4 | note:e s:piano ]",
+  "[ 5/4 → 11/8 | note:e s:piano ]",
+  "[ 11/8 → 3/2 | note:c s:piano ]",
+  "[ 3/2 → 2/1 | note:g s:piano ]",
+  "[ 2/1 → 17/8 | note:f s:piano ]",
+  "[ 17/8 → 9/4 | note:d s:piano ]",
+  "[ 9/4 → 19/8 | note:d s:piano ]",
+  "[ 19/8 → 5/2 | note:e s:piano ]",
+  "[ 5/2 → 3/1 | note:g s:piano ]",
+  "[ 3/1 → 25/8 | note:c s:piano ]",
+  "[ 25/8 → 13/4 | note:f s:piano ]",
+  "[ 13/4 → 27/8 | note:d s:piano ]",
+  "[ 27/8 → 7/2 | note:f s:piano ]",
+  "[ 7/2 → 4/1 | note:g s:piano ]",
+]
+`;
+
 exports[`runs examples > example "scrub" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | s:swpad n:0 begin:0.1 speed:1 clip:1 ]",
@@ -8481,9 +8548,7 @@ exports[`runs examples > example "shrink" example index 3 1`] = `
 ]
 `;
 
-exports[`runs examples > example "shuffle
-Slices a pattern into the given number of parts, then plays those parts in random order.
-Each part will be played exactly once per cycle." example index 0 1`] = `
+exports[`runs examples > example "shuffle" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c s:piano ]",
   "[ 1/4 → 1/2 | note:d s:piano ]",
@@ -8504,9 +8569,7 @@ Each part will be played exactly once per cycle." example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "shuffle
-Slices a pattern into the given number of parts, then plays those parts in random order.
-Each part will be played exactly once per cycle." example index 1 1`] = `
+exports[`runs examples > example "shuffle" example index 1 1`] = `
 [
   "[ 0/1 → 1/8 | note:c s:piano ]",
   "[ 1/8 → 1/4 | note:d s:piano ]",

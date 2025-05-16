@@ -1,5 +1,5 @@
-/**
- * @name Cutie Pi
+/*
+ * Cutie Pi
  * by Switch Angel
  */
 import { tags as t } from '@lezer/highlight';
