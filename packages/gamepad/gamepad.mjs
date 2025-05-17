@@ -1,6 +1,7 @@
 // @strudel/gamepad/index.mjs
 
 import { signal } from '@strudel/core';
+import { logger } from '@strudel/core';
 
 // Button mapping for Logitech Dual Action (STANDARD GAMEPAD Vendor: 046d Product: c216)
 
