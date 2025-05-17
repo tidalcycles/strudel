@@ -14,7 +14,12 @@ npm i @strudel/gamepad --save
 import { gamepad } from '@strudel/gamepad';
 
 // Initialize gamepad (optional index parameter, defaults to 0)
-const pad = gamepad(0);
+const pad = gamepad(0); // Default mapping is XBOX {a: 0, b: 1, x: 2, y: 3}
+
+//const pad = gamepad(0, 'XBOX'); // XBOX button mapping {a: 0, b: 1, x: 2, y: 3}
+//const pad = gamepad(0, 'NES'); // Nintendo button mapping {a: 1, b: 0, x: 3, y: 2}
+//const pad = gamepad(0, {a: 0, b: 1, x: 2, y: 3}); // Custom mapping
+
 
 // Use gamepad inputs in patterns
 const pattern = sequence([
@@ -86,6 +91,7 @@ $: sound("hadoken").gain(pad.checkSequence(HADOKEN))
 ## Multiple Gamepads
 
 You can connect multiple gamepads by specifying the gamepad index:
+Make sure to press buttons on all connected gamepads before hitting play, so the browser can properly detect them.
 
 ```javascript
 const pad1 = gamepad(0);  // First gamepad
