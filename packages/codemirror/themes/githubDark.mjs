@@ -1,6 +1,3 @@
-/**
- * @name github
- */
 import { tags as t } from '@lezer/highlight';
 import { createTheme } from './theme-helper.mjs';
 
