@@ -8,6 +8,14 @@ This package adds midi functionality to strudel Patterns.
 npm i @strudel/midi --save
 ```
 
+## Enabling MIDI for Local Development in Chrome
+
+1. Open Chrome and navigate to `chrome://flags`
+2. Search for "Insecure origins treated as secure"
+3. In the text field that appears, add your development origin (e.g., http://localhost:3000)
+4. Enable the flag
+5. Restart Chrome
+
 ## Available Controls
 
 The following MIDI controls are available:
