@@ -144,14 +144,13 @@ export function registerSynthSounds() {
     { prebake: true, type: 'synth' },
   );
 
-
   registerSound(
     'bytebeat',
     (begin, value, onended) => {
       const ac = getAudioContext();
       let { byteBeatExpression } = value;
 
-      let { duration} = value;
+      let { duration } = value;
       const [attack, decay, sustain, release] = getADSRValues(
         [value.attack, value.decay, value.sustain, value.release],
         'linear',
@@ -163,7 +162,6 @@ export function registerSynthSounds() {
         ac,
         'byte-beat-processor',
         {
-        
           begin,
           end,
         },
@@ -172,14 +170,13 @@ export function registerSynthSounds() {
         },
       );
 
-
       o.port.postMessage(byteBeatExpression);
 
       let envGain = gainNode(1);
       envGain = o.connect(envGain);
 
       getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
-  
+
       let timeoutNode = webAudioTimeout(
         ac,
         () => {

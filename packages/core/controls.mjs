@@ -446,18 +446,17 @@ export const { coarse } = registerControl('coarse');
 export const { drive } = registerControl('drive');
 
 /**
- * Allows you to set the output channels on the interface
+ * Create byte beats with custom expressions
  *
  * @name byteBeatExpression
  * @synonyms bbexpr
  *
  * @param {number | Pattern} byteBeatExpression pattern the output channels
  * @example
- * note("e a d b g").channels("3:4")
+ * s("bytebeat").bbexpr('t*(t>>15^t>>66)')
  *
  */
 export const { byteBeatExpression, bbexpr } = registerControl('byteBeatExpression', 'bbexpr');
-
 
 /**
  * Allows you to set the output channels on the interface

@@ -762,12 +762,10 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
 
 registerProcessor('pulse-oscillator', PulseOscillatorProcessor);
 
-
-
 class ByteBeatProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
-    this.bb = '0'
+    this.bb = '0';
     this.port.onmessage = (event) => {
       this.bb = event.data;
     };
@@ -801,20 +799,19 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
     if (currentTime >= params.end[0]) {
       return false;
     }
-    const bb = this.bb
+    const bb = this.bb;
 
-    const f = Function('t', 'return ' + bb)
+    const f = Function('t', 'return ' + bb);
 
     const output = outputs[0];
 
     for (let i = 0; i < (output[0].length ?? 0); i++) {
-
-      let t = currentTime
-      t *= sampleRate
-      const signal = ((f(t)&255)/127.5 - 1)/4
+      let t = currentTime;
+      t *= sampleRate;
+      const signal = ((f(t) & 255) / 127.5 - 1) / 4;
       for (let o = 0; o < output.length; o++) {
         // Combination of both oscillators with envelope applied
-        output[o][i] = signal
+        output[o][i] = signal;
       }
     }
 
