@@ -761,3 +761,55 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
 }
 
 registerProcessor('pulse-oscillator', PulseOscillatorProcessor);
+
+
+
+class ByteBeatProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.pi = _PI;
+  }
+
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+    ];
+  }
+
+  process(inputs, outputs, params) {
+    if (this.disconnected) {
+      return false;
+    }
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    if (currentTime >= params.end[0]) {
+      return false;
+    }
+    const output = outputs[0];
+
+    for (let i = 0; i < (output[0].length ?? 0); i++) {
+
+      for (let o = 0; o < output.length; o++) {
+        // Combination of both oscillators with envelope applied
+        output[o][i] = 0.15 * (out0 - out1) * this.envf;
+      }
+    }
+
+    return true; // keep the audio processing going
+  }
+}
+
+registerProcessor('byte-beat-processor', BeatBeatProcessor);
