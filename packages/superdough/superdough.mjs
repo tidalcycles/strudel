@@ -137,6 +137,7 @@ const defaultDefaultValues = {
   shapevol: 1,
   distortvol: 1,
   delay: 0,
+  byteBeatExpression: '0',
   delayfeedback: 0.5,
   delaytime: 0.25,
   orbit: 1,
@@ -475,6 +476,7 @@ export const superdough = async (value, t, hapDuration) => {
   let {
     s = getDefaultValue('s'),
     bank,
+    byteBeatExpression,
     source,
     gain = getDefaultValue('gain'),
     postgain = getDefaultValue('postgain'),

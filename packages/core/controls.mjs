@@ -448,6 +448,20 @@ export const { drive } = registerControl('drive');
 /**
  * Allows you to set the output channels on the interface
  *
+ * @name byteBeatExpression
+ * @synonyms bbexpr
+ *
+ * @param {number | Pattern} byteBeatExpression pattern the output channels
+ * @example
+ * note("e a d b g").channels("3:4")
+ *
+ */
+export const { byteBeatExpression, bbexpr } = registerControl('byteBeatExpression', 'bbexpr');
+
+
+/**
+ * Allows you to set the output channels on the interface
+ *
  * @name channels
  * @synonyms ch
  *

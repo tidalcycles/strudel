@@ -144,6 +144,63 @@ export function registerSynthSounds() {
     { prebake: true, type: 'synth' },
   );
 
+
+  registerSound(
+    'bytebeat',
+    (begin, value, onended) => {
+      const ac = getAudioContext();
+      let { byteBeatExpression } = value;
+
+      let { duration} = value;
+      const [attack, decay, sustain, release] = getADSRValues(
+        [value.attack, value.decay, value.sustain, value.release],
+        'linear',
+        [0.001, 0.05, 0.6, 0.01],
+      );
+      const holdend = begin + duration;
+      const end = holdend + release + 0.01;
+      let o = getWorklet(
+        ac,
+        'byte-beat-processor',
+        {
+        
+          begin,
+          end,
+        },
+        {
+          outputChannelCount: [2],
+        },
+      );
+
+
+      o.port.postMessage(byteBeatExpression);
+
+      let envGain = gainNode(1);
+      envGain = o.connect(envGain);
+
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
+  
+      let timeoutNode = webAudioTimeout(
+        ac,
+        () => {
+          destroyAudioWorkletNode(o);
+          envGain.disconnect();
+          onended();
+        },
+        begin,
+        end,
+      );
+
+      return {
+        node: envGain,
+        stop: (time) => {
+          timeoutNode.stop(time);
+        },
+      };
+    },
+    { prebake: true, type: 'synth' },
+  );
+
   registerSound(
     'pulse',
     (begin, value, onended) => {
