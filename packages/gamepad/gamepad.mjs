@@ -178,16 +178,18 @@ export const listGamepads = () => {
   const connectedGamepads = Array.from(gamepads)
     .filter((gp) => gp !== null)
     .map((gp) => ({
-      id: gp.id,
       index: gp.index,
+      id: gp.id,
       mapping: gp.mapping,
       buttons: gp.buttons.length,
       axes: gp.axes.length,
       connected: gp.connected,
       timestamp: gp.timestamp,
     }));
+  // Format the gamepads info into a readable string
+  const gamepadsInfo = connectedGamepads.map((gp) => `${gp.index}: ${gp.id}`).join('\n');
 
-  logger('Connected Gamepads:', connectedGamepads);
+  logger(`[gamepad] available gamepads:\n${gamepadsInfo}`);
   return connectedGamepads;
 };
 
@@ -195,6 +197,17 @@ export const listGamepads = () => {
 const gamepadStates = new Map();
 
 export const gamepad = (index = 0, mapping = 'XBOX') => {
+  // list connected gamepads
+  const connectedGamepads = listGamepads();
+
+  // Check if the requested gamepad index exists
+  const requestedGamepad = connectedGamepads.find((gp) => gp.index === index);
+  if (!requestedGamepad) {
+    throw new Error(
+      `[gamepad] gamepad at index ${index} not found. available gamepads: ${connectedGamepads.map((gp) => gp.index).join(', ')}`,
+    );
+  }
+
   // Handle button mapping
   let buttonMap =
     typeof mapping === 'string'
@@ -204,8 +217,7 @@ export const gamepad = (index = 0, mapping = 'XBOX') => {
         : buttonMapSettings.XBOX;
 
   if (!buttonMap) {
-    logger(`Button mapping '${mapping}' not found`);
-    return;
+    throw new Error(`[gamepad] button mapping '${mapping}' not found`);
   }
 
   const handler = new GamepadHandler(index, buttonMap);
@@ -283,6 +295,8 @@ export const gamepad = (index = 0, mapping = 'XBOX') => {
   const btnSeq = btnSequence;
   const btnseq = btnSequence;
   const seq = btnSequence;
+
+  logger(`[gamepad] connected to gamepad ${index} (${requestedGamepad.id}) with ${mapping} mapping`);
 
   // Return an object with all controls
   return {
