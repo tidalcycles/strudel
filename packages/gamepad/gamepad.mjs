@@ -209,12 +209,22 @@ export const gamepad = (index = 0, mapping = 'XBOX') => {
   }
 
   // Handle button mapping
-  let buttonMap =
-    typeof mapping === 'string'
-      ? buttonMapSettings[mapping.toUpperCase()]
-      : typeof mapping === 'object'
-        ? { ...buttonMap, ...mapping }
-        : buttonMapSettings.XBOX;
+  let buttonMap = buttonMapSettings.XBOX;
+
+  if (typeof mapping === 'string') {
+    buttonMap = buttonMapSettings[mapping.toUpperCase()];
+  } else if (typeof mapping === 'object') {
+    buttonMap = { ...buttonMapSettings.XBOX, ...mapping };
+    // Check that all mapping values are valid button indices
+    const maxButtons = requestedGamepad.buttons; // Standard gamepad has 16 buttons
+    for (const [key, value] of Object.entries(mapping)) {
+      if (typeof value !== 'number' || value < 0 || value >= maxButtons) {
+        throw new Error(
+          `[gamepad] invalid button mapping for '${key}': ${value}. Must be a number between 0 and ${maxButtons - 1}`,
+        );
+      }
+    }
+  }
 
   if (!buttonMap) {
     throw new Error(`[gamepad] button mapping '${mapping}' not found`);
@@ -296,7 +306,9 @@ export const gamepad = (index = 0, mapping = 'XBOX') => {
   const btnseq = btnSequence;
   const seq = btnSequence;
 
-  logger(`[gamepad] connected to gamepad ${index} (${requestedGamepad.id}) with ${mapping} mapping`);
+  logger(
+    `[gamepad] connected to gamepad ${index} (${requestedGamepad.id}) with ${typeof mapping === 'object' ? 'custom' : mapping} mapping`,
+  );
 
   // Return an object with all controls
   return {
