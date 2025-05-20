@@ -811,7 +811,7 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
       const signal = ((f(t) & 255) / 127.5 - 1) / 4;
       for (let o = 0; o < output.length; o++) {
         // Combination of both oscillators with envelope applied
-        output[o][i] = signal;
+        output[o][i] = signal * .4;
       }
     }
 
