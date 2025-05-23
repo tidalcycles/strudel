@@ -140,3 +140,8 @@ registerWidget('_spectrum', (id, options = {}, pat) => {
   const ctx = getCanvasWidget(id, options).getContext('2d');
   return pat.spectrum({ ...options, ctx, id });
 });
+
+registerWidget('_cyclecounter', (id, options = {}, pat) => {
+  const ctx = getCanvasWidget(id, options).getContext('2d');
+  return pat.cyclecounter({ ...options, ctx, id });
+});
