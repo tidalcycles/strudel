@@ -722,12 +722,12 @@ export const superdoughTrigger = (t, hap, ct, cps) => {
   superdough(hap, t - ct, hap.duration / cps, cps);
 };
 
-export const prepare = (value) => {
+export const prepare = async (value) => {
   const { onPrepare } = getSound(value.s);
   if (onPrepare) {
     if (value.bank && value.s) {
       value.s = `${value.bank}_${value.s}`;
     }
-    onPrepare(value);
+    await onPrepare(value);
   }
 };
