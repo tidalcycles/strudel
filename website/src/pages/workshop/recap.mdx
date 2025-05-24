@@ -11,19 +11,20 @@ This page is just a listing of all functions covered in the workshop!
 
 ## Mini Notation
 
-| Concept           | Syntax   | Example                                                               |
-| ----------------- | -------- | --------------------------------------------------------------------- |
-| Sequence          | space    | <MiniRepl client:visible tune={`sound("bd bd sd hh bd cp sd hh")`} /> |
-| Sample Number     | :x       | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
-| Rests             | ~        | <MiniRepl client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
-| Sub-Sequences     | \[\]     | <MiniRepl client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
-| Sub-Sub-Sequences | \[\[\]\] | <MiniRepl client:visible tune={`sound("bd [metal [jazz sd]]")`} />    |
-| Speed up          | \*       | <MiniRepl client:visible tune={`sound("bd sd*2 cp*3")`} />            |
-| Parallel          | ,        | <MiniRepl client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
-| Slow down         | \/       | <MiniRepl client:visible tune={`note("[c a f e]/2")`} />              |
-| Alternate         | \<\>     | <MiniRepl client:visible tune={`note("c <e g>")`} />                  |
-| Elongate          | @        | <MiniRepl client:visible tune={`note("c@3 e")`} />                    |
-| Replicate         | !        | <MiniRepl client:visible tune={`note("c!3 e")`} />                    |
+| Concept           | Syntax   | Description                               | Example                                                                 |
+| ----------------- | -------- | ----------------------------------------- | ----------------------------------------------------------------------- |
+| Sequence          | space    | Play sounds one after another             | <MiniRepl client:visible tune={`sound("bd bd sd hh bd cp sd hh")`} />   |
+| Sample Number     | :x       | Select a specific sample from a sound     | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />       |
+| Rests             | ~        | Add silence into the sequence             | <MiniRepl client:visible tune={`sound("metal ~ jazz jazz:1")`} />       |
+| Sub-Sequences     | \[\]     | Group elements, squished into their space | <MiniRepl client:visible tune={`sound("bd wind [metal jazz] hh")`} />   |
+| Sub-Sub-Sequences | \[\[\]\] | Nest groups within groups                 | <MiniRepl client:visible tune={`sound("bd [metal [jazz sd]]")`} />      |
+| Speed up          | \*       | Make elements play faster                 | <MiniRepl client:visible tune={`sound("bd sd*2 cp*3")`} />              |
+| Parallel          | ,        | Play multiple sequences at the same time  | <MiniRepl client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />       |
+| Slow down         | \/       | Divide a sequence over multiple cycles    | <MiniRepl client:visible tune={`note("[c a f e]/2")`} />               |
+| Alternate         | \<\>     | Play one element per cycle from a sequence| <MiniRepl client:visible tune={`note("c <e g>")`} />                   |
+| Elongate          | @        | Extend the duration of an element         | <MiniRepl client:visible tune={`note("c@3 e")`} />                     |
+| Replicate         | !        | Repeat an element multiple times          | <MiniRepl client:visible tune={`note("c!3 e")`} />                     |
+| Multiple-Lines    | \`\`     | Write sequences across multiple lines     | <MiniRepl client:visible tune={'sound(`bd*2, \n hh*4`)'} />            |
 
 ## Sounds
 
@@ -43,20 +44,26 @@ This page is just a listing of all functions covered in the workshop!
 
 ## Audio Effects
 
-| name  | example                                                                                 |
-| ----- | --------------------------------------------------------------------------------------- |
-| lpf   | <MiniRepl client:visible tune={`note("c2 c3 c2 c3").s("sawtooth").lpf("400 2000")`} />  |
-| vowel | <MiniRepl client:visible tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} /> |
-| gain  | <MiniRepl client:visible tune={`s("hh*16").gain("[.25 1]*4")`} />                       |
-| delay | <MiniRepl client:visible tune={`s("bd rim bd cp").delay(.5)`} />                        |
-| room  | <MiniRepl client:visible tune={`s("bd rim bd cp").room(.5)`} />                         |
-| pan   | <MiniRepl client:visible tune={`s("bd rim bd cp").pan("0 1")`} />                       |
-| speed | <MiniRepl client:visible tune={`s("bd rim bd cp").speed("<1 2 -1 -2>")`} />             |
-| range | <MiniRepl client:visible tune={`s("hh*32").lpf(saw.range(200,4000))`} />                |
+| Name    | Description                                      | Example                                                                                                          |
+| ------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| lpf     | Low-pass filter, cuts high frequencies           | <MiniRepl client:visible tune={`note("c2 c3 c2 c3").s("sawtooth").lpf("400 2000")`} />                         |
+| vowel   | Vowel-like filter                                | <MiniRepl client:visible tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} />                          |
+| gain    | Adjusts volume/amplitude                         | <MiniRepl client:visible tune={`s("hh*16").gain("[.25 1]*2")`} />                                                |
+| attack  | ADSR: Time to reach full volume                  | <MiniRepl client:visible tune={`note("c3").s("sawtooth").attack(.5)`} />                                              |
+| decay   | ADSR: Time to reach sustain level                | <MiniRepl client:visible tune={`note("c3").s("sawtooth").decay(.5)`} />                                               |
+| sustain | ADSR: Volume level while note is held            | <MiniRepl client:visible tune={`note("c3").s("sawtooth").sustain(.5)`} />                                             |
+| release | ADSR: Time to fade out after note ends           | <MiniRepl client:visible tune={`note("c3").s("sawtooth").release(.5)`} />                                             |
+| adsr    | ADSR: Short notation (attack:decay:sustain:release) | <MiniRepl client:visible tune={`note("c3").s("sawtooth").adsr(".1:.2:.5:.3")`} />                                     |
+| delay   | Creates echoes                                   | <MiniRepl client:visible tune={`s("bd rim bd cp").delay(.5)`} />                                                 |
+| room    | Simulates room reverb                            | <MiniRepl client:visible tune={`s("bd rim bd cp").room(.5)`} />                                                  |
+| pan     | Pans sound left (0) to right (1)                 | <MiniRepl client:visible tune={`s("bd rim bd cp").pan("0 1")`} />                                                |
+| speed   | Changes playback speed (and pitch)               | <MiniRepl client:visible tune={`s("bd rim bd cp").speed("<1 2 -1 -2>")`} />                                      |
+| signals | Modulate parameters with waveforms (`sine`, etc.) | `sine`, `saw`, `square`, `tri`, `rand`, `perlin`<br/><MiniRepl client:visible tune={`s("hh*16").gain(saw)`} /> |
+| range   | Set min/max values for signal modulation         | <MiniRepl client:visible tune={`s("hh*16").lpf(saw.range(200,4000))`} />                                         |
 
 ## Pattern Effects
 
-| name | description                         | example                                                                             |
+| Name | Description                         | Example                                                                             |
 | ---- | ----------------------------------- | ----------------------------------------------------------------------------------- |
 | cpm  | sets the tempo in cycles per minute | <MiniRepl client:visible tune={`sound("bd sd [~ bd] sd").cpm(45)`} />               |
 | fast | speed up                            | <MiniRepl client:visible tune={`sound("bd sd [~ bd] sd").fast(2)`} />               |
