@@ -1,35 +1,62 @@
 // @strudel/gamepad/index.mjs
 
 import { signal } from '@strudel/core';
+import { logger } from '@strudel/core';
 
 // Button mapping for Logitech Dual Action (STANDARD GAMEPAD Vendor: 046d Product: c216)
-export const buttonMap = {
-  a: 0,
-  b: 1,
-  x: 2,
-  y: 3,
-  lb: 4,
-  rb: 5,
-  lt: 6,
-  rt: 7,
-  back: 8,
-  start: 9,
-  u: 12,
-  up: 12,
-  d: 13,
-  down: 13,
-  l: 14,
-  left: 14,
-  r: 15,
-  right: 15,
+
+const buttonMapSettings = {
+  XBOX: {
+    // XBOX mapping default
+    a: 0,
+    b: 1,
+    x: 2,
+    y: 3,
+    lb: 4,
+    rb: 5,
+    lt: 6,
+    rt: 7,
+    back: 8,
+    start: 9,
+    u: 12,
+    up: 12,
+    d: 13,
+    down: 13,
+    l: 14,
+    left: 14,
+    r: 15,
+    right: 15,
+  },
+  NES: {
+    // Nintendo mapping
+    a: 1,
+    b: 0,
+    x: 3,
+    y: 2,
+    lb: 4,
+    rb: 5,
+    lt: 6,
+    rt: 7,
+    back: 8,
+    start: 9,
+    u: 12,
+    up: 12,
+    d: 13,
+    down: 13,
+    l: 14,
+    left: 14,
+    r: 15,
+    right: 15,
+  },
 };
 
 class ButtonSequenceDetector {
-  constructor(timeWindow = 1000) {
+  constructor(timeWindow = 1000, mapping) {
     this.sequence = [];
     this.timeWindow = timeWindow;
     this.lastInputTime = 0;
     this.buttonStates = Array(16).fill(0); // Track previous state of each button
+    this.buttonMap = mapping;
     // Button mapping for character inputs
   }
 
@@ -44,7 +71,8 @@ class ButtonSequenceDetector {
       }
 
       // Store the button name instead of index
-      const buttonName = Object.keys(buttonMap).find((key) => buttonMap[key] === buttonIndex) || buttonIndex.toString();
+      const buttonName =
+        Object.keys(this.buttonMap).find((key) => this.buttonMap[key] === buttonIndex) || buttonIndex.toString();
 
       this.sequence.push({
         input: buttonName,
@@ -87,9 +115,9 @@ class ButtonSequenceDetector {
       // Check if either the input matches directly or they refer to the same button in the map
       return (
         input === target ||
-        buttonMap[input] === buttonMap[target] ||
+        this.buttonMap[input] === this.buttonMap[target] ||
         // Also check if the numerical index matches
-        buttonMap[input] === parseInt(target)
+        this.buttonMap[input] === parseInt(target)
       );
     })
       ? 1
@@ -98,9 +126,10 @@ class ButtonSequenceDetector {
 }
 
 class GamepadHandler {
-  constructor(index = 0) {
+  constructor(index = 0, mapping) {
     // Add index parameter
     this._gamepads = {};
+    this._mapping = mapping;
     this._activeGamepad = index; // Use provided index
     this._axes = [0, 0, 0, 0];
     this._buttons = Array(16).fill(0);
@@ -143,12 +172,66 @@ class GamepadHandler {
   }
 }
 
+// Add utility function to list all connected gamepads
+export const listGamepads = () => {
+  const gamepads = navigator.getGamepads();
+  const connectedGamepads = Array.from(gamepads)
+    .filter((gp) => gp !== null)
+    .map((gp) => ({
+      index: gp.index,
+      id: gp.id,
+      mapping: gp.mapping,
+      buttons: gp.buttons.length,
+      axes: gp.axes.length,
+      connected: gp.connected,
+      timestamp: gp.timestamp,
+    }));
+  // Format the gamepads info into a readable string
+  const gamepadsInfo = connectedGamepads.map((gp) => `${gp.index}: ${gp.id}`).join('\n');
+
+  logger(`[gamepad] available gamepads:\n${gamepadsInfo}`);
+  return connectedGamepads;
+};
+
 // Module-level state store for toggle states
 const gamepadStates = new Map();
 
-export const gamepad = (index = 0) => {
-  const handler = new GamepadHandler(index);
-  const sequenceDetector = new ButtonSequenceDetector(2000);
+export const gamepad = (index = 0, mapping = 'XBOX') => {
+  // list connected gamepads
+  const connectedGamepads = listGamepads();
+
+  // Check if the requested gamepad index exists
+  const requestedGamepad = connectedGamepads.find((gp) => gp.index === index);
+  if (!requestedGamepad) {
+    throw new Error(
+      `[gamepad] gamepad at index ${index} not found. available gamepads: ${connectedGamepads.map((gp) => gp.index).join(', ')}`,
+    );
+  }
+
+  // Handle button mapping
+  let buttonMap = buttonMapSettings.XBOX;
+
+  if (typeof mapping === 'string') {
+    buttonMap = buttonMapSettings[mapping.toUpperCase()];
+  } else if (typeof mapping === 'object') {
+    buttonMap = { ...buttonMapSettings.XBOX, ...mapping };
+    // Check that all mapping values are valid button indices
+    const maxButtons = requestedGamepad.buttons; // Standard gamepad has 16 buttons
+    for (const [key, value] of Object.entries(mapping)) {
+      if (typeof value !== 'number' || value < 0 || value >= maxButtons) {
+        throw new Error(
+          `[gamepad] invalid button mapping for '${key}': ${value}. Must be a number between 0 and ${maxButtons - 1}`,
+        );
+      }
+    }
+  }
+
+  if (!buttonMap) {
+    throw new Error(`[gamepad] button mapping '${mapping}' not found`);
+  }
+
+  const handler = new GamepadHandler(index, buttonMap);
+  const sequenceDetector = new ButtonSequenceDetector(2000, buttonMap);
 
   // Base signal that polls gamepad state and handles sequence detection
   const baseSignal = signal((t) => {
@@ -218,8 +301,14 @@ export const gamepad = (index = 0) => {
     return baseSignal.fmap(() => sequenceDetector.checkSequence(sequence));
   };
   const checkSequence = btnSequence;
+  const sequence = btnSequence;
   const btnSeq = btnSequence;
-  const btnseq = btnSeq;
+  const btnseq = btnSequence;
+  const seq = btnSequence;
+
+  logger(
+    `[gamepad] connected to gamepad ${index} (${requestedGamepad.id}) with ${typeof mapping === 'object' ? 'custom' : mapping} mapping`,
+  );
 
   // Return an object with all controls
   return {
@@ -234,9 +323,11 @@ export const gamepad = (index = 0) => {
       ]),
     ),
     checkSequence,
+    sequence,
     btnSequence,
     btnSeq,
     btnseq,
+    seq,
     raw: baseSignal,
   };
 };
