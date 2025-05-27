@@ -158,10 +158,13 @@ export function registerSynthSounds() {
       );
       const holdend = begin + duration;
       const end = holdend + release + 0.01;
+      const frequency = getFrequencyFromValue(value);
+
       let o = getWorklet(
         ac,
         'byte-beat-processor',
         {
+          frequency,
           begin,
           end,
         },

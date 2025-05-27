@@ -1,0 +1,295 @@
+🌱 audio worklets
+In the last post, we've been filling fixed length audio buffers. While this is very simple to implement, it's a bit annoying when the audio is always stopping. To calculate samples infinitely, we can use an AudioWorklet. Now we've arrived at a typical bytebeat/floatbeat editor:
+
+💡 hit ctrl+enter to update the code & ctrl+. to stop
+((( // by stimmer (2011-10-03)
+t*(4|t>>13&3)>>(~t>>11&1)&128|t*(t>>11&t>>13)*(~t>>9&3)&127
+) & 255) / 127.5 - 1)/4
+ play | stop 
+The AudioWorklet is the lowest abstaction we get with the Web Audio API. It essentially gives us a function that fills a buffer of 128 samples over and over again, also running isolated from the rest of the page. At a sample rate of 44100/s, this means we fill a buffer every ~3ms (44100/128).
+
+Here are some examples to try:
+
+hello sine
+slow sine (inaudible)
+just intonation triad
+hello saw
+hello pulse
+wandering sine
+bytebeat 1
+bytebeat 2
+gladyouask - chirps
+aks - TR-808-like hihat
+show source (271 loc)
+<html><!-- license: AGPL-3.0 --><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 audio worklets</title>
+    <style>
+      body {
+        background-color: #222;
+        max-width: 500px;
+        margin: auto;
+        font-family: serif;
+        font-size: 1.2em;
+        color: #edd;
+        text-align: left;
+        padding: 20px 8px;
+      }
+      @font-face {
+        font-family: "FontWithASyntaxHighlighter";
+        src: url("/fonts/FontWithASyntaxHighlighter-Regular.woff2")
+          format("woff2");
+      }
+      a {
+        color: cyan;
+        font-size: 1em;
+        cursor: pointer;
+      }
+      textarea,
+      pre {
+        overflow: auto;
+        font-family: "FontWithASyntaxHighlighter", monospace;
+        padding: 8px;
+        font-size: 12px;
+        border: 0;
+        outline: none;
+        background-color: #44444490;
+        border: 0;
+        color: white;
+        width: 100%;
+        margin-top: 8px;
+        box-sizing: border-box;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+      }
+      canvas {
+        max-width: 100%;
+        background-color: #44444490;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>🌱 audio worklets</h2>
+    <p>
+      In the <a href="/audio-dsp/buffers.html">last post</a>, we've been filling
+      fixed length audio buffers. While this is very simple to implement, it's a
+      bit annoying when the audio is always stopping. To calculate samples
+      infinitely, we can use an AudioWorklet. Now we've arrived at a typical
+      bytebeat/floatbeat editor:
+    </p>
+    <div>
+      <small>💡 hit ctrl+enter to update the code &amp; ctrl+. to stop</small>
+    </div>
+    <textarea id="code" spellcheck="false" rows="8"></textarea>
+    <a id="play">play</a> | <a id="stop">stop</a>
+    <canvas id="canvas" width="800" height="200"></canvas>
+    <p>
+      The AudioWorklet is the lowest abstaction we get with the Web Audio API.
+      It essentially gives us a function that fills a buffer of 128 samples over
+      and over again, also running isolated from the rest of the page. At a
+      sample rate of 44100/s, this means we fill a buffer every ~3ms
+      (44100/128).
+    </p>
+    <p>Here are some examples to try:</p>
+    <ul>
+      <li>
+        <a href="#TWF0aC5zaW4odC80NDEwMCoyKk1hdGguUEkqMTIxKQ==">hello sine</a>
+      </li>
+      <li>
+        <a href="#TWF0aC5zaW4odC80NDEwMCoyKk1hdGguUEkqMik=">slow sine (inaudible)</a>
+      </li>
+      <li>
+        <a href="#KApNYXRoLnNpbih0LzQ0MTAwKjIqTWF0aC5QSSoyMDApCitNYXRoLnNpbih0LzQ0MTAwKjIqTWF0aC5QSSozMDApCitNYXRoLnNpbih0LzQ0MTAwKjIqTWF0aC5QSSo0MDApCikvNA==">
+          just intonation triad
+        </a>
+      </li>
+      <li>
+        <a href="#KHQvNDQxMDApKjYxJTEtLjU=">hello saw</a>
+      </li>
+      <li>
+        <a href="#KCh0LzQ0MTAwKjYxKSUxPi41Py0xOjEpLzI=">hello pulse</a>
+      </li>
+      <li>
+        <a href="#KHQ9dC80NDEwMCwKTWF0aC5zaW4odCoyKk1hdGguUEkqMTIwKS8zCitNYXRoLnNpbih0KjIqTWF0aC5QSSozMDEpLzMKKQ==">wandering sine</a>
+      </li>
+      <li>
+        <a href="#KCgoIC8vIGJ5IHN0aW1tZXIgKDIwMTEtMTAtMDMpCnQqKDR8dD4+MTMmMyk+Pih+dD4+MTEmMSkmMTI4fHQqKHQ+PjExJnQ+PjEzKSoofnQ+PjkmMykmMTI3CikgJiAyNTUpIC8gMTI3LjUgLSAxKS80">bytebeat 1</a>
+      </li>
+      <li>
+        <a href="#KCgoIC8vIGxocGhyIC0gRnJhY3RhbGl6ZWQgUGFzdAoodD4+MTBedD4+MTEpJTUqKCh0Pj4xNCYzXnQ+PjE1JjEpKzEpKnQlOTkrKCgzKyh0Pj4xNCYzKS0odD4+MTYmMSkpLzMqdCU5OSY2NCkKKSAmIDI1NSkgLyAxMjcuNSAtIDEpLzQ=">bytebeat 2</a>
+      </li>
+      <li>
+        <a href="#ICh0PXQvNDQxMDAsCk1hdGguc2luKHQqMSpNYXRoLlBJKjM1MCkvNAorTWF0aC5zaW4odCoxKk1hdGguUEkqNTIwKS84IAorTWF0aC5zaW4odCoyKk1hdGguUEkqKCgodCo5KSUxMj4uNT8tLjg6MTcwMCkpKS8xMAorTWF0aC5zaW4odCoyKk1hdGguUEkqKCgodCo0KSUyPi4yPy0uODoyMjAwKSkpLzEwCitNYXRoLnNpbih0KjIqTWF0aC5QSSooKCh0KjMpJTE+LjI/LS44OjM2MDApKSkvMTAKKygodCoyKSUxPi4yPy0uODouOCkvNAorKCh0KSUxPi4zPy0uODouOCkvMgop">gladyouask - chirps</a>
+      </li>
+      <li>
+        <a href="#KHQ9dC80NDEwMCwKLy8gc291cmNlOiBodHRwczovL3d3dy5yZWRkaXQuY29tL3IvZWRtcHJvZHVjdGlvbi9jb21tZW50cy8xOHVtNXgzL3RpcHNfYW5kX3RyaWNrc19mb3JfYXV0aGVudGljX3RyODA4X3NvdW5kc19raWNrLwpbMjA0LDI5OCwzNjYsNTE1LDU0MCw4MDBdLm1hcChoej0+eyAvLyBoaWhhdCB0dW5pbmcKICBsZXQgYT0wOwogIGNvbnN0IEkwPTE4OyAvLyBmaXJzdCBoYXJtb255IChoaXBhc3MgZmlsdGVyKQogIGNvbnN0IE49MzA7IC8vIGhhcm1vbnkgY291bnQKICAvLyBzcXVhcmUgd2F2ZSBmb3VyaWVyIHNlcmllczoKICBmb3IgKGxldCBpID0gSTA7IGkgPCBJMCtOOyBpKz0yKSB7CiAgICBpZiAoaHoqaSA+PSAyMjAwMCkgYnJlYWs7IC8vIHN0b3AgYXQgbnlxdWlzdCBsaW1pdAogICAgYSArPSBNYXRoLnNpbih0KjIqTWF0aC5QSSpoeippKS9OOwogIH07CiAgcmV0dXJuIGE7Cn0pLnJlZHVjZSgoYSxiKT0+YStiKQoqCjAuMSpbMTAsMSwyLDUsOSwxLDQsNywxMCwwLDIsNSwxLDcsMSw3XVsoKHQqMTApfDApJTE2XSAvLyBwYXR0ZXJuCioKKCgxLSgodCUwLjEpKjEwKSkqKjEuNykpIC8qIGVudmVsb3BlICov">aks - TR-808-like hihat</a>
+      </li>
+    </ul>
+
+    <details>
+      <summary id="loc">show page source</summary>
+      <pre id="pre"></pre>
+    </details>
+    <p>
+      <a href="/">back to garten.salat</a>
+    </p>
+
+    <script>
+      // init canvas
+      const canvas = document.querySelector("#canvas");
+      const drawContext = canvas.getContext("2d");
+      canvas.width = 800;
+      canvas.height = 200;
+      drawSilence(drawContext);
+
+      // init audio context
+      const ctx = new AudioContext();
+      document.addEventListener("click", function firstClick() {
+        ctx.resume(); // autoply policy
+        document.removeEventListener("click", firstClick);
+      });
+
+      // init code input
+      const input = document.querySelector("#code");
+      document.querySelector("#play").onclick = () => play();
+      document.querySelector("#stop").onclick = () => stop();
+      let worklet;
+      async function play() {
+        await ctx.resume();
+        stop();
+        worklet = await runWorklet(ctx, input.value);
+        worklet.port.onmessage = (e) => drawBuffer(e.data);
+      }
+      let stop = () => {
+        worklet?.disconnect();
+        worklet?.port.postMessage("stop");
+      };
+
+      // read base64 code from url
+      let urlCode = window.location.hash.slice(1);
+      if (urlCode) {
+        urlCode = atob(urlCode);
+        console.log("loaded code from url!");
+      }
+      input.value = urlCode || `Math.sin(t/44100*2*Math.PI*220)/2`;
+      // live coding / sharing logic
+      window.addEventListener("hashchange", function () {
+        const urlCode = atob(window.location.hash.slice(1));
+        input.value = urlCode;
+        play();
+      });
+      input.addEventListener("keydown", async (e) => {
+        if ((e.ctrlKey || e.altKey) && e.key === "Enter") {
+          const hash = btoa(input.value);
+          let urlCode = window.location.hash.slice(1);
+          if (hash !== urlCode) {
+            window.location.hash = "#" + hash;
+          } else {
+            play();
+          }
+        }
+        if ((e.ctrlKey || e.altKey) && e.code === "Period") {
+          e.preventDefault();
+          stop();
+        }
+      });
+
+      async function runWorklet(ac, expression) {
+        const name = `worklet-${Date.now()}`;
+        const workletCode = `
+let dsp = (t) => ${expression};
+class MyProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.t = 0;
+    this.active = true;
+    this.framebuffer = new Float32Array(Math.floor(sampleRate/60));
+    this.port.onmessage = (e) => e.data === "stop" && (this.active = false)
+  }
+  process(inputs, outputs, parameters) {
+    const output = outputs[0];
+    for (let i = 0; i < output[0].length; i++) {
+      const out = dsp(this.t);
+      for (let c = 0; c < output.length; c++) 
+        output[c][i] = out;
+      this.t++;
+      this.framebuffer[this.t%this.framebuffer.length] = out;
+      if(this.t % this.framebuffer.length === 0 && this.t > 0) {
+        this.port.postMessage(this.framebuffer)
+      }
+    }
+    return this.active;
+  }
+}
+registerProcessor('${name}', MyProcessor);`;
+        await ac.resume();
+        const dataURL = `data:text/javascript;base64,${btoa(workletCode)}`;
+        await ac.audioWorklet.addModule(dataURL);
+        const node = new AudioWorkletNode(ac, name);
+        node.connect(ac.destination);
+        return node;
+      }
+
+      function drawBuffer(samples) {
+        drawContext.clearRect(0, 0, canvas.width, canvas.height);
+        plot(
+          (x) => samples[Math.floor(x)], // this is bad..
+          drawContext,
+          [1, samples.length],
+          [-1, 1],
+          "white",
+          2
+        );
+      }
+      function drawSilence(ctx, color = "white", lineWidth = 2) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+      }
+
+      // plot function, see /plot.html
+      function plot(
+        fn,
+        ctx,
+        xrange = [-1, 1],
+        yrange = [-1, 1],
+        color = "black",
+        lineWidth = 4
+      ) {
+        // these 3 functions are very good to know..
+        const lerp = (v, min, max) => v * (max - min) + min;
+        const invLerp = (v, min, max) => (v - min) / (max - min);
+        const remap = (v, vmin, vmax, omin, omax) =>
+          lerp(invLerp(v, vmin, vmax), omin, omax);
+        // prepare draw context
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = color;
+        // function ranges
+        const [x0, x1] = xrange;
+        const [y0, y1] = yrange;
+        // draw ranges
+        const [px0, px1] = [0, ctx.canvas.width];
+        const [py0, py1] = [ctx.canvas.height - ctx.lineWidth, ctx.lineWidth];
+        // actual draw logic
+        ctx.beginPath();
+        for (let px = 0; px < ctx.canvas.width; px++) {
+          const x = remap(px, px0, px1, x0, x1);
+          const y = fn(x);
+          const py = remap(y, y0, y1, py0, py1);
+          px === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      }
+
+      const html = document.querySelector("html").outerHTML;
+      const loc = html.split("\n").length;
+      document.querySelector("#pre").textContent = html;
+      document.querySelector("#loc").textContent = `show source (${loc} loc)`;
+    </script></body></html>
+back to garten.salat

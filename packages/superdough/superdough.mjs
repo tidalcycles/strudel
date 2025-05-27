@@ -446,7 +446,7 @@ function mapChannelNumbers(channels) {
   return (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 }
 
-export const superdough = async (value, t, hapDuration) => {
+export const superdough = async (value, t, hapDuration, cps) => {
   const ac = getAudioContext();
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   let { stretch } = value;
@@ -580,7 +580,7 @@ export const superdough = async (value, t, hapDuration) => {
   // get source AudioNode
   let sourceNode;
   if (source) {
-    sourceNode = source(t, value, hapDuration);
+    sourceNode = source(t, value, hapDuration,cps);
   } else if (getSound(s)) {
     const { onTrigger } = getSound(s);
     const onEnded = () => {
