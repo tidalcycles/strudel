@@ -580,7 +580,7 @@ export const superdough = async (value, t, hapDuration, cps) => {
   // get source AudioNode
   let sourceNode;
   if (source) {
-    sourceNode = source(t, value, hapDuration,cps);
+    sourceNode = source(t, value, hapDuration, cps);
   } else if (getSound(s)) {
     const { onTrigger } = getSound(s);
     const onEnded = () => {

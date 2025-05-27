@@ -767,11 +767,12 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
     super();
     this.codeText = '0';
     this.port.onmessage = (event) => {
-
-      this.codeText = event.data.trim().replace(
-        /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
-        (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
-
+      this.codeText = event.data
+        .trim()
+        .replace(
+          /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+          (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')),
+        );
     };
     this.virtualRate = 112600; // target sample rate
     // this.nativeRate = sampleRate; // actual context rate, e.g., 48000
@@ -820,32 +821,29 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
       return false;
     }
     if (this.t == null) {
-      this.t = params.begin[0] * this.virtualRate
+      this.t = params.begin[0] * this.virtualRate;
     }
 
     let codeText = this.codeText;
     this.func = Function('t', 'return ' + codeText);
     const output = outputs[0];
-    const tIncrement = this.virtualRate / sampleRate
-
+    const tIncrement = this.virtualRate / sampleRate;
 
     for (let i = 0; i < output[0].length; i++) {
-      let t = Math.floor(this.t)
+      let t = Math.floor(this.t);
       const detune = getParamValue(i, params.detune);
       const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
 
-      t = t / (this.virtualRate / 256) * freq
+      t = (t / (this.virtualRate / 256)) * freq;
 
-      const funcValue = this.func(t)
-      let signal = (funcValue & 255) / 127.5 - 1
+      const funcValue = this.func(t);
+      let signal = (funcValue & 255) / 127.5 - 1;
       const out = signal;
       for (let c = 0; c < output.length; c++) {
         output[c][i] = out;
       }
-      this.t = this.t + tIncrement
-
+      this.t = this.t + tIncrement;
     }
-
 
     return true; // keep the audio processing going
   }
