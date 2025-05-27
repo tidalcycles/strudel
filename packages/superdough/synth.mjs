@@ -147,8 +147,14 @@ export function registerSynthSounds() {
   registerSound(
     'bytebeat',
     (begin, value, onended) => {
+      const defaultBeats = [
+        '(t%255 >= t/255%255)*255',
+        '(t*(t*8%60 <= 300)|(-t)*(t*4%512 < 256))+t/400',
+        't',
+      ]
+      const { n } = value
+      const { byteBeatExpression = defaultBeats[n % defaultBeats.length] } = value
       const ac = getAudioContext();
-      let { byteBeatExpression } = value;
 
       let { duration } = value;
       const [attack, decay, sustain, release] = getADSRValues(
