@@ -295,7 +295,7 @@ class LadderProcessor extends AudioWorkletProcessor {
     cutoff = (cutoff * 2 * _PI) / sampleRate;
     cutoff = cutoff > 1 ? 1 : cutoff;
 
-    const k = Math.min(8, resonance * 0.4);
+    const k = Math.min(8, resonance * 0.13);
     //               drive makeup  * resonance volume loss makeup
     let makeupgain = (1 / drive) * Math.min(1.75, 1 + k);
 
@@ -761,3 +761,90 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
 }
 
 registerProcessor('pulse-oscillator', PulseOscillatorProcessor);
+
+class ByteBeatProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.codeText = '0';
+    this.port.onmessage = (event) => {
+      this.codeText = event.data
+        .trim()
+        .replace(
+          /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+          (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')),
+        );
+    };
+    this.virtualRate = 112600; // target sample rate
+    this.t = null;
+    this.framebuffer = new Float32Array(Math.floor(sampleRate / 60));
+    this.func = null;
+  }
+
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+      {
+        name: 'frequency',
+        defaultValue: 440,
+        min: Number.EPSILON,
+      },
+      {
+        name: 'detune',
+        defaultValue: 0,
+        min: Number.NEGATIVE_INFINITY,
+        max: Number.POSITIVE_INFINITY,
+      },
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+    ];
+  }
+
+  process(inputs, outputs, params) {
+    if (this.disconnected) {
+      return false;
+    }
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    if (currentTime >= params.end[0]) {
+      return false;
+    }
+    if (this.t == null) {
+      this.t = params.begin[0] * this.virtualRate;
+    }
+
+    let codeText = this.codeText;
+    this.func = Function('t', 'return ' + codeText);
+    const output = outputs[0];
+    const tIncrement = this.virtualRate / sampleRate;
+
+    for (let i = 0; i < output[0].length; i++) {
+      let t = Math.floor(this.t);
+      const detune = getParamValue(i, params.detune);
+      const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
+
+      t = (t / (this.virtualRate / 256)) * freq;
+
+      const funcValue = this.func(t);
+      let signal = (funcValue & 255) / 127.5 - 1;
+      const out = signal * 0.2;
+      for (let c = 0; c < output.length; c++) {
+        output[c][i] = out;
+      }
+      this.t = this.t + tIncrement;
+    }
+
+    return true; // keep the audio processing going
+  }
+}
+
+registerProcessor('byte-beat-processor', ByteBeatProcessor);

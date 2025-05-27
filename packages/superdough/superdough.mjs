@@ -137,6 +137,7 @@ const defaultDefaultValues = {
   shapevol: 1,
   distortvol: 1,
   delay: 0,
+  byteBeatExpression: '0',
   delayfeedback: 0.5,
   delaytime: 0.25,
   orbit: 1,
@@ -445,7 +446,7 @@ function mapChannelNumbers(channels) {
   return (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 }
 
-export const superdough = async (value, t, hapDuration) => {
+export const superdough = async (value, t, hapDuration, cps) => {
   const ac = getAudioContext();
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   let { stretch } = value;
@@ -475,6 +476,7 @@ export const superdough = async (value, t, hapDuration) => {
   let {
     s = getDefaultValue('s'),
     bank,
+    byteBeatExpression,
     source,
     gain = getDefaultValue('gain'),
     postgain = getDefaultValue('postgain'),
@@ -578,7 +580,7 @@ export const superdough = async (value, t, hapDuration) => {
   // get source AudioNode
   let sourceNode;
   if (source) {
-    sourceNode = source(t, value, hapDuration);
+    sourceNode = source(t, value, hapDuration, cps);
   } else if (getSound(s)) {
     const { onTrigger } = getSound(s);
     const onEnded = () => {

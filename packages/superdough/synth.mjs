@@ -145,6 +145,65 @@ export function registerSynthSounds() {
   );
 
   registerSound(
+    'bytebeat',
+    (begin, value, onended) => {
+      const defaultBeats = ['(t%255 >= t/255%255)*255', '(t*(t*8%60 <= 300)|(-t)*(t*4%512 < 256))+t/400', 't'];
+      const { n } = value;
+      const { byteBeatExpression = defaultBeats[n % defaultBeats.length] } = value;
+      const ac = getAudioContext();
+
+      let { duration } = value;
+      const [attack, decay, sustain, release] = getADSRValues(
+        [value.attack, value.decay, value.sustain, value.release],
+        'linear',
+        [0.001, 0.05, 0.6, 0.01],
+      );
+      const holdend = begin + duration;
+      const end = holdend + release + 0.01;
+      const frequency = getFrequencyFromValue(value);
+
+      let o = getWorklet(
+        ac,
+        'byte-beat-processor',
+        {
+          frequency,
+          begin,
+          end,
+        },
+        {
+          outputChannelCount: [2],
+        },
+      );
+
+      o.port.postMessage(byteBeatExpression);
+
+      let envGain = gainNode(1);
+      envGain = o.connect(envGain);
+
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
+
+      let timeoutNode = webAudioTimeout(
+        ac,
+        () => {
+          destroyAudioWorkletNode(o);
+          envGain.disconnect();
+          onended();
+        },
+        begin,
+        end,
+      );
+
+      return {
+        node: envGain,
+        stop: (time) => {
+          timeoutNode.stop(time);
+        },
+      };
+    },
+    { prebake: true, type: 'synth' },
+  );
+
+  registerSound(
     'pulse',
     (begin, value, onended) => {
       const ac = getAudioContext();
