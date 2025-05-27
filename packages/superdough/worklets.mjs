@@ -775,8 +775,6 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
         );
     };
     this.virtualRate = 112600; // target sample rate
-    // this.nativeRate = sampleRate; // actual context rate, e.g., 48000
-    // this.ratio = this.nativeRate / this.virtualRate;
     this.t = null;
     this.framebuffer = new Float32Array(Math.floor(sampleRate / 60));
     this.func = null;
@@ -838,7 +836,7 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
 
       const funcValue = this.func(t);
       let signal = (funcValue & 255) / 127.5 - 1;
-      const out = signal;
+      const out = signal * 0.2;
       for (let c = 0; c < output.length; c++) {
         output[c][i] = out;
       }
