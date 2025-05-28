@@ -767,16 +767,56 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
     super();
     this.codeText = '0';
     this.port.onmessage = (event) => {
+      const chyx = {
+        /*bit*/ bitC: function (x, y, z) {
+          return x & y ? z : 0;
+        },
+        /*bit reverse*/ br: function (x, size = 8) {
+          if (size > 32) {
+            throw new Error('br() Size cannot be greater than 32');
+          } else {
+            let result = 0;
+            for (let idx = 0; idx < size - 0; idx++) {
+              result += chyx.bitC(x, 2 ** idx, 2 ** (size - (idx + 1)));
+            }
+            return result;
+          }
+        },
+        /*sin that loops every 128 "steps", instead of every pi steps*/ sinf: function (x) {
+          return Math.sin(x / (128 / Math.PI));
+        },
+        /*cos that loops every 128 "steps", instead of every pi steps*/ cosf: function (x) {
+          return Math.cos(x / (128 / Math.PI));
+        },
+        /*tan that loops every 128 "steps", instead of every pi steps*/ tanf: function (x) {
+          return Math.tan(x / (128 / Math.PI));
+        },
+        /*converts t into a string composed of it's bits, regex's that*/ regG: function (t, X) {
+          return X.test(t.toString(2));
+        },
+        /*corrupt sound"crpt": function(x,y=8) {return chyx.br(chyx.br(x,y)+t,y)^chyx.br(t,y)},
+			decorrupt sound"decrpt": function(x,y=8) {return chyx.br(chyx.br(x^chyx.br(t,y),y)-t,y)},*/
+      };
+      // Create shortened Math functions
+      const mathParams = Object.getOwnPropertyNames(Math);
+      const values = mathParams.map((k) => Math[k]);
+      const chyxNames = Object.getOwnPropertyNames(chyx);
+      const chyxFuncs = chyxNames.map((k) => chyx[k]);
+      mathParams.push('int', 'window', ...chyxNames);
+      values.push(Math.floor, globalThis, ...chyxFuncs);
+
+      //Optimization pulled from dollchan.net, it seemed important
+      //Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
       this.codeText = event.data
         .trim()
         .replace(
           /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
           (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')),
         );
+
+      this.func = new Function(...mathParams, 't', `return 0,\n${this.codeText || 0};`).bind(globalThis, ...values);
     };
-    this.virtualRate = 112600; // target sample rate
     this.t = null;
-    this.framebuffer = new Float32Array(Math.floor(sampleRate / 60));
     this.func = null;
   }
 
@@ -819,20 +859,19 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
       return false;
     }
     if (this.t == null) {
-      this.t = params.begin[0] * this.virtualRate;
+      this.t = params.begin[0] * sampleRate;
     }
 
     let codeText = this.codeText;
-    this.func = Function('t', 'return ' + codeText);
+    // this.func = Function('t', 'return ' + codeText);
     const output = outputs[0];
-    const tIncrement = this.virtualRate / sampleRate;
 
     for (let i = 0; i < output[0].length; i++) {
       let t = Math.floor(this.t);
       const detune = getParamValue(i, params.detune);
       const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
 
-      t = (t / (this.virtualRate / 256)) * freq;
+      t = (t / (sampleRate / 256)) * freq;
 
       const funcValue = this.func(t);
       let signal = (funcValue & 255) / 127.5 - 1;
@@ -840,7 +879,7 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
       for (let c = 0; c < output.length; c++) {
         output[c][i] = out;
       }
-      this.t = this.t + tIncrement;
+      this.t = this.t + 1;
     }
 
     return true; // keep the audio processing going
