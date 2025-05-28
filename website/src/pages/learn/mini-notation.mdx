@@ -8,7 +8,7 @@ import { JsDoc } from '../../docs/JsDoc';
 
 # Mini-notation
 
-Just like [Tidal Cycles](https://tidalcycles.org/), Strudel uses a so called "Mini-Notation", which is a custom language that is designed for writing rhythmic patterns using little amounts of text.
+Just like [Tidal Cycles](https://tidalcycles.org/docs/reference/mini_notation/), Strudel uses a so called "Mini-Notation", which is a custom language that is designed for writing rhythmic patterns using little amounts of text.
 
 ## Note
 
@@ -156,7 +156,11 @@ But to play multiple chords in a sequence, we have to wrap them in brackets:
 
 ## Elongation
 
-With the "@" symbol, we can specify temporal "weight" of a sequence child:
+With the "\_" symbol, we can manually extend the duration of an event:
+
+<MiniRepl client:idle tune={`note("<[g3,b3,e4] _ _ [a3,c3,e4] [b3,d3,f#4]>*2")`} punchcard />
+
+With the "@" symbol, we can do the same thing more conveniently by specifying the temporal "weight" of a sequence child:
 
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>*2")`} punchcard />
 
@@ -167,6 +171,16 @@ Here, the first chord has a weight of 2, making it twice the length of the other
 Using "!" we can repeat without speeding up:
 
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>*2")`} punchcard />
+
+## Degradation
+
+Using "?" we can randomly drop events from a pattern while preserving their time slot:
+
+<MiniRepl client:idle tune={`note("<[g3,b3,e4]? [a3,c3,e4]? [b3,d3,f#4]>*2")`} punchcard />
+
+We can include a number after the "?" to represent the probability of being dropped, otherwise defaulting to 0.5:
+
+<MiniRepl client:idle tune={`note("<[g3,b3,e4]? [a3,c3,e4]?0.9 [b3,d3,f#4]>*2")`} punchcard />
 
 ## Mini-notation review
 
@@ -179,6 +193,7 @@ To recap what we've learned so far, compare the following patterns:
 <MiniRepl client:idle tune={`note("<[g3,b3,e4] _ [a3,c3,e4] [b3,d3,f#4]>*2")`} />
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>*2")`} />
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>*2")`} />
+<MiniRepl client:idle tune={`note("<[g3,b3,e4]?0.9 [a3,c3,e4] [b3,d3,f#4]>*2")`} />
 
 ## Euclidian rhythms
 
