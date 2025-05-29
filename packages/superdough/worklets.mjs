@@ -813,8 +813,8 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
       let { codeText } = event.data;
       const { byteBeatStartTime } = event.data;
       if (byteBeatStartTime != null) {
-        this.t = 0
-        this.initialOffset = Math.floor(byteBeatStartTime)
+        this.t = 0;
+        this.initialOffset = Math.floor(byteBeatStartTime);
       }
 
       //Optimization pulled from dollchan.net: https://github.com/Chasyxx/EnBeat_NEW, it seemed important
@@ -878,7 +878,7 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
     for (let i = 0; i < output[0].length; i++) {
       const detune = getParamValue(i, params.detune);
       const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
-      let local_t = ((this.t / (sampleRate / 256)) * freq) + this.initialOffset
+      let local_t = (this.t / (sampleRate / 256)) * freq + this.initialOffset;
       const funcValue = this.func(local_t);
       let signal = (funcValue & 255) / 127.5 - 1;
       const out = signal * 0.2;
