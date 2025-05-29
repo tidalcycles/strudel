@@ -192,7 +192,7 @@ export function registerSynthSounds() {
         },
       );
 
-      o.port.postMessage({ codeText: byteBeatExpression, startTimeSeconds: byteBeatStartTime, frequency });
+      o.port.postMessage({ codeText: byteBeatExpression, byteBeatStartTime, frequency });
 
       let envGain = gainNode(1);
       envGain = o.connect(envGain);

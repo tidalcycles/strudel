@@ -464,9 +464,9 @@ export const { byteBeatExpression, bbexpr } = registerControl('byteBeatExpressio
  * @name byteBeatStartTime
  * @synonyms bbst
  *
- * @param {number | Pattern} byteBeatStartTime in seconds
+ * @param {number | Pattern} byteBeatStartTime in samples (t)
  * @example
- * note("{c g a b c d}%16").s("bytebeat").bbexpr('t&t>>8').bbst("<0 300>")
+ * note("c3!8".add("{0 0 12 0 7 5 3}%8")).s("bytebeat:5").bbst("<3 1>".mul(10000))._scope()
  *
  */
 export const { byteBeatStartTime, bbst } = registerControl('byteBeatStartTime', 'bbst');
