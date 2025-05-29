@@ -451,12 +451,25 @@ export const { drive } = registerControl('drive');
  * @name byteBeatExpression
  * @synonyms bbexpr
  *
- * @param {number | Pattern} byteBeatExpression pattern the output channels
+ * @param {number | Pattern} byteBeatExpression bitwise expression for creating bytebeat
  * @example
  * s("bytebeat").bbexpr('t*(t>>15^t>>66)')
  *
  */
 export const { byteBeatExpression, bbexpr } = registerControl('byteBeatExpression', 'bbexpr');
+
+/**
+ * Create byte beats with custom expressions
+ *
+ * @name byteBeatStartTime
+ * @synonyms bbst
+ *
+ * @param {number | Pattern} byteBeatStartTime in seconds
+ * @example
+ * note("{c g a b c d}%16").s("bytebeat").bbexpr('t&t>>8').bbst("<0 300>")
+ *
+ */
+export const { byteBeatStartTime, bbst } = registerControl('byteBeatStartTime', 'bbst');
 
 /**
  * Allows you to set the output channels on the interface

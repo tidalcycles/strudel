@@ -476,7 +476,6 @@ export const superdough = async (value, t, hapDuration, cps) => {
   let {
     s = getDefaultValue('s'),
     bank,
-    byteBeatExpression,
     source,
     gain = getDefaultValue('gain'),
     postgain = getDefaultValue('postgain'),
