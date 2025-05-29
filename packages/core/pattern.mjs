@@ -1814,9 +1814,9 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
     const newWhole = !hap.whole
       ? undefined
       : new TimeSpan(
-          newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
-          newPart.end.add(hap.whole.end.sub(end).div(factor)),
-        );
+        newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+        newPart.end.add(hap.whole.end.sub(end).div(factor)),
+      );
     return new Hap(newWhole, newPart, hap.value, hap.context);
   };
   return pat.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
@@ -2443,7 +2443,7 @@ const _chunk = function (n, func, pat, back = false, fast = false) {
 
 export const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
   return _chunk(n, func, pat, false, false);
-});
+}, true, true);
 
 /**
  * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
@@ -2457,7 +2457,7 @@ export const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', '
  */
 export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], function (n, func, pat) {
   return _chunk(n, func, pat, true);
-});
+}, true, true);
 
 /**
  * Like `chunk`, but the cycles of the source pattern aren't repeated
@@ -2473,7 +2473,7 @@ export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], fun
  */
 export const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
   return _chunk(n, func, pat, false, true);
-});
+}, true, true);
 
 // TODO - redefine elsewhere in terms of mask
 export const bypass = register(
