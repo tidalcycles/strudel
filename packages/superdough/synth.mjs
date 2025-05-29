@@ -165,7 +165,9 @@ export function registerSynthSounds() {
         '((t^t/2+t+64)%7 * 24)',
       ];
       const { n = 0 } = value;
-      const { byteBeatExpression = defaultBeats[n % defaultBeats.length] } = value;
+      const frequency = getFrequencyFromValue(value);
+      const { byteBeatExpression = defaultBeats[n % defaultBeats.length], byteBeatStartTime } = value;
+
       const ac = getAudioContext();
 
       let { duration } = value;
@@ -176,7 +178,6 @@ export function registerSynthSounds() {
       );
       const holdend = begin + duration;
       const end = holdend + release + 0.01;
-      const frequency = getFrequencyFromValue(value);
 
       let o = getWorklet(
         ac,
@@ -191,7 +192,7 @@ export function registerSynthSounds() {
         },
       );
 
-      o.port.postMessage(byteBeatExpression);
+      o.port.postMessage({ codeText: byteBeatExpression, startTimeSeconds: byteBeatStartTime, frequency });
 
       let envGain = gainNode(1);
       envGain = o.connect(envGain);
