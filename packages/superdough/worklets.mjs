@@ -811,11 +811,10 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
     super();
     this.port.onmessage = (event) => {
       let { codeText } = event.data;
-      const { startTimeSeconds, frequency } = event.data;
-      if (startTimeSeconds != null) {
-        const t = startTimeSeconds * sampleRate;
-        this.t = t;
-        this.t = (t / (sampleRate / 256)) * frequency;
+      const { byteBeatStartTime } = event.data;
+      if (byteBeatStartTime != null) {
+        this.t = 0;
+        this.initialOffset = Math.floor(byteBeatStartTime);
       }
 
       //Optimization pulled from dollchan.net: https://github.com/Chasyxx/EnBeat_NEW, it seemed important
@@ -829,6 +828,7 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
 
       this.func = getByteBeatFunc(codeText);
     };
+    this.initialOffset = null;
     this.t = null;
     this.func = null;
   }
@@ -878,13 +878,14 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
     for (let i = 0; i < output[0].length; i++) {
       const detune = getParamValue(i, params.detune);
       const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
-      let t = (this.t / (sampleRate / 256)) * freq;
-      const funcValue = this.func(t);
+      let local_t = (this.t / (sampleRate / 256)) * freq + this.initialOffset;
+      const funcValue = this.func(local_t);
       let signal = (funcValue & 255) / 127.5 - 1;
       const out = signal * 0.2;
 
       for (let c = 0; c < output.length; c++) {
-        output[c][i] = clamp(out, -0.2, 0.2);
+        //prevent speaker blowout via clipping if threshold exceeds
+        output[c][i] = clamp(out, -0.4, 0.4);
       }
       this.t = this.t + 1;
     }
