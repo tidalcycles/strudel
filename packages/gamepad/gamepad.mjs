@@ -1,11 +1,11 @@
 // @strudel/gamepad/index.mjs
 
-import { signal } from '@strudel/core';
-import { logger } from '@strudel/core';
+import { signal, Pattern, logger, registerControl, register, isPattern } from '@strudel/core';
+import { vibrationSupported, getGamepadVibrationActuator } from './vibration.mjs';
 
 // Button mapping for Logitech Dual Action (STANDARD GAMEPAD Vendor: 046d Product: c216)
 
-const buttonMapSettings = {
+export const buttonMapSettings = {
   XBOX: {
     // XBOX mapping default
     a: 0,
@@ -18,6 +18,10 @@ const buttonMapSettings = {
     rt: 7,
     back: 8,
     start: 9,
+    lstick: 10,
+    rstick: 11,
+    ls: 10,
+    rs: 11,
     u: 12,
     up: 12,
     d: 13,
@@ -26,6 +30,7 @@ const buttonMapSettings = {
     left: 14,
     r: 15,
     right: 15,
+    xbox: 16,
   },
   NES: {
     // Nintendo mapping
@@ -35,10 +40,18 @@ const buttonMapSettings = {
     y: 2,
     lb: 4,
     rb: 5,
+    zl: 6,
+    zr: 7,
     lt: 6,
     rt: 7,
     back: 8,
+    minus: 8,
     start: 9,
+    plus: 9,
+    lstick: 10,
+    rstick: 11,
+    ls: 10,
+    rs: 11,
     u: 12,
     up: 12,
     d: 13,
@@ -47,6 +60,8 @@ const buttonMapSettings = {
     left: 14,
     r: 15,
     right: 15,
+    home: 16,
+    select: 17,
   },
 };
 
@@ -55,7 +70,7 @@ class ButtonSequenceDetector {
     this.sequence = [];
     this.timeWindow = timeWindow;
     this.lastInputTime = 0;
-    this.buttonStates = Array(16).fill(0); // Track previous state of each button
+    this.buttonStates = Array(Object.keys(mapping).length).fill(0); // Track previous state of each button
     this.buttonMap = mapping;
     // Button mapping for character inputs
   }
@@ -132,7 +147,7 @@ class GamepadHandler {
     this._mapping = mapping;
     this._activeGamepad = index; // Use provided index
     this._axes = [0, 0, 0, 0];
-    this._buttons = Array(16).fill(0);
+    this._buttons = Array(Object.keys(mapping).length).fill(0);
     this.setupEventListeners();
   }
 
@@ -216,7 +231,7 @@ export const gamepad = (index = 0, mapping = 'XBOX') => {
   } else if (typeof mapping === 'object') {
     buttonMap = { ...buttonMapSettings.XBOX, ...mapping };
     // Check that all mapping values are valid button indices
-    const maxButtons = requestedGamepad.buttons; // Standard gamepad has 16 buttons
+    const maxButtons = requestedGamepad.buttons;
     for (const [key, value] of Object.entries(mapping)) {
       if (typeof value !== 'number' || value < 0 || value >= maxButtons) {
         throw new Error(
@@ -262,7 +277,7 @@ export const gamepad = (index = 0, mapping = 'XBOX') => {
   axes.y2_2 = axes.y2.toBipolar();
 
   // Create button patterns
-  const buttons = Array(16)
+  const buttons = Array(Object.keys(buttonMap).length)
     .fill(null)
     .map((_, i) => {
       // Create unique key for this gamepad+button combination
@@ -306,8 +321,16 @@ export const gamepad = (index = 0, mapping = 'XBOX') => {
   const btnseq = btnSequence;
   const seq = btnSequence;
 
+  // Create vibration pattern
+  const vibration = (pattern) => {
+    return signal(() => {
+      // Return vibration enable/disable pattern
+      return pattern;
+    });
+  };
+
   logger(
-    `[gamepad] connected to gamepad ${index} (${requestedGamepad.id}) with ${typeof mapping === 'object' ? 'custom' : mapping} mapping`,
+    `[gamepad] connected to gamepad ${index} (${requestedGamepad.id}) with ${typeof mapping === 'object' ? 'custom' : mapping} mapping${vibrationSupported(index) ? ' (vibration supported)' : ''}`,
   );
 
   // Return an object with all controls
@@ -328,6 +351,7 @@ export const gamepad = (index = 0, mapping = 'XBOX') => {
     btnSeq,
     btnseq,
     seq,
+    vibration,
     raw: baseSignal,
   };
 };

@@ -97,3 +97,29 @@ Make sure to press buttons on all connected gamepads before hitting play, so the
 const pad1 = gamepad(0);  // First gamepad
 const pad2 = gamepad(1);  // Second gamepad
 ```
+
+## Vibration
+
+You can use the `vibrate` control to provide haptic feedback to the gamepad.
+The `vibrate` control is a patternable control, so you can use it to control the vibration of the gamepad.
+
+The vibrate control has several parameters:
+
+- `vibGamepadIndex` - Index of the gamepad to vibrate (0-3)
+- `vibStrong` - Intensity of the strong/left motor (0-1)
+- `vibWeak` - Intensity of the weak/right motor (0-1) 
+- `vibDuration` - Duration of vibration in milliseconds
+- `vibEnable` - Enable/disable vibration (0 or 1)
+
+```javascript
+// Vibration with gamepad 
+// vibrate(gamepadId, { strong: 1, weak: 0.5, duration: 100 })
+// vibrate("gamepadId")
+// vibrate(gamepadId)
+
+$: note("c4*4").vibrate(0, { strong: 1, weak: 0.5, duration: 100 }) // gamepad index 0
+$: note("c4*4").vibrate("0:1:0.5:200") // Array format
+$: note("c4*4").vibrate("<0 1 0 1>") // select gamepad index
+
+$: note("c4*4").vibStrong("<0.1 0.2 0.5 1>").vibWeak("<0.1 0.2 0.5 1>").vibDuration("<10 20 50 100>").vibrate(0) // gamepad index 0
+```
