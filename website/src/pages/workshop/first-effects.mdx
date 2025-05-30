@@ -296,16 +296,23 @@ The whole modulation will now take 8 cycles to repeat.
 
 ## Recap
 
-| name    | example                                                                                                          |
-| ------- | ---------------------------------------------------------------------------------------------------------------- |
-| lpf     | <MiniRepl client:visible tune={`note("c2 c3 c2 c3").s("sawtooth").lpf("<400 2000>")`} />                         |
-| vowel   | <MiniRepl client:visible tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} />                          |
-| gain    | <MiniRepl client:visible tune={`s("hh*16").gain("[.25 1]*2")`} />                                                |
-| delay   | <MiniRepl client:visible tune={`s("bd rim bd cp").delay(.5)`} />                                                 |
-| room    | <MiniRepl client:visible tune={`s("bd rim bd cp").room(.5)`} />                                                  |
-| pan     | <MiniRepl client:visible tune={`s("bd rim bd cp").pan("0 1")`} />                                                |
-| speed   | <MiniRepl client:visible tune={`s("bd rim bd cp").speed("<1 2 -1 -2>")`} />                                      |
-| signals | `sine`, `saw`, `square`, `tri`, `rand`, `perlin`<br/><MiniRepl client:visible tune={`s("hh*16").gain  (saw)`} /> |
-| range   | <MiniRepl client:visible tune={`s("hh*16").lpf(saw.range(200,4000))`} />                                         |
+| Name    | Description                                      | Example                                                                                                          |
+| ------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| lpf     | Low-pass filter, cuts high frequencies           | <MiniRepl client:visible tune={`note("c2 c3 c2 c3").s("sawtooth").lpf("<400 2000>")`} />                         |
+| vowel   | Vowel-like filter                                | <MiniRepl client:visible tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} />                          |
+| gain    | Adjusts volume/amplitude                         | <MiniRepl client:visible tune={`s("hh*16").gain("[.25 1]*2")`} />                                                |
+| attack  | ADSR: Time to reach full volume                  | <MiniRepl client:visible tune={`note("c3").s("sawtooth").attack(.5)`} />                                              |
+| decay   | ADSR: Time to reach sustain level                | <MiniRepl client:visible tune={`note("c3").s("sawtooth").decay(.5)`} />                                               |
+| sustain | ADSR: Volume level while note is held            | <MiniRepl client:visible tune={`note("c3").s("sawtooth").sustain(.5)`} />                                             |
+| release | ADSR: Time to fade out after note ends           | <MiniRepl client:visible tune={`note("c3").s("sawtooth").release(.5)`} />                                             |
+| adsr    | ADSR: Short notation (attack:decay:sustain:release) | <MiniRepl client:visible tune={`note("c3").s("sawtooth").adsr(".1:.2:.5:.3")`} />                                     |
+| delay   | Creates echoes                                   | <MiniRepl client:visible tune={`s("bd rim bd cp").delay(.5)`} />                                                 |
+| room    | Simulates room reverb                            | <MiniRepl client:visible tune={`s("bd rim bd cp").room(.5)`} />                                                  |
+| pan     | Pans sound left (0) to right (1)                 | <MiniRepl client:visible tune={`s("bd rim bd cp").pan("0 1")`} />                                                |
+| speed   | Changes playback speed (and pitch)               | <MiniRepl client:visible tune={`s("bd rim bd cp").speed("<1 2 -1 -2>")`} />                                      |
+| fast    | Speeds up pattern playback (outside mini-notation) | <MiniRepl client:visible tune={`s("bd sd").fast(2)`} />                                                          |
+| slow    | Slows down pattern playback (outside mini-notation)| <MiniRepl client:visible tune={`s("bd sd").slow(2)`} />                                                          |
+| signals | Modulate parameters with waveforms (`sine`, etc.) | `sine`, `saw`, `square`, `tri`, `rand`, `perlin`<br/><MiniRepl client:visible tune={`s("hh*16").gain(saw)`} /> |
+| range   | Set min/max values for signal modulation         | <MiniRepl client:visible tune={`s("hh*16").lpf(saw.range(200,4000))`} />                                         |
 
 Let us now take a look at some of Tidal's typical [pattern effects](/workshop/pattern-effects).
