@@ -69,3 +69,10 @@
   text-decoration: underline 0.18rem;
   text-underline-offset: 0.22rem;
 }
+
+/* Drag and drop styles */
+#code .cm-editor.cm-drag-over {
+  outline: 2px dashed #4CAF50;
+  outline-offset: -2px;
+  background-color: rgba(76, 175, 80, 0.05) !important;
+}
