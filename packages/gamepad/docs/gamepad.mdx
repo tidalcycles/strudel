@@ -106,9 +106,32 @@ $: s("free_hadouken -").slow(2)
 samples({free_hadouken: 'https://cdn.freesound.org/previews/67/67674_111920-lq.mp3'})
 `} />
 
-## Multiple Gamepads
+### Button Sequences
+
+### Button Mappings
+
+The gamepad module supports different button mapping configurations to accommodate various gamepad layouts:
+
+- **XBOX** (Default): Standard Xbox-style mapping where A=0, B=1, X=2, Y=3
+- **NES**: Nintendo-style mapping where B=0, A=1, Y=2, X=3
+- **Custom**: Define your own button mapping by passing an object with button assignments
+
+You can specify the mapping when initializing the gamepad:
+
+<MiniRepl
+  client:idle
+  tune={`
+const pad1 = gamepad(0); // Default mapping is XBOX {a: 0, b: 1, x: 2, y: 3}
+const pad2 = gamepad(1, 'XBOX'); // XBOX button mapping {a: 0, b: 1, x: 2, y: 3}
+const pad3 = gamepad(2, 'NES'); // Nintendo button mapping {a: 1, b: 0, x: 3, y: 2}
+const pad4 = gamepad(3, {a: 0, b: 1, x: 2, y: 3}); // Custom mapping
+`}
+/>
+
+### Multiple Gamepads
 
 Strudel supports multiple gamepads. You can specify the gamepad index to connect to different devices.
+Make sure to press buttons on all connected gamepads before hitting play, so the browser can properly detect them.
 
 <MiniRepl
   client:idle
