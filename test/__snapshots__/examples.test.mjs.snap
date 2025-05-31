@@ -8803,6 +8803,27 @@ exports[`runs examples > example "vibGamepad" example index 0 2`] = `
 ]
 `;
 
+exports[`runs examples > example "vibGamepadIndex" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 1/4 → 1/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 1/2 → 3/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 3/4 → 1/1 | s:hh vibGamepadIndex:1 ]",
+  "[ 1/1 → 5/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 5/4 → 3/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 3/2 → 7/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 7/4 → 2/1 | s:hh vibGamepadIndex:1 ]",
+  "[ 2/1 → 9/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 9/4 → 5/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 5/2 → 11/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 11/4 → 3/1 | s:hh vibGamepadIndex:1 ]",
+  "[ 3/1 → 13/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 13/4 → 7/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 7/2 → 15/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 15/4 → 4/1 | s:hh vibGamepadIndex:1 ]",
+]
+`;
+
 exports[`runs examples > example "vibIntensity" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
