@@ -11,15 +11,15 @@ import { JsDoc } from '../../docs/JsDoc';
 The following functions will return a pattern.
 These are the equivalents used by the Mini Notation:
 
-| function                         | mini             |
-| -------------------------------- | ---------------- |
-| `cat(x, y)`                      | `"<x y>"`        |
-| `seq(x, y)`                      | `"x y"`          |
-| `stack(x, y)`                    | `"x,y"`          |
-| `s_cat([3,x],[2,y])`             | `"x@3 y@2"`      |
-| `s_polymeter([a, b, c], [x, y])` | `"{a b c, x y}"` |
-| `s_polymeterSteps(2, x, y, z)`   | `"{x y z}%2"`    |
-| `silence`                        | `"~"`            |
+| function                       | mini             |
+| ------------------------------ | ---------------- |
+| `cat(x, y)`                    | `"<x y>"`        |
+| `seq(x, y)`                    | `"x y"`          |
+| `stack(x, y)`                  | `"x,y"`          |
+| `stepcat([3,x],[2,y])`         | `"x@3 y@2"`      |
+| `polymeter([a, b, c], [x, y])` | `"{a b c, x y}"` |
+| `polymeterSteps(2, x, y, z)`   | `"{x y z}%2"`    |
+| `silence`                      | `"~"`            |
 
 ## cat
 
@@ -33,21 +33,21 @@ These are the equivalents used by the Mini Notation:
 
 <JsDoc client:idle name="stack" h={0} />
 
-## s_cat
+## stepcat
 
-<JsDoc client:idle name="s_cat" h={0} />
+<JsDoc client:idle name="stepcat" h={0} />
 
 ## arrange
 
 <JsDoc client:idle name="arrange" h={0} />
 
-## s_polymeter
+## polymeter
 
-<JsDoc client:idle name="s_polymeter" h={0} />
+<JsDoc client:idle name="polymeter" h={0} />
 
-## s_polymeterSteps
+## polymeterSteps
 
-<JsDoc client:idle name="s_polymeterSteps" h={0} />
+<JsDoc client:idle name="polymeterSteps" h={0} />
 
 ## silence
 

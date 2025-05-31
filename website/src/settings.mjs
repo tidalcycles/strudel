@@ -3,8 +3,6 @@ import { useStore } from '@nanostores/react';
 import { register } from '@strudel/core';
 import { isUdels } from './repl/util.mjs';
 
-export const defaultAudioDeviceName = 'System Standard';
-
 export const audioEngineTargets = {
   webaudio: 'webaudio',
   osc: 'osc',
@@ -36,10 +34,11 @@ export const defaultSettings = {
   isPanelOpen: true,
   togglePanelTrigger: 'click', //click | hover
   userPatterns: '{}',
-  audioDeviceName: defaultAudioDeviceName,
   audioEngineTarget: audioEngineTargets.webaudio,
   isButtonRowHidden: false,
   isCSSAnimationDisabled: false,
+  maxPolyphony: 128,
+  multiChannelOrbits: false,
 };
 
 let search = null;
@@ -52,7 +51,7 @@ const settings_key = `strudel-settings${instance > 0 ? instance : ''}`;
 
 export const settingsMap = persistentMap(settings_key, defaultSettings);
 
-const parseBoolean = (booleanlike) => ([true, 'true'].includes(booleanlike) ? true : false);
+export const parseBoolean = (booleanlike) => ([true, 'true'].includes(booleanlike) ? true : false);
 
 export function useSettings() {
   const state = useStore(settingsMap);
@@ -83,6 +82,7 @@ export function useSettings() {
     isPanelPinned: parseBoolean(state.isPanelPinned),
     isPanelOpen: parseBoolean(state.isPanelOpen),
     userPatterns: userPatterns,
+    multiChannelOrbits: parseBoolean(state.multiChannelOrbits),
   };
 }
 

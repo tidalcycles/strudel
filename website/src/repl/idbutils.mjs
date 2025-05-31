@@ -54,25 +54,23 @@ export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete =
               splitRelativePath[splitRelativePath.length - 2] ?? soundFile.id.split(/\W+/)[0] ?? 'user';
             const blob = soundFile.blob;
 
-            // Files used to be uploaded as base64 strings, After Jan 1 2025 this check can be safely deleted
-            if (typeof blob === 'string') {
-              const soundPaths = sounds.get(parentDirectory) ?? new Set();
-              soundPaths.add(blob);
-              sounds.set(parentDirectory, soundPaths);
-              return;
-            }
-
             return blobToDataUrl(blob).then((soundPath) => {
-              const soundPaths = sounds.get(parentDirectory) ?? new Set();
-              soundPaths.add(soundPath);
-              sounds.set(parentDirectory, soundPaths);
+              const titlePathMap = sounds.get(parentDirectory) ?? new Map();
+
+              titlePathMap.set(title, soundPath);
+
+              sounds.set(parentDirectory, titlePathMap);
               return;
             });
           }),
       )
         .then(() => {
-          sounds.forEach((soundPaths, key) => {
-            const value = Array.from(soundPaths);
+          sounds.forEach((titlePathMap, key) => {
+            const value = Array.from(titlePathMap.keys())
+              .sort((a, b) => {
+                return a.localeCompare(b);
+              })
+              .map((title) => titlePathMap.get(title));
 
             registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
               type: 'sample',

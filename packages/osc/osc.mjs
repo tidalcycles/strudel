@@ -37,7 +37,7 @@ function connect() {
 export function parseControlsFromHap(hap, cps) {
   hap.ensureObjectValue();
   const cycle = hap.wholeOrPart().begin.valueOf();
-  const delta = hap.duration.valueOf();
+  const delta = hap.duration.valueOf() / cps;
   const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
   // make sure n and note are numbers
   controls.n && (controls.n = parseNumeral(controls.n));

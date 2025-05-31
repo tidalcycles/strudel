@@ -1,10 +1,12 @@
 import { defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
 import { themes } from '@strudel/codemirror';
+import { Textbox } from '../textbox/Textbox.jsx';
 import { isUdels } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 import { AudioEngineTargetSelector } from './AudioEngineTargetSelector.jsx';
 import { confirmDialog } from '../../util.mjs';
+import { DEFAULT_MAX_POLYPHONY, setMaxPolyphony, setMultiChannelOrbits } from '@strudel/webaudio';
 
 function Checkbox({ label, value, onChange, disabled = false }) {
   return (
@@ -18,7 +20,7 @@ function Checkbox({ label, value, onChange, disabled = false }) {
 function SelectInput({ value, options, onChange }) {
   return (
     <select
-      className="p-2 bg-background rounded-md text-foreground"
+      className="p-2 bg-background rounded-md text-foreground  border-foreground"
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >
@@ -53,7 +55,7 @@ function NumberSlider({ value, onChange, step = 1, ...rest }) {
   );
 }
 
-function FormItem({ label, children }) {
+function FormItem({ label, children, sublabel }) {
   return (
     <div className="grid gap-2">
       <label>{label}</label>
@@ -66,6 +68,7 @@ const themeOptions = Object.fromEntries(Object.keys(themes).map((k) => [k, k]));
 const fontFamilyOptions = {
   monospace: 'monospace',
   Courier: 'Courier',
+  CutiePi: 'CutiePi',
   JetBrains: 'JetBrains',
   Hack: 'Hack',
   FiraCode: 'FiraCode',
@@ -104,11 +107,13 @@ export function SettingsTab({ started }) {
     audioDeviceName,
     audioEngineTarget,
     togglePanelTrigger,
+    maxPolyphony,
+    multiChannelOrbits,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
   return (
-    <div className="text-foreground p-4 space-y-4 w-full">
+    <div className="text-foreground p-4 space-y-4 w-full" style={{ fontFamily }}>
       {canChangeAudioDevice && (
         <FormItem label="Audio Output Device">
           <AudioDeviceSelector
@@ -138,10 +143,46 @@ export function SettingsTab({ started }) {
           }}
         />
       </FormItem>
+
+      <FormItem label="Maximum Polyphony">
+        <Textbox
+          min={1}
+          max={Infinity}
+          onBlur={(e) => {
+            let v = parseInt(e.target.value);
+            v = isNaN(v) ? DEFAULT_MAX_POLYPHONY : v;
+            setMaxPolyphony(v);
+            settingsMap.setKey('maxPolyphony', v);
+          }}
+          onChange={(v) => {
+            v = Math.max(1, parseInt(v));
+            settingsMap.setKey('maxPolyphony', isNaN(v) ? undefined : v);
+          }}
+          type="number"
+          placeholder=""
+          value={maxPolyphony ?? ''}
+        />
+      </FormItem>
+      <FormItem>
+        <Checkbox
+          label="Multi Channel Orbits"
+          onChange={(cbEvent) => {
+            const val = cbEvent.target.checked;
+            confirmDialog(RELOAD_MSG).then((r) => {
+              if (r == true) {
+                settingsMap.setKey('multiChannelOrbits', val);
+                setMultiChannelOrbits(val);
+                return window.location.reload();
+              }
+            });
+          }}
+          value={multiChannelOrbits}
+        />
+      </FormItem>
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
         <FormItem label="Font Family">
           <SelectInput
             options={fontFamilyOptions}
@@ -178,25 +219,7 @@ export function SettingsTab({ started }) {
           value={togglePanelTrigger}
           onChange={(value) => settingsMap.setKey('togglePanelTrigger', value)}
           items={{ click: 'Click', hover: 'Hover' }}
-        ></ButtonGroup>
-        {/* <Checkbox
-          label="Click"
-          onChange={(cbEvent) => {
-            if (cbEvent.target.checked) {
-              settingsMap.setKey('togglePanelTrigger', 'click');
-            }
-          }}
-          value={togglePanelTrigger != 'hover'}
         />
-        <Checkbox
-          label="Hover"
-          onChange={(cbEvent) => {
-            if (cbEvent.target.checked) {
-              settingsMap.setKey('togglePanelTrigger', 'hover');
-            }
-          }}
-          value={togglePanelTrigger == 'hover'}
-        /> */}
       </FormItem>
       <FormItem label="More Settings">
         <Checkbox

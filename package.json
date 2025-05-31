@@ -59,6 +59,7 @@
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.19.0",
     "@tauri-apps/cli": "^2.2.7",
+    "@vitest/coverage-v8": "3.0.4",
     "@vitest/ui": "^3.0.4",
     "acorn": "^8.14.0",
     "dependency-tree": "^11.0.1",
@@ -70,6 +71,7 @@
     "jsdoc-json": "^2.0.2",
     "lerna": "^8.1.9",
     "prettier": "^3.4.2",
-    "vitest": "^3.0.4"
+    "vitest": "^3.0.4",
+    "vite-plugin-bundle-audioworklet": "workspace:*"
   }
 }

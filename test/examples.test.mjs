@@ -26,6 +26,8 @@ const skippedExamples = [
   'vibStrong',
   'vibDuration',
   'vibIntensity',
+  'defaultmidimap',
+  'midimaps',
 ];
 
 describe('runs examples', () => {

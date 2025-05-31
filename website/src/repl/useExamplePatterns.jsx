@@ -1,4 +1,4 @@
-import { $featuredPatterns, $publicPatterns, collectionName } from '../user_pattern_utils.mjs';
+import { $featuredPatterns, $publicPatterns, patternFilterName } from '../user_pattern_utils.mjs';
 import { useStore } from '@nanostores/react';
 import { useMemo } from 'react';
 import * as tunes from '../repl/tunes.mjs';
@@ -12,9 +12,9 @@ export const useExamplePatterns = () => {
   const publicPatterns = useStore($publicPatterns);
   const collections = useMemo(() => {
     const pats = new Map();
-    pats.set(collectionName.featured, featuredPatterns);
-    pats.set(collectionName.public, publicPatterns);
-    // pats.set(collectionName.stock, stockPatterns);
+    pats.set(patternFilterName.featured, featuredPatterns);
+    pats.set(patternFilterName.public, publicPatterns);
+    // pats.set(patternFilterName.stock, stockPatterns);
     return pats;
   }, [featuredPatterns, publicPatterns]);
 

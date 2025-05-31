@@ -19,10 +19,10 @@ This program is free software: you can redistribute it and/or modify it under th
     this.location_ = location();
   }
 
-  var PatternStub = function(source, alignment, seed, tactus)
+  var PatternStub = function(source, alignment, seed, _steps)
   {
     this.type_ = "pattern";
-    this.arguments_ = { alignment: alignment, tactus: tactus };
+    this.arguments_ = { alignment: alignment, _steps: _steps };
     if (seed !== undefined) {
       this.arguments_.seed = seed;
     }
@@ -172,8 +172,8 @@ slice_with_ops = s:slice ops:slice_op*
   }
 
 // a sequence is a combination of one or more successive slices (as an array)
-sequence = tactus:'^'? s:(slice_with_ops)+
-  { return new PatternStub(s, 'fastcat', undefined, !!tactus); }
+sequence = _steps:'^'? s:(slice_with_ops)+
+  { return new PatternStub(s, 'fastcat', undefined, !!_steps); }
 
 // a stack is a series of vertically aligned sequence, separated by a comma
 stack_tail = tail:(comma @sequence)+

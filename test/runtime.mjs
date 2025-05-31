@@ -11,7 +11,7 @@ import * as webaudio from '@strudel/webaudio';
 import { mini, m } from '@strudel/mini/mini.mjs';
 // import * as voicingHelpers from '@strudel/tonal/voicings.mjs';
 // import euclid from '@strudel/core/euclid.mjs';
-// import '@strudel/midi/midi.mjs';
+//import '@strudel/midi/midi.mjs';
 import * as tonalHelpers from '@strudel/tonal';
 import '@strudel/xen/xen.mjs';
 // import '@strudel/xen/tune.mjs';
@@ -126,6 +126,12 @@ const loadCsound = () => {};
 const loadCSound = () => {};
 const loadcsound = () => {};
 
+const midin = () => {
+  return (ccNum) => strudel.ref(() => 0); // returns ref with default value 0
+};
+
+const sysex = ([id, data]) => {};
+
 // TODO: refactor to evalScope
 evalScope(
   // Tone,
@@ -142,6 +148,8 @@ evalScope(
   uiHelpers,
   */
   {
+    midin,
+    sysex,
     // gist,
     // euclid,
     csound: id,

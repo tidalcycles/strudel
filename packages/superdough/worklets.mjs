@@ -75,7 +75,12 @@ const waveshapes = {
     return v - polyBlep(phase, dt);
   },
 };
-
+function getParamValue(block, param) {
+  if (param.length > 1) {
+    return param[block];
+  }
+  return param[0];
+}
 const waveShapeNames = Object.keys(waveshapes);
 class LFOProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
@@ -290,7 +295,7 @@ class LadderProcessor extends AudioWorkletProcessor {
     cutoff = (cutoff * 2 * _PI) / sampleRate;
     cutoff = cutoff > 1 ? 1 : cutoff;
 
-    const k = Math.min(8, resonance * 0.4);
+    const k = Math.min(8, resonance * 0.13);
     //               drive makeup  * resonance volume loss makeup
     let makeupgain = (1 / drive) * Math.min(1.75, 1 + k);
 
@@ -362,6 +367,11 @@ function getUnisonDetune(unison, detune, voiceIndex) {
   }
   return lerp(-detune * 0.5, detune * 0.5, voiceIndex / (unison - 1));
 }
+
+function applySemitoneDetuneToFrequency(frequency, detune) {
+  return frequency * Math.pow(2, detune / 12);
+}
+
 class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
@@ -438,7 +448,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
       const isOdd = (n & 1) == 1;
 
       //applies unison "spread" detune in semitones
-      const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 12);
+      const freq = applySemitoneDetuneToFrequency(frequency, getUnisonDetune(voices, freqspread, n));
       let gainL = gain1;
       let gainR = gain2;
       // invert right and left gain
@@ -648,3 +658,240 @@ class PhaseVocoderProcessor extends OLAProcessor {
 }
 
 registerProcessor('phase-vocoder-processor', PhaseVocoderProcessor);
+
+// Adapted from https://www.musicdsp.org/en/latest/Effects/221-band-limited-pwm-generator.html
+class PulseOscillatorProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.pi = _PI;
+    this.phi = -this.pi; // phase
+    this.Y0 = 0; // feedback memories
+    this.Y1 = 0;
+    this.PW = this.pi; // pulse width
+    this.B = 2.3; // feedback coefficient
+    this.dphif = 0; // filtered phase increment
+    this.envf = 0; // filtered envelope
+  }
+
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
+        name: 'frequency',
+        defaultValue: 440,
+        min: Number.EPSILON,
+      },
+      {
+        name: 'detune',
+        defaultValue: 0,
+        min: Number.NEGATIVE_INFINITY,
+        max: Number.POSITIVE_INFINITY,
+      },
+      {
+        name: 'pulsewidth',
+        defaultValue: 1,
+        min: 0,
+        max: Number.POSITIVE_INFINITY,
+      },
+    ];
+  }
+
+  process(inputs, outputs, params) {
+    if (this.disconnected) {
+      return false;
+    }
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    if (currentTime >= params.end[0]) {
+      return false;
+    }
+    const output = outputs[0];
+    let env = 1,
+      dphi;
+
+    for (let i = 0; i < (output[0].length ?? 0); i++) {
+      const pw = (1 - clamp(getParamValue(i, params.pulsewidth), -0.99, 0.99)) * this.pi;
+      const detune = getParamValue(i, params.detune);
+      const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
+
+      dphi = freq * (this.pi / (sampleRate * 0.5)); // phase increment
+      this.dphif += 0.1 * (dphi - this.dphif);
+
+      env *= 0.9998; // exponential decay envelope
+      this.envf += 0.1 * (env - this.envf);
+
+      // Feedback coefficient control
+      this.B = 2.3 * (1 - 0.0001 * freq); // feedback limitation
+      if (this.B < 0) this.B = 0;
+
+      // Waveform generation (half-Tomisawa oscillators)
+      this.phi += this.dphif; // phase increment
+      if (this.phi >= this.pi) this.phi -= 2 * this.pi; // phase wrapping
+
+      // First half-Tomisawa generator
+      let out0 = Math.cos(this.phi + this.B * this.Y0); // self-phase modulation
+      this.Y0 = 0.5 * (out0 + this.Y0); // anti-hunting filter
+
+      // Second half-Tomisawa generator (with phase offset for pulse width)
+      let out1 = Math.cos(this.phi + this.B * this.Y1 + pw);
+      this.Y1 = 0.5 * (out1 + this.Y1); // anti-hunting filter
+
+      for (let o = 0; o < output.length; o++) {
+        // Combination of both oscillators with envelope applied
+        output[o][i] = 0.15 * (out0 - out1) * this.envf;
+      }
+    }
+
+    return true; // keep the audio processing going
+  }
+}
+
+registerProcessor('pulse-oscillator', PulseOscillatorProcessor);
+
+/**  BYTE BEATS */
+const chyx = {
+  /*bit*/ bitC: function (x, y, z) {
+    return x & y ? z : 0;
+  },
+  /*bit reverse*/ br: function (x, size = 8) {
+    if (size > 32) {
+      throw new Error('br() Size cannot be greater than 32');
+    } else {
+      let result = 0;
+      for (let idx = 0; idx < size - 0; idx++) {
+        result += chyx.bitC(x, 2 ** idx, 2 ** (size - (idx + 1)));
+      }
+      return result;
+    }
+  },
+  /*sin that loops every 128 "steps", instead of every pi steps*/ sinf: function (x) {
+    return Math.sin(x / (128 / Math.PI));
+  },
+  /*cos that loops every 128 "steps", instead of every pi steps*/ cosf: function (x) {
+    return Math.cos(x / (128 / Math.PI));
+  },
+  /*tan that loops every 128 "steps", instead of every pi steps*/ tanf: function (x) {
+    return Math.tan(x / (128 / Math.PI));
+  },
+  /*converts t into a string composed of it's bits, regex's that*/ regG: function (t, X) {
+    return X.test(t.toString(2));
+  },
+};
+
+// Create shortened Math functions
+let mathParams, byteBeatHelperFuncs;
+function getByteBeatFunc(codetext) {
+  if ((mathParams || byteBeatHelperFuncs) == null) {
+    mathParams = Object.getOwnPropertyNames(Math);
+    byteBeatHelperFuncs = mathParams.map((k) => Math[k]);
+    const chyxNames = Object.getOwnPropertyNames(chyx);
+    const chyxFuncs = chyxNames.map((k) => chyx[k]);
+    mathParams.push('int', 'window', ...chyxNames);
+    byteBeatHelperFuncs.push(Math.floor, globalThis, ...chyxFuncs);
+  }
+  return new Function(...mathParams, 't', `return 0,\n${codetext || 0};`).bind(globalThis, ...byteBeatHelperFuncs);
+}
+
+class ByteBeatProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.port.onmessage = (event) => {
+      let { codeText } = event.data;
+      const { byteBeatStartTime } = event.data;
+      if (byteBeatStartTime != null) {
+        this.t = 0;
+        this.initialOffset = Math.floor(byteBeatStartTime);
+      }
+
+      //Optimization pulled from dollchan.net: https://github.com/Chasyxx/EnBeat_NEW, it seemed important
+      //Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+      codeText = codeText
+        .trim()
+        .replace(
+          /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+          (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')),
+        );
+
+      this.func = getByteBeatFunc(codeText);
+    };
+    this.initialOffset = null;
+    this.t = null;
+    this.func = null;
+  }
+
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+      {
+        name: 'frequency',
+        defaultValue: 440,
+        min: Number.EPSILON,
+      },
+      {
+        name: 'detune',
+        defaultValue: 0,
+        min: Number.NEGATIVE_INFINITY,
+        max: Number.POSITIVE_INFINITY,
+      },
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+    ];
+  }
+
+  process(inputs, outputs, params) {
+    if (this.disconnected) {
+      return false;
+    }
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    if (currentTime >= params.end[0]) {
+      return false;
+    }
+    if (this.t == null) {
+      this.t = params.begin[0] * sampleRate;
+    }
+    const output = outputs[0];
+    for (let i = 0; i < output[0].length; i++) {
+      const detune = getParamValue(i, params.detune);
+      const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
+      let local_t = (this.t / (sampleRate / 256)) * freq + this.initialOffset;
+      const funcValue = this.func(local_t);
+      let signal = (funcValue & 255) / 127.5 - 1;
+      const out = signal * 0.2;
+
+      for (let c = 0; c < output.length; c++) {
+        //prevent speaker blowout via clipping if threshold exceeds
+        output[c][i] = clamp(out, -0.4, 0.4);
+      }
+      this.t = this.t + 1;
+    }
+
+    return true; // keep the audio processing going
+  }
+}
+
+registerProcessor('byte-beat-processor', ByteBeatProcessor);

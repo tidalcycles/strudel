@@ -30,14 +30,14 @@ describe('controls', () => {
     expect(s(mini('bd').pan(1)).firstCycleValues).toEqual([{ s: 'bd', pan: 1 }]);
     expect(s(mini('bd:1').pan(1)).firstCycleValues).toEqual([{ s: 'bd', n: 1, pan: 1 }]);
   });
-  it('preserves tactus of the left pattern', () => {
-    expect(s(mini('bd cp mt').pan(mini('1 2 3 4'))).tactus).toEqual(Fraction(3));
+  it('preserves step count of the left pattern', () => {
+    expect(s(mini('bd cp mt').pan(mini('1 2 3 4')))._steps).toEqual(Fraction(3));
   });
-  it('preserves tactus of the right pattern for .out', () => {
-    expect(s(mini('bd cp mt').set.out(pan(mini('1 2 3 4')))).tactus).toEqual(Fraction(4));
+  it('preserves step count of the right pattern for .out', () => {
+    expect(s(mini('bd cp mt').set.out(pan(mini('1 2 3 4'))))._steps).toEqual(Fraction(4));
   });
-  it('combines tactus of the pattern for .mix as lcm', () => {
-    expect(s(mini('bd cp mt').set.mix(pan(mini('1 2 3 4')))).tactus).toEqual(Fraction(12));
+  it('combines step count of the pattern for .mix as lcm', () => {
+    expect(s(mini('bd cp mt').set.mix(pan(mini('1 2 3 4'))))._steps).toEqual(Fraction(12));
   });
   it('finds control name by alias', () => {
     expect(getControlName('lpf')).toEqual('cutoff');

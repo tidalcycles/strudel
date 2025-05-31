@@ -5,14 +5,11 @@ export const settings = {
   background: '#222',
   lineBackground: '#22222299',
   foreground: '#fff',
-  // foreground: '#75baff',
   caret: '#ffcc00',
   selection: 'rgba(128, 203, 196, 0.5)',
   selectionMatch: '#036dd626',
-  // lineHighlight: '#8a91991a', // original
   lineHighlight: '#00000050',
   gutterBackground: 'transparent',
-  // gutterForeground: '#8a919966',
   gutterForeground: '#8a919966',
 };
 
@@ -20,6 +17,7 @@ export default createTheme({
   theme: 'dark',
   settings,
   styles: [
+    { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#89ddff' },
     { tag: t.labelName, color: '#89ddff' },
     { tag: t.keyword, color: '#c792ea' },
     { tag: t.operator, color: '#89ddff' },

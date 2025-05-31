@@ -16,23 +16,96 @@ It is also possible to pattern other things with Strudel, such as software and h
 
 Strudel supports MIDI without any additional software (thanks to [webmidi](https://npmjs.com/package/webmidi)), just by adding methods to your pattern:
 
-## midi(outputName?)
+## midiin(inputName?)
+
+<JsDoc client:idle name="midin" h={0} />
+
+## midi(outputName?,options?)
 
 Either connect a midi device or use the IAC Driver (Mac) or Midi Through Port (Linux) for internal midi messages.
 If no outputName is given, it uses the first midi output it finds.
 
-<MiniRepl client:idle tune={`chord("<C^7 A7 Dm7 G7>").voicing().midi()`} />
+<MiniRepl
+  client:idle
+  tune={`
+$: chord("<C^7 A7 Dm7 G7>").voicing().midi('IAC Driver')
+`}
+/>
 
-In the console, you will see a log of the available MIDI devices as soon as you run the code, e.g. `Midi connected! Using "Midi Through Port-0".`
+In the console, you will see a log of the available MIDI devices as soon as you run the code,
+e.g.
+
+```
+ `Midi connected! Using "Midi Through Port-0".`
+```
+
+The `.midi()` function accepts an options object with the following properties:
+
+<MiniRepl
+  client:idle
+  tune={`$: note("d e c a f").midi('IAC Driver', { isController: true, midimap: 'default'})
+`}
+/>
+
+<details>
+<summary>Available Options</summary>
+
+| Option       | Type          | Default   | Description                                                            |
+| ------------ | ------------- | --------- | ---------------------------------------------------------------------- |
+| isController | boolean       | false     | When true, disables sending note messages. Useful for MIDI controllers |
+| latencyMs    | number        | 34        | Latency in milliseconds to align MIDI with audio engine                |
+| noteOffsetMs | number        | 10        | Offset in milliseconds for note-off messages to prevent glitching      |
+| midichannel  | number        | 1         | Default MIDI channel (1-16)                                            |
+| velocity     | number        | 0.9       | Default note velocity (0-1)                                            |
+| gain         | number        | 1         | Default gain multiplier for velocity (0-1)                             |
+| midimap      | string        | 'default' | Name of MIDI mapping to use for control changes                        |
+| midiport     | string/number | -         | MIDI device name or index                                              |
+
+</details>
+
+### midiport(outputName)
+
+Selects the MIDI output device to use, pattern can be used to switch between devices.
+
+```javascript
+$: midiport('IAC Driver');
+$: note('c a f e').midiport('<0 1 2 3>').midi();
+```
+
+<JsDoc client:idle name="midiport" h={0} />
 
 ## midichan(number)
 
 Selects the MIDI channel to use. If not used, `.midi` will use channel 1 by default.
 
-## ccn && ccv
+## midicmd(command)
 
+`midicmd` sends MIDI system real-time messages to control timing and transport on MIDI devices.
+
+It supports the following commands:
+
+- `clock`/`midiClock` - Sends MIDI timing clock messages
+- `start` - Sends MIDI start message
+- `stop` - Sends MIDI stop message
+- `continue` - Sends MIDI continue message
+
+// You can control the clock with a pattern and ensure it starts in sync when the repl begins.
+// Note: It might act unexpectedly if MIDI isn't set up initially.
+
+<MiniRepl
+  client:idle
+  tune={`$:stack(
+  midicmd("clock*48,<start stop>/2").midi('IAC Driver')
+)`}
+/>
+
+## control, ccn && ccv
+
+- `control` sends MIDI control change messages to your MIDI device.
 - `ccn` sets the cc number. Depends on your synths midi mapping
 - `ccv` sets the cc value. normalized from 0 to 1.
+
+<MiniRepl client:idle tune={`note("c a f e").control([74, sine.slow(4)]).midi()`} />
 
 <MiniRepl client:idle tune={`note("c a f e").ccn(74).ccv(sine.slow(4)).midi()`} />
 
@@ -45,6 +118,58 @@ But you can also control cc messages separately like this:
   tune={`$: note("c a f e").midi()
 $: ccv(sine.segment(16).slow(4)).ccn(74).midi()`}
 />
+
+Instead of setting `ccn` and `ccv` directly, you can also create mappings with `midimaps`:
+
+## midimaps
+
+<JsDoc client:idle name="midimaps" h={0} />
+
+## defaultmidimap
+
+<JsDoc client:idle name="defaultmidimap" h={0} />
+
+## progNum (Program Change)
+
+`progNum` sends MIDI program change messages to switch between different presets/patches on your MIDI device.
+Program change values should be numbers between 0 and 127.
+
+<MiniRepl client:idle tune={`// Switch between programs 0 and 1 every cycle
+progNum("<0 1>").midi()
+
+// Play notes while changing programs
+note("c3 e3 g3").progNum("<0 1 2>").midi()`} />
+
+Program change messages are useful for switching between different instrument sounds or presets during a performance.
+The exact sound that each program number maps to depends on your MIDI device's configuration.
+
+## sysex, sysexid && sysexdata (System Exclusive Message)
+
+`sysex` sends MIDI System Exclusive (SysEx) messages to your MIDI device.
+ysEx messages are device-specific commands that allow deeper control over synthesizer parameters.
+The value should be an array of numbers between 0-255 representing the SysEx data bytes.
+
+<MiniRepl
+  client:idle
+  tune={`// Send a simple SysEx message
+let id = 0x43; //Yamaha
+//let id = "0x00:0x20:0x32"; //Behringer ID can be an array of numbers
+let data = "0x79:0x09:0x11:0x0A:0x00:0x00"; // Set NSX-39 voice to say "Aa"
+$: note("c a f e").sysex(id, data).midi();
+$: note("c a f e").sysexid(id).sysexdata(data).midi();`}
+/>
+
+The exact format of SysEx messages depends on your MIDI device's specification.
+Consult your device's MIDI implementation guide for details on supported SysEx messages.
+
+## midibend && miditouch
+
+`midibend` sets MIDI pitch bend (-1 - 1)
+`miditouch` sets MIDI key after touch (0-1)
+
+<MiniRepl client:idle tune={`note("c a f e").midibend(sine.slow(4).range(-0.4,0.4)).midi()`} />
+
+<MiniRepl client:idle tune={`note("c a f e").miditouch(sine.slow(4).range(0,1)).midi()`} />
 
 # OSC/SuperDirt/StrudelDirt
 
@@ -108,8 +233,8 @@ The following example shows how to send a pattern to an MQTT broker:
   client:only="react"
   tune={`"hello world"
     .mqtt(undefined, // username (undefined for open/public servers)
-          undefined, // password 
-          '/strudel-pattern', // mqtt 'topic' 
+          undefined, // password
+          '/strudel-pattern', // mqtt 'topic'
           'wss://mqtt.eclipseprojects.io:443/mqtt', // MQTT server address
           'mystrudel', // MQTT client id - randomly generated if not supplied
           0 // latency / delay before sending messages (0 = no delay)
@@ -120,12 +245,14 @@ The following example shows how to send a pattern to an MQTT broker:
 Other software can then receive the messages. For example using the [mosquitto](https://mosquitto.org/) commandline client tools:
 
 ```
-> mosquitto_sub  -h mqtt.eclipseprojects.io -p 1883  -t "/strudel-pattern"
-hello
-world
-hello
-world
-...
+
+> mosquitto_sub -h mqtt.eclipseprojects.io -p 1883 -t "/strudel-pattern"
+> hello
+> world
+> hello
+> world
+> ...
+
 ```
 
 Control patterns will be encoded as JSON, for example:
@@ -145,11 +272,17 @@ Control patterns will be encoded as JSON, for example:
 Will send messages like the following:
 
 ```
+
 {"s":"sax","speed":2}
 {"s":"sax","speed":2}
 {"s":"sax","speed":3}
 {"s":"sax","speed":2}
 ...
+
 ```
 
 Libraries for receiving MQTT are available for many programming languages.
+
+```
+
+```
