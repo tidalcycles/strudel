@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 export default function DownloadButton({ context }) {
   const handleDownload = useCallback(() => {
     // Get the current code from the editor
-    const code = context.code;
+    const code = context.editorRef?.current?.code || '';
     
     // Create a blob with the code
     const blob = new Blob([code], { type: 'text/javascript' });
@@ -21,7 +21,7 @@ export default function DownloadButton({ context }) {
     
     // Clean up the URL
     window.URL.revokeObjectURL(url);
-  }, [context.code]);
+  }, []);
 
   return (
     <button
