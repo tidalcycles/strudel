@@ -24,7 +24,7 @@ import { initTheme, activateTheme, theme } from './themes.mjs';
 import { sliderPlugin, updateSliderWidgets } from './slider.mjs';
 import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
-import { dragDropPlugin, dragDropStyles } from './dragdrop.mjs';
+import { dragDropPlugin } from './dragdrop.mjs';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),

@@ -11,13 +11,11 @@ async function readFileContent(file) {
   });
 }
 
-// Helper function to check if file is a code file
+// Check for common text file formats, to avoid
+// accidentally loading images or other files
 function isCodeFile(file) {
   const codeExtensions = [
-    '.js', '.mjs', '.ts', '.tsx', '.jsx', 
-    '.json', '.txt', '.md', '.tidal', '.strudel',
-    '.html', '.css', '.scss', '.yaml', '.yml',
-    '.xml', '.csv', '.log', '.ini', '.conf'
+    '.js', '.strudel', '.str'
   ];
   const fileName = file.name.toLowerCase();
   return codeExtensions.some(ext => fileName.endsWith(ext)) || file.type.startsWith('text/');
@@ -101,25 +99,10 @@ export const dragDropPlugin = ViewPlugin.fromClass(
         const fileNames = codeFiles.map(f => f.name).join(', ');
         logger(`Successfully loaded ${codeFiles.length} file(s): ${fileNames}`, 'highlight');
         
-        // Dispatch custom event for external notification handling
-        this.view.dom.dispatchEvent(new CustomEvent('files-dropped', {
-          detail: {
-            success: true,
-            fileCount: codeFiles.length,
-            fileNames: fileNames
-          }
-        }));
       } catch (error) {
         console.error('Error reading dropped files:', error);
         logger(`Error loading files: ${error.message}`, 'error');
         
-        // Dispatch error event
-        this.view.dom.dispatchEvent(new CustomEvent('files-dropped', {
-          detail: {
-            success: false,
-            error: error.message
-          }
-        }));
       }
     }
 
@@ -131,12 +114,3 @@ export const dragDropPlugin = ViewPlugin.fromClass(
     }
   }
 );
-
-// CSS for drag over effect
-export const dragDropStyles = `
-  .cm-editor.cm-drag-over {
-    outline: 2px dashed #4CAF50;
-    outline-offset: -2px;
-    background-color: rgba(76, 175, 80, 0.05);
-  }
-`;
