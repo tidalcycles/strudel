@@ -20,7 +20,7 @@ export default function ReplEditor(Props) {
       <Loader active={pending} />
       <Header context={context} />
       <div className="grow flex relative overflow-hidden">
-        <Code containerRef={containerRef} editorRef={editorRef} init={init} />
+        <Code containerRef={containerRef} editorRef={editorRef} init={init} context={context} />
         {!isZen && panelPosition === 'right' && <VerticalPanel context={context} />}
       </div>
       <UserFacingErrorMessage error={error} />
