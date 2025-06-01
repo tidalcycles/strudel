@@ -4,6 +4,7 @@
 
 import OLAProcessor from './ola-processor';
 import FFT from './fft.js';
+import { Dough } from './dough.mjs';
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 const _mod = (n, m) => ((n % m) + m) % m;
@@ -895,3 +896,55 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
 }
 
 registerProcessor('byte-beat-processor', ByteBeatProcessor);
+
+class DoughProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.dough = new Dough();
+    this.port.onmessage = (event) => this.dough.init(event.data);
+  }
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+    ];
+  }
+
+  process(inputs, outputs, params) {
+    if (this.disconnected) {
+      return false;
+    }
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    if (currentTime >= params.end[0]) {
+      return false;
+    }
+    if (this.t == null) {
+      this.t = params.begin[0] * sampleRate;
+    }
+    const output = outputs[0];
+    for (let i = 0; i < output[0].length; i++) {
+      const out = this.dough.update(currentTime);
+
+      for (let c = 0; c < output.length; c++) {
+        //prevent speaker blowout via clipping if threshold exceeds
+        output[c][i] = clamp(out, -1, 1);
+      }
+      this.t = this.t + 1;
+    }
+    return true; // keep the audio processing going
+  }
+}
+
+registerProcessor('dough-processor', DoughProcessor);
