@@ -295,7 +295,7 @@ class LadderProcessor extends AudioWorkletProcessor {
     cutoff = (cutoff * 2 * _PI) / sampleRate;
     cutoff = cutoff > 1 ? 1 : cutoff;
 
-    const k = Math.min(8, resonance * 0.4);
+    const k = Math.min(8, resonance * 0.13);
     //               drive makeup  * resonance volume loss makeup
     let makeupgain = (1 / drive) * Math.min(1.75, 1 + k);
 
@@ -761,3 +761,137 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
 }
 
 registerProcessor('pulse-oscillator', PulseOscillatorProcessor);
+
+/**  BYTE BEATS */
+const chyx = {
+  /*bit*/ bitC: function (x, y, z) {
+    return x & y ? z : 0;
+  },
+  /*bit reverse*/ br: function (x, size = 8) {
+    if (size > 32) {
+      throw new Error('br() Size cannot be greater than 32');
+    } else {
+      let result = 0;
+      for (let idx = 0; idx < size - 0; idx++) {
+        result += chyx.bitC(x, 2 ** idx, 2 ** (size - (idx + 1)));
+      }
+      return result;
+    }
+  },
+  /*sin that loops every 128 "steps", instead of every pi steps*/ sinf: function (x) {
+    return Math.sin(x / (128 / Math.PI));
+  },
+  /*cos that loops every 128 "steps", instead of every pi steps*/ cosf: function (x) {
+    return Math.cos(x / (128 / Math.PI));
+  },
+  /*tan that loops every 128 "steps", instead of every pi steps*/ tanf: function (x) {
+    return Math.tan(x / (128 / Math.PI));
+  },
+  /*converts t into a string composed of it's bits, regex's that*/ regG: function (t, X) {
+    return X.test(t.toString(2));
+  },
+};
+
+// Create shortened Math functions
+let mathParams, byteBeatHelperFuncs;
+function getByteBeatFunc(codetext) {
+  if ((mathParams || byteBeatHelperFuncs) == null) {
+    mathParams = Object.getOwnPropertyNames(Math);
+    byteBeatHelperFuncs = mathParams.map((k) => Math[k]);
+    const chyxNames = Object.getOwnPropertyNames(chyx);
+    const chyxFuncs = chyxNames.map((k) => chyx[k]);
+    mathParams.push('int', 'window', ...chyxNames);
+    byteBeatHelperFuncs.push(Math.floor, globalThis, ...chyxFuncs);
+  }
+  return new Function(...mathParams, 't', `return 0,\n${codetext || 0};`).bind(globalThis, ...byteBeatHelperFuncs);
+}
+
+class ByteBeatProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.port.onmessage = (event) => {
+      let { codeText } = event.data;
+      const { byteBeatStartTime } = event.data;
+      if (byteBeatStartTime != null) {
+        this.t = 0;
+        this.initialOffset = Math.floor(byteBeatStartTime);
+      }
+
+      //Optimization pulled from dollchan.net: https://github.com/Chasyxx/EnBeat_NEW, it seemed important
+      //Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+      codeText = codeText
+        .trim()
+        .replace(
+          /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+          (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')),
+        );
+
+      this.func = getByteBeatFunc(codeText);
+    };
+    this.initialOffset = null;
+    this.t = null;
+    this.func = null;
+  }
+
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+      {
+        name: 'frequency',
+        defaultValue: 440,
+        min: Number.EPSILON,
+      },
+      {
+        name: 'detune',
+        defaultValue: 0,
+        min: Number.NEGATIVE_INFINITY,
+        max: Number.POSITIVE_INFINITY,
+      },
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+    ];
+  }
+
+  process(inputs, outputs, params) {
+    if (this.disconnected) {
+      return false;
+    }
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    if (currentTime >= params.end[0]) {
+      return false;
+    }
+    if (this.t == null) {
+      this.t = params.begin[0] * sampleRate;
+    }
+    const output = outputs[0];
+    for (let i = 0; i < output[0].length; i++) {
+      const detune = getParamValue(i, params.detune);
+      const freq = applySemitoneDetuneToFrequency(getParamValue(i, params.frequency), detune / 100);
+      let local_t = (this.t / (sampleRate / 256)) * freq + this.initialOffset;
+      const funcValue = this.func(local_t);
+      let signal = (funcValue & 255) / 127.5 - 1;
+      const out = signal * 0.2;
+
+      for (let c = 0; c < output.length; c++) {
+        //prevent speaker blowout via clipping if threshold exceeds
+        output[c][i] = clamp(out, -0.4, 0.4);
+      }
+      this.t = this.t + 1;
+    }
+
+    return true; // keep the audio processing going
+  }
+}
+
+registerProcessor('byte-beat-processor', ByteBeatProcessor);

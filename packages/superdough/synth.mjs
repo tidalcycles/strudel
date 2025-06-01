@@ -1,5 +1,5 @@
 import { clamp, midiToFreq, noteToMidi } from './util.mjs';
-import { registerSound, getAudioContext } from './superdough.mjs';
+import { registerSound, getAudioContext, getLfo } from './superdough.mjs';
 import {
   applyFM,
   gainNode,
@@ -26,6 +26,9 @@ const getFrequencyFromValue = (value) => {
   return Number(freq);
 };
 function destroyAudioWorkletNode(node) {
+  if (node == null) {
+    return;
+  }
   node.disconnect();
   node.parameters.get('end')?.setValueAtTime(0, 0);
 }
@@ -142,10 +145,99 @@ export function registerSynthSounds() {
   );
 
   registerSound(
+    'bytebeat',
+    (begin, value, onended) => {
+      const defaultBeats = [
+        '(t%255 >= t/255%255)*255',
+        '(t*(t*8%60 <= 300)|(-t)*(t*4%512 < 256))+t/400',
+        't',
+        't*(t >> 10^t)',
+        't&128',
+        't&t>>8',
+        '((t%255+t%128+t%64+t%32+t%16+t%127.8+t%64.8+t%32.8+t%16.8)/3)',
+        '((t%64+t%63.8+t%64.15+t%64.35+t%63.5)/1.25)',
+        '(t&(t>>7)-t)',
+        '(sin(t*PI/128)*127+127)',
+        '((t^t/2+t+64*(sin((t*PI/64)+(t*PI/32768))+64))%128*2)',
+        '((t^t/2+t+64*(cos >> 0))%127.85*2)',
+        '((t^t/2+t+64)%128*2)',
+        '(((t * .25)^(t * .25)/100+(t * .25))%128)*2',
+        '((t^t/2+t+64)%7 * 24)',
+      ];
+      const { n = 0 } = value;
+      const frequency = getFrequencyFromValue(value);
+      const { byteBeatExpression = defaultBeats[n % defaultBeats.length], byteBeatStartTime } = value;
+
+      const ac = getAudioContext();
+
+      let { duration } = value;
+      const [attack, decay, sustain, release] = getADSRValues(
+        [value.attack, value.decay, value.sustain, value.release],
+        'linear',
+        [0.001, 0.05, 0.6, 0.01],
+      );
+      const holdend = begin + duration;
+      const end = holdend + release + 0.01;
+
+      let o = getWorklet(
+        ac,
+        'byte-beat-processor',
+        {
+          frequency,
+          begin,
+          end,
+        },
+        {
+          outputChannelCount: [2],
+        },
+      );
+
+      o.port.postMessage({ codeText: byteBeatExpression, byteBeatStartTime, frequency });
+
+      let envGain = gainNode(1);
+      envGain = o.connect(envGain);
+
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
+
+      let timeoutNode = webAudioTimeout(
+        ac,
+        () => {
+          destroyAudioWorkletNode(o);
+          envGain.disconnect();
+          onended();
+        },
+        begin,
+        end,
+      );
+
+      return {
+        node: envGain,
+        stop: (time) => {
+          timeoutNode.stop(time);
+        },
+      };
+    },
+    { prebake: true, type: 'synth' },
+  );
+
+  registerSound(
     'pulse',
     (begin, value, onended) => {
       const ac = getAudioContext();
-      let { duration, n: pulsewidth = 0.5 } = value;
+      let { pwrate, pwsweep } = value;
+      if (pwsweep == null) {
+        if (pwrate != null) {
+          pwsweep = 0.3;
+        } else {
+          pwsweep = 0;
+        }
+      }
+
+      if (pwrate == null && pwsweep != null) {
+        pwrate = 1;
+      }
+
+      let { duration, pw: pulsewidth = 0.5 } = value;
       const frequency = getFrequencyFromValue(value);
 
       const [attack, decay, sustain, release] = getADSRValues(
@@ -153,10 +245,8 @@ export function registerSynthSounds() {
         'linear',
         [0.001, 0.05, 0.6, 0.01],
       );
-
       const holdend = begin + duration;
       const end = holdend + release + 0.01;
-
       let o = getWorklet(
         ac,
         'pulse-oscillator',
@@ -178,11 +268,16 @@ export function registerSynthSounds() {
       envGain = o.connect(envGain);
 
       getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'linear');
-
+      let lfo;
+      if (pwsweep != 0) {
+        lfo = getLfo(ac, begin, end, { frequency: pwrate, depth: pwsweep });
+        lfo.connect(o.parameters.get('pulsewidth'));
+      }
       let timeoutNode = webAudioTimeout(
         ac,
         () => {
           destroyAudioWorkletNode(o);
+          destroyAudioWorkletNode(lfo);
           envGain.disconnect();
           onended();
           fm?.stop();

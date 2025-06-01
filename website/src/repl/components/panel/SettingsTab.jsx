@@ -6,7 +6,7 @@ import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 import { AudioEngineTargetSelector } from './AudioEngineTargetSelector.jsx';
 import { confirmDialog } from '../../util.mjs';
-import { DEFAULT_MAX_POLYPHONY, setMaxPolyphony } from '@strudel/webaudio';
+import { DEFAULT_MAX_POLYPHONY, setMaxPolyphony, setMultiChannelOrbits } from '@strudel/webaudio';
 
 function Checkbox({ label, value, onChange, disabled = false }) {
   return (
@@ -108,6 +108,7 @@ export function SettingsTab({ started }) {
     audioEngineTarget,
     togglePanelTrigger,
     maxPolyphony,
+    multiChannelOrbits,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
@@ -160,6 +161,22 @@ export function SettingsTab({ started }) {
           type="number"
           placeholder=""
           value={maxPolyphony ?? ''}
+        />
+      </FormItem>
+      <FormItem>
+        <Checkbox
+          label="Multi Channel Orbits"
+          onChange={(cbEvent) => {
+            const val = cbEvent.target.checked;
+            confirmDialog(RELOAD_MSG).then((r) => {
+              if (r == true) {
+                settingsMap.setKey('multiChannelOrbits', val);
+                setMultiChannelOrbits(val);
+                return window.location.reload();
+              }
+            });
+          }}
+          value={multiChannelOrbits}
         />
       </FormItem>
       <FormItem label="Theme">

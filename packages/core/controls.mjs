@@ -446,6 +446,32 @@ export const { coarse } = registerControl('coarse');
 export const { drive } = registerControl('drive');
 
 /**
+ * Create byte beats with custom expressions
+ *
+ * @name byteBeatExpression
+ * @synonyms bbexpr
+ *
+ * @param {number | Pattern} byteBeatExpression bitwise expression for creating bytebeat
+ * @example
+ * s("bytebeat").bbexpr('t*(t>>15^t>>66)')
+ *
+ */
+export const { byteBeatExpression, bbexpr } = registerControl('byteBeatExpression', 'bbexpr');
+
+/**
+ * Create byte beats with custom expressions
+ *
+ * @name byteBeatStartTime
+ * @synonyms bbst
+ *
+ * @param {number | Pattern} byteBeatStartTime in samples (t)
+ * @example
+ * note("c3!8".add("{0 0 12 0 7 5 3}%8")).s("bytebeat:5").bbst("<3 1>".mul(10000))._scope()
+ *
+ */
+export const { byteBeatStartTime, bbst } = registerControl('byteBeatStartTime', 'bbst');
+
+/**
  * Allows you to set the output channels on the interface
  *
  * @name channels
@@ -457,6 +483,41 @@ export const { drive } = registerControl('drive');
  *
  */
 export const { channels, ch } = registerControl('channels', 'ch');
+
+/**
+ * controls the pulsewidth of the pulse oscillator
+ *
+ * @name pw
+ * @param {number | Pattern} pulsewidth
+ * @example
+ * note("{f a c e}%16").s("pulse").pw(".8:1:.2")
+ * @example
+ * n(run(8)).scale("D:pentatonic").s("pulse").pw("0 .75 .5 1")
+ */
+export const { pw } = registerControl(['pw', 'pwrate', 'pwsweep']);
+
+/**
+ * controls the lfo rate for the pulsewidth of the pulse oscillator
+ *
+ * @name pwrate
+ * @param {number | Pattern} rate
+ * @example
+ * n(run(8)).scale("D:pentatonic").s("pulse").pw("0.5").pwrate("<5 .1 25>").pwsweep("<0.3 .8>")
+
+ *
+ */
+export const { pwrate } = registerControl('pwrate');
+
+/**
+ * controls the lfo sweep for the pulsewidth of the pulse oscillator
+ *
+ * @name pwsweep
+ * @param {number | Pattern} sweep
+ * @example
+ * n(run(8)).scale("D:pentatonic").s("pulse").pw("0.5").pwrate("<5 .1 25>").pwsweep("<0.3 .8>")
+ *
+ */
+export const { pwsweep } = registerControl('pwsweep');
 
 /**
  * Phaser audio effect that approximates popular guitar pedals.
@@ -1461,7 +1522,7 @@ export const { vowel } = registerControl('vowel');
  * @name waveloss
  */
 export const { waveloss } = registerControl('waveloss');
-/*
+/**
  * Noise crackle density
  *
  * @name density

@@ -8,7 +8,7 @@ import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
 import { clamp, nanFallback, _mod } from './util.mjs';
-import workletsUrl from './worklets.mjs?worker&url';
+import workletsUrl from './worklets.mjs?audioworklet';
 import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
@@ -18,14 +18,31 @@ export const DEFAULT_MAX_POLYPHONY = 128;
 const DEFAULT_AUDIO_DEVICE_NAME = 'System Standard';
 
 let maxPolyphony = DEFAULT_MAX_POLYPHONY;
+
 export function setMaxPolyphony(polyphony) {
   maxPolyphony = parseInt(polyphony) ?? DEFAULT_MAX_POLYPHONY;
 }
+
+let multiChannelOrbits = false;
+export function setMultiChannelOrbits(bool) {
+  multiChannelOrbits = bool == true;
+}
+
 export const soundMap = map();
 
 export function registerSound(key, onTrigger, data = {}, onPrepare = () => {}) {
   key = key.toLowerCase().replace(/\s+/g, '_');
   soundMap.setKey(key, { onTrigger, data, onPrepare });
+}
+
+let gainCurveFunc = (val) => val;
+
+export function applyGainCurve(val) {
+  return gainCurveFunc(val);
+}
+
+export function setGainCurve(newGainCurveFunc) {
+  gainCurveFunc = newGainCurveFunc;
 }
 
 function aliasBankMap(aliasMap) {
@@ -120,6 +137,7 @@ const defaultDefaultValues = {
   shapevol: 1,
   distortvol: 1,
   delay: 0,
+  byteBeatExpression: '0',
   delayfeedback: 0.5,
   delaytime: 0.25,
   orbit: 1,
@@ -184,8 +202,15 @@ function loadWorklets() {
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
-  const { disableWorklets = false, maxPolyphony, audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME } = options;
+  const {
+    disableWorklets = false,
+    maxPolyphony,
+    audioDeviceName = DEFAULT_AUDIO_DEVICE_NAME,
+    multiChannelOrbits = false,
+  } = options;
+
   setMaxPolyphony(maxPolyphony);
+  setMultiChannelOrbits(multiChannelOrbits);
   if (typeof window === 'undefined') {
     return;
   }
@@ -266,7 +291,7 @@ export const connectToDestination = (input, channels = [0, 1]) => {
   });
   stereoMix.connect(splitter);
   channels.forEach((ch, i) => {
-    splitter.connect(channelMerger, i % stereoMix.channelCount, clamp(ch, 0, ctx.destination.channelCount - 1));
+    splitter.connect(channelMerger, i % stereoMix.channelCount, ch % ctx.destination.channelCount);
   });
 };
 
@@ -279,7 +304,7 @@ export const panic = () => {
   channelMerger == null;
 };
 
-function getDelay(orbit, delaytime, delayfeedback, t) {
+function getDelay(orbit, delaytime, delayfeedback, t, channels) {
   if (delayfeedback > maxfeedback) {
     //logger(`delayfeedback was clamped to ${maxfeedback} to save your ears`);
   }
@@ -288,7 +313,7 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
     const ac = getAudioContext();
     const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
     dly.start?.(t); // for some reason, this throws when audion extension is installed..
-    connectToDestination(dly, [0, 1]);
+    connectToDestination(dly, channels);
     delays[orbit] = dly;
   }
   delays[orbit].delayTime.value !== delaytime && delays[orbit].delayTime.setValueAtTime(delaytime, t);
@@ -296,16 +321,9 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
-function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
-  //gain
-  const ac = getAudioContext();
-  const lfoGain = ac.createGain();
-  lfoGain.gain.value = sweep * 2;
-  // centerFrequency = centerFrequency * 2;
-  // sweep = sweep * 1.5;
-
-  const lfo = getWorklet(ac, 'lfo-processor', {
-    frequency,
+export function getLfo(audioContext, time, end, properties = {}) {
+  return getWorklet(audioContext, 'lfo-processor', {
+    frequency: 1,
     depth: 1,
     skew: 0,
     phaseoffset: 0,
@@ -313,8 +331,13 @@ function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000
     end,
     shape: 1,
     dcoffset: -0.5,
+    ...properties,
   });
-  lfo.connect(lfoGain);
+}
+
+function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
+  const ac = getAudioContext();
+  const lfoGain = getLfo(ac, time, end, { frequency, depth: sweep * 2 });
 
   //filters
   const numStages = 2; //num of filters in series
@@ -345,12 +368,12 @@ function getFilterType(ftype) {
 
 let reverbs = {};
 let hasChanged = (now, before) => now !== undefined && now !== before;
-function getReverb(orbit, duration, fade, lp, dim, ir) {
+function getReverb(orbit, duration, fade, lp, dim, ir, channels) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
     const reverb = ac.createReverb(duration, fade, lp, dim, ir);
-    connectToDestination(reverb, [0, 1]);
+    connectToDestination(reverb, channels);
     reverbs[orbit] = reverb;
   }
   if (
@@ -417,8 +440,13 @@ export function resetGlobalEffects() {
 }
 
 let activeSoundSources = new Map();
+//music programs/audio gear usually increments inputs/outputs from 1, we need to subtract 1 from the input because the webaudio API channels start at 0
 
-export const superdough = async (value, t, hapDuration) => {
+function mapChannelNumbers(channels) {
+  return (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
+}
+
+export const superdough = async (value, t, hapDuration, cps) => {
   const ac = getAudioContext();
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   let { stretch } = value;
@@ -479,7 +507,7 @@ export const superdough = async (value, t, hapDuration) => {
     bpsustain,
     bprelease,
     bandq = getDefaultValue('bandq'),
-    channels = getDefaultValue('channels'),
+
     //phaser
     phaserrate: phaser,
     phaserdepth = getDefaultValue('phaserdepth'),
@@ -515,7 +543,18 @@ export const superdough = async (value, t, hapDuration) => {
     compressorRelease,
   } = value;
 
-  gain = nanFallback(gain, 1);
+  const orbitChannels = mapChannelNumbers(
+    multiChannelOrbits && orbit > 0 ? [orbit * 2 - 1, orbit * 2] : getDefaultValue('channels'),
+  );
+  const channels = value.channels != null ? mapChannelNumbers(value.channels) : orbitChannels;
+
+  gain = applyGainCurve(nanFallback(gain, 1));
+  postgain = applyGainCurve(postgain);
+  shapevol = applyGainCurve(shapevol);
+  distortvol = applyGainCurve(distortvol);
+  delay = applyGainCurve(delay);
+  velocity = applyGainCurve(velocity);
+  gain *= velocity; // velocity currently only multiplies with gain. it might do other things in the future
 
   const chainID = Math.round(Math.random() * 1000000);
 
@@ -530,9 +569,6 @@ export const superdough = async (value, t, hapDuration) => {
     activeSoundSources.delete(chainID);
   }
 
-  //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
-  channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
-  gain *= velocity; // velocity currently only multiplies with gain. it might do other things in the future
   let audioNodes = [];
 
   if (bank && s) {
@@ -543,7 +579,7 @@ export const superdough = async (value, t, hapDuration) => {
   // get source AudioNode
   let sourceNode;
   if (source) {
-    sourceNode = source(t, value, hapDuration);
+    sourceNode = source(t, value, hapDuration, cps);
   } else if (getSound(s)) {
     const { onTrigger } = getSound(s);
     const onEnded = () => {
@@ -682,7 +718,7 @@ export const superdough = async (value, t, hapDuration) => {
   // delay
   let delaySend;
   if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
-    const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
+    const delyNode = getDelay(orbit, delaytime, delayfeedback, t, orbitChannels);
     delaySend = effectSend(post, delyNode, delay);
     audioNodes.push(delaySend);
   }
@@ -700,7 +736,7 @@ export const superdough = async (value, t, hapDuration) => {
       }
       roomIR = await loadBuffer(url, ac, ir, 0);
     }
-    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, roomIR);
+    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, roomIR, orbitChannels);
     reverbSend = effectSend(post, reverbNode, room);
     audioNodes.push(reverbSend);
   }

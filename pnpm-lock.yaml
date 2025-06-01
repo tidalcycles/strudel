@@ -41,7 +41,7 @@ importers:
         version: 2.2.7
       '@vitest/coverage-v8':
         specifier: 3.0.4
-        version: 3.0.4(vitest@3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))
+        version: 3.0.4(vitest@3.0.4)
       '@vitest/ui':
         specifier: ^3.0.4
         version: 3.0.4(vitest@3.0.4)
@@ -75,6 +75,9 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:packages/vite-plugin-bundle-audioworklet
       vitest:
         specifier: ^3.0.4
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
@@ -428,6 +431,9 @@ importers:
       vite:
         specifier: ^6.0.11
         version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../vite-plugin-bundle-audioworklet
 
   packages/sampler:
     dependencies:
@@ -476,6 +482,9 @@ importers:
       vite:
         specifier: ^6.0.11
         version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../vite-plugin-bundle-audioworklet
 
   packages/tidal:
     dependencies:
@@ -540,6 +549,12 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
 
+  packages/vite-plugin-bundle-audioworklet:
+    devDependencies:
+      vite:
+        specifier: ^6.0.11
+        version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+
   packages/web:
     dependencies:
       '@strudel/core':
@@ -564,6 +579,9 @@ importers:
       vite:
         specifier: ^6.0.11
         version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../vite-plugin-bundle-audioworklet
 
   packages/webaudio:
     dependencies:
@@ -780,6 +798,9 @@ importers:
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../packages/vite-plugin-bundle-audioworklet
       workbox-window:
         specifier: ^7.3.0
         version: 7.3.0
@@ -7561,7 +7582,6 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
-    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -10248,7 +10268,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@3.0.4(vitest@3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))':
+  '@vitest/coverage-v8@3.0.4(vitest@3.0.4)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
