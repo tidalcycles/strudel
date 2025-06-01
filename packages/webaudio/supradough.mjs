@@ -22,10 +22,7 @@ Pattern.prototype.supradough = function () {
     let o = getWorklet(
       ac,
       'dough-processor',
-      {
-        begin, // we might not need these, as we could send them via postMessage below
-        end,
-      },
+      {},
       {
         outputChannelCount: [2],
       },

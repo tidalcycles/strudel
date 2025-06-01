@@ -901,42 +901,30 @@ class DoughProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.dough = new Dough();
-    this.port.onmessage = (event) => this.dough.init(event.data);
-  }
-  static get parameterDescriptors() {
-    return [
-      {
-        name: 'begin',
-        defaultValue: 0,
-        max: Number.POSITIVE_INFINITY,
-        min: 0,
-      },
-      {
-        name: 'end',
-        defaultValue: 0,
-        max: Number.POSITIVE_INFINITY,
-        min: 0,
-      },
-    ];
+    this.port.onmessage = (event) => this.dough.init(event.data, sampleRate);
   }
 
   process(inputs, outputs, params) {
     if (this.disconnected) {
       return false;
     }
-    if (currentTime <= params.begin[0]) {
+    if (this.dough._begin === undefined) {
       return true;
     }
-    if (currentTime >= params.end[0]) {
-      return false;
+    if (currentTime <= this.dough._begin) {
+      return true;
     }
-    if (this.t == null) {
-      this.t = params.begin[0] * sampleRate;
+    if (currentTime >= this.dough._end + 1) {
+      return false; // this causes cracks for some reason (seems to kick in too early for some reason)
+      // it works with + 1 but not sure why this is needed
+    }
+    if (this.t === undefined) {
+      this.t = Math.floor(this.dough._begin * sampleRate);
     }
     const output = outputs[0];
     for (let i = 0; i < output[0].length; i++) {
-      const out = this.dough.update(currentTime);
-
+      // const out = this.dough.update(currentTime);
+      const out = this.dough.update(this.t / sampleRate);
       for (let c = 0; c < output.length; c++) {
         //prevent speaker blowout via clipping if threshold exceeds
         output[c][i] = clamp(out, -1, 1);

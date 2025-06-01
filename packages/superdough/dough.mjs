@@ -351,7 +351,7 @@ const defaultDefaultValues = {
 let getDefaultValue = (key) => defaultDefaultValues[key];
 
 export class Dough {
-  init(value) {
+  init(value, sampleRate) {
     // params without defaults:
     /*
     bank,
@@ -424,6 +424,14 @@ export class Dough {
     this._sound = new SourceClass();
     this._lpf = this.cutoff ? new Lpf() : null;
     this._adsr = new ADSR();
+
+    this.piOverSr = Math.PI / sampleRate;
+    this.eighthOverLogHalf = 0.125 / Math.log(0.5);
+  }
+  // credits to pulu: https://github.com/felixroos/kabelsalat/issues/35
+  freq2cutoff(freq) {
+    const c = 2 * Math.sin(freq * this.piOverSr);
+    return 1 - Math.log(c) * this.eighthOverLogHalf;
   }
   update(t) {
     if (!this._sound) {
@@ -432,14 +440,19 @@ export class Dough {
     // sound source
     let s = this._sound.update(this.freq);
     // lpf
-    s = this._lpf ? this._lpf.update(s, this.cutoff, this.resonance) : s;
+    if (this._lpf) {
+      const cutoff = this.freq2cutoff(this.cutoff);
+      s = this._lpf ? this._lpf.update(s, cutoff, this.resonance) : s;
+    }
     // not sure if gain is applied here
     s = s * this.gain;
     // envelope
     let gate = Number(t >= this._begin && t <= this._end);
+    /* Math.random() > 0.99 && console.log('gate', gate); */
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
     s = s * env;
-    s = s * this.postgain;
+
+    s = s * this.postgain * 0.3;
     return s;
   }
 }
