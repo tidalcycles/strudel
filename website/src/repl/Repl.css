@@ -72,7 +72,7 @@
 
 /* Drag and drop styles */
 #code .cm-editor.cm-drag-over {
-  outline: 2px dashed #4CAF50;
+  outline: 2px dashed #4caf50;
   outline-offset: -2px;
   background-color: rgba(76, 175, 80, 0.05) !important;
 }

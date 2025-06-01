@@ -14,11 +14,9 @@ async function readFileContent(file) {
 // Check for common text file formats, to avoid
 // accidentally loading images or other files
 function isCodeFile(file) {
-  const codeExtensions = [
-    '.js', '.strudel', '.str'
-  ];
+  const codeExtensions = ['.js', '.strudel', '.str'];
   const fileName = file.name.toLowerCase();
-  return codeExtensions.some(ext => fileName.endsWith(ext)) || file.type.startsWith('text/');
+  return codeExtensions.some((ext) => fileName.endsWith(ext)) || file.type.startsWith('text/');
 }
 
 // Create drag and drop extension
@@ -30,7 +28,7 @@ export const dragDropPlugin = ViewPlugin.fromClass(
       this.handleDragOver = this.handleDragOver.bind(this);
       this.handleDragEnter = this.handleDragEnter.bind(this);
       this.handleDragLeave = this.handleDragLeave.bind(this);
-      
+
       // Add event listeners
       view.dom.addEventListener('drop', this.handleDrop);
       view.dom.addEventListener('dragover', this.handleDragOver);
@@ -65,10 +63,10 @@ export const dragDropPlugin = ViewPlugin.fromClass(
       this.view.dom.classList.remove('cm-drag-over');
 
       const files = Array.from(e.dataTransfer.files);
-      
+
       // Filter for code files only
       const codeFiles = files.filter(isCodeFile);
-      
+
       if (codeFiles.length === 0) {
         logger('No code files were dropped. Please drop text-based files.', 'warning');
         return;
@@ -80,29 +78,27 @@ export const dragDropPlugin = ViewPlugin.fromClass(
           codeFiles.map(async (file) => {
             const content = await readFileContent(file);
             return `// File: ${file.name}\n${content}`;
-          })
+          }),
         );
 
         // Combine content
         const newContent = fileContents.join('\n\n');
-        
+
         // Replace entire editor contents
         this.view.dispatch({
           changes: { from: 0, to: this.view.state.doc.length, insert: newContent },
-          selection: { anchor: newContent.length }
+          selection: { anchor: newContent.length },
         });
 
         // Focus the editor
         this.view.focus();
-        
+
         // Show success message
-        const fileNames = codeFiles.map(f => f.name).join(', ');
+        const fileNames = codeFiles.map((f) => f.name).join(', ');
         logger(`Successfully loaded ${codeFiles.length} file(s): ${fileNames}`, 'highlight');
-        
       } catch (error) {
         console.error('Error reading dropped files:', error);
         logger(`Error loading files: ${error.message}`, 'error');
-        
       }
     }
 
@@ -112,5 +108,5 @@ export const dragDropPlugin = ViewPlugin.fromClass(
       this.view.dom.removeEventListener('dragenter', this.handleDragEnter);
       this.view.dom.removeEventListener('dragleave', this.handleDragLeave);
     }
-  }
+  },
 );
