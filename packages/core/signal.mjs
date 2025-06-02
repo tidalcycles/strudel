@@ -534,7 +534,7 @@ export const perlin = perlinWith(time.fmap((v) => Number(v)));
  * @name berlin
  * @example
  * // ascending arpeggios
- * $: n("0!16".add(berlin.fast(4).mul(14))).scale("d:minor")._pianoroll()
+ * n("0!16".add(berlin.fast(4).mul(14))).scale("d:minor")
  *
  */
 export const berlin = berlinWith(time.fmap((v) => Number(v)));
