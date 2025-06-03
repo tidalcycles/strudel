@@ -3193,6 +3193,25 @@ export const slice = register(
 );
 
 /**
+ *
+ * make something happen on event time
+ * uses browser timeout which is innacurate for audio tasks
+ * @name onTriggerTime
+ * @memberof Pattern
+ *  @returns Pattern
+ * @example
+ * s("bd!8").onTriggerTime((hap) => {console.info(hap)})
+ */
+Pattern.prototype.onTriggerTime = function (func) {
+  return this.onTrigger((t_deprecate, hap, currentTime, cps = 1, targetTime) => {
+    const diff = targetTime - currentTime;
+    window.setTimeout(() => {
+      func(hap);
+    }, diff * 1000);
+  }, false);
+};
+
+/**
  * Works the same as slice, but changes the playback speed of each slice to match the duration of its step.
  * @name splice
  * @example
