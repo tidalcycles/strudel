@@ -146,6 +146,7 @@ export class ADSR {
   startVal = 0;
 
   update(curTime, gate, attack, decay, susVal, release) {
+    console.info('here')
     switch (this.state) {
       case 'off': {
         if (gate > 0) {
@@ -352,6 +353,7 @@ let getDefaultValue = (key) => defaultDefaultValues[key];
 
 export class Dough {
   init(value, sampleRate) {
+  
     // params without defaults:
     /*
     bank,
@@ -447,12 +449,13 @@ export class Dough {
     // not sure if gain is applied here
     s = s * this.gain;
     // envelope
-    let gate = Number(t >= this._begin && t <= this._end);
+    let gate = Number(t >= this._begin && t <= this._holdEnd);
+
     /* Math.random() > 0.99 && console.log('gate', gate); */
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
     s = s * env;
 
-    s = s * this.postgain * 0.3;
+    s = s * this.postgain * .3
     return s;
   }
 }
