@@ -882,7 +882,6 @@ class ByteBeatProcessor extends AudioWorkletProcessor {
       const funcValue = this.func(local_t);
       let signal = (funcValue & 255) / 127.5 - 1;
       const out = signal * 0.2;
-
       for (let c = 0; c < output.length; c++) {
         //prevent speaker blowout via clipping if threshold exceeds
         output[c][i] = clamp(out, -0.4, 0.4);
