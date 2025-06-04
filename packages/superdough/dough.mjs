@@ -146,7 +146,6 @@ export class ADSR {
   startVal = 0;
 
   update(curTime, gate, attack, decay, susVal, release) {
-    console.info('here')
     switch (this.state) {
       case 'off': {
         if (gate > 0) {
@@ -191,6 +190,7 @@ export class ADSR {
       }
       case 'release': {
         let time = curTime - this.startTime;
+
         if (time > release) {
           this.state = 'off';
           return 0;
@@ -353,7 +353,7 @@ let getDefaultValue = (key) => defaultDefaultValues[key];
 
 export class Dough {
   init(value, sampleRate) {
-  
+
     // params without defaults:
     /*
     bank,
@@ -455,7 +455,7 @@ export class Dough {
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
     s = s * env;
 
-    s = s * this.postgain * .3
+    s = s * this.postgain * .2
     return s;
   }
 }
