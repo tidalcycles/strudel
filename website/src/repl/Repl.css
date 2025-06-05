@@ -69,3 +69,40 @@
   text-decoration: underline 0.18rem;
   text-underline-offset: 0.22rem;
 }
+
+/* Drag and drop styles */
+#code .cm-editor.cm-drag-over {
+  outline: 2px dashed #4caf50;
+  outline-offset: -2px;
+  background-color: rgba(76, 175, 80, 0.05) !important;
+}
+
+/* Download button styles */
+.download-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s ease;
+  pointer-events: auto;
+}
+
+.download-button:hover {
+  background: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.download-button:active {
+  transform: scale(0.95);
+}
+
+.download-button svg {
+  display: block;
+}

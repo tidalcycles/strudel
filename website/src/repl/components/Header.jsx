@@ -1,5 +1,6 @@
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
+import ArrowDownTrayIcon from '@heroicons/react/20/solid/ArrowDownTrayIcon';
 import cx from '@src/cx.mjs';
 import { useSettings, setIsZen } from '../../settings.mjs';
 import '../Repl.css';

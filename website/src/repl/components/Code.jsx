@@ -1,14 +1,16 @@
+import DownloadButton from './DownloadButton';
+
 // type Props = {
 //   containerRef:  React.MutableRefObject<HTMLElement | null>,
 //   editorRef:  React.MutableRefObject<HTMLElement | null>,
 //   init: () => void
 // }
 export function Code(Props) {
-  const { editorRef, containerRef, init } = Props;
+  const { editorRef, containerRef, init, context } = Props;
 
   return (
     <section
-      className={'text-gray-100 cursor-text pb-0 overflow-auto grow'}
+      className={'text-gray-100 cursor-text pb-0 overflow-auto grow relative'}
       id="code"
       ref={(el) => {
         containerRef.current = el;
@@ -16,6 +18,8 @@ export function Code(Props) {
           init();
         }
       }}
-    ></section>
+    >
+      {context && <DownloadButton context={context} />}
+    </section>
   );
 }
