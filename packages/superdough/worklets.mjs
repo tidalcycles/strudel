@@ -901,10 +901,7 @@ class DoughProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.dough = new Dough(sampleRate, currentTime);
-    this.port.onmessage = (event) => {
-      event.data.sampleRate = sampleRate;
-      this.dough.scheduleSpawn(event.data);
-    };
+    this.port.onmessage = (event) => this.dough.scheduleSpawn(event.data);
   }
   process(inputs, outputs, params) {
     if (this.disconnected) {

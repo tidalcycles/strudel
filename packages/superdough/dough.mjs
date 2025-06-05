@@ -1,12 +1,12 @@
 // this is dough, the superdough without dependencies
-
-const ISR = 1 / sampleRate;
+const SAMPLE_RATE = typeof sampleRate !== 'undefined' ? sampleRate : 48000;
+const ISR = 1 / SAMPLE_RATE;
 // https://garten.salat.dev/audio-DSP/oscillators.html
 export class SineOsc {
   phase = 0;
   update(freq) {
     const value = Math.sin(this.phase * 2 * Math.PI);
-    this.phase = (this.phase + freq / sampleRate) % 1;
+    this.phase = (this.phase + freq / SAMPLE_RATE) % 1;
     return value;
   }
 }
@@ -39,7 +39,7 @@ export class SawOsc {
   //phase = Math.random();
   phase = 0;
   update(freq) {
-    const dt = freq / sampleRate;
+    const dt = freq / SAMPLE_RATE;
     let p = polyBlep(this.phase, dt);
     let s = 2 * this.phase - 1 - p;
     this.phase += dt;
@@ -216,12 +216,12 @@ const MAX_DELAY_TIME = 10;
 export class Delay {
   writeIdx = 0;
   readIdx = 0;
-  buffer = new Float32Array(MAX_DELAY_TIME * sampleRate); // .fill(0)
+  buffer = new Float32Array(MAX_DELAY_TIME * SAMPLE_RATE); // .fill(0)
   write(s, delayTime) {
     this.writeIdx = (this.writeIdx + 1) % this.buffer.length;
     this.buffer[this.writeIdx] = s;
     // Calculate how far in the past to read
-    let numSamples = Math.min(Math.floor(sampleRate * delayTime), this.buffer.length - 1);
+    let numSamples = Math.min(Math.floor(SAMPLE_RATE * delayTime), this.buffer.length - 1);
     this.readIdx = this.writeIdx - numSamples;
     // If past the start of the buffer, wrap around
     if (this.readIdx < 0) this.readIdx += this.buffer.length;
@@ -501,7 +501,7 @@ export class Dough {
   r = 0; // tbd
   t = 0;
   // sampleRate: number, currentTime: number (seconds)
-  constructor(sampleRate, currentTime) {
+  constructor(sampleRate = 48000, currentTime = 0) {
     this.sampleRate = sampleRate;
     this.t = Math.floor(currentTime * sampleRate); // samples
     // console.log('init dough', this.sampleRate, this.t);
@@ -513,6 +513,7 @@ export class Dough {
     if (value._duration === undefined) {
       throw new Error('[dough]: scheduleSpawn expected _duration to be set');
     }
+    value.sampleRate = this.sampleRate;
     const time = value._begin; // set from supradough.mjs
     this.schedule({ time, type: 'spawn', arg: value });
   }
