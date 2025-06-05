@@ -900,36 +900,23 @@ registerProcessor('byte-beat-processor', ByteBeatProcessor);
 class DoughProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
-    this.dough = new Dough();
-    this.port.onmessage = (event) => this.dough.init(event.data, sampleRate);
+    this.dough = new Dough(sampleRate, currentTime);
+    this.port.onmessage = (event) => {
+      event.data.sampleRate = sampleRate;
+      this.dough.scheduleSpawn(event.data);
+    };
   }
-
   process(inputs, outputs, params) {
     if (this.disconnected) {
       return false;
     }
-    if (this.dough._begin === undefined) {
-      return true;
-    }
-    if (currentTime <= this.dough._begin) {
-      return true;
-    }
-    if (currentTime >= this.dough._end + 1) {
-      return false; // this causes cracks for some reason (seems to kick in too early for some reason)
-      // it works with + 1 but not sure why this is needed
-    }
-    if (this.t === undefined) {
-      this.t = Math.floor(this.dough._begin * sampleRate);
-    }
     const output = outputs[0];
     for (let i = 0; i < output[0].length; i++) {
-      // const out = this.dough.update(currentTime);
-      const out = this.dough.update(this.t / sampleRate);
+      const out = this.dough.update();
       for (let c = 0; c < output.length; c++) {
         //prevent speaker blowout via clipping if threshold exceeds
         output[c][i] = clamp(out, -1, 1);
       }
-      this.t = this.t + 1;
     }
     return true; // keep the audio processing going
   }

@@ -1,10 +1,27 @@
 import { Pattern } from '@strudel/core';
-import { connectToDestination, destroyAudioWorkletNode, getAudioContext, webAudioTimeout } from 'superdough';
+import { connectToDestination, getAudioContext, getWorklet } from 'superdough';
+
+let doughWorklet;
+
+function initDoughWorklet() {
+  const ac = getAudioContext();
+  doughWorklet = getWorklet(
+    ac,
+    'dough-processor',
+    {},
+    {
+      outputChannelCount: [2],
+    },
+  );
+  /* webAudioTimeout(ac, () => destroyAudioWorkletNode(doughWorklet), begin, end); */
+  connectToDestination(doughWorklet); // channels?
+}
+
 Pattern.prototype.supradough = function () {
   return this.onTrigger((_, hap, __, cps, begin) => {
     const { value } = hap;
+    // todo: could these calculations be made inside dough as well?
     value.freq = getFrequencyFromValue(hap.value);
-    const ac = getAudioContext();
 
     const release = getADSRValues(
       [value.attack, value.decay, value.sustain, value.release],
@@ -17,19 +34,12 @@ Pattern.prototype.supradough = function () {
     const end = holdEnd + release + 0.01;
     value._begin = begin; // these are needed for the gate signal
     value._end = end;
-    value._holdEnd = holdEnd
+    value._holdEnd = holdEnd;
+    value._holdDuration = duration + release;
 
-    let o = getWorklet(
-      ac,
-      'dough-processor',
-      {},
-      {
-        outputChannelCount: [2],
-      },
-    );
-
-    o.port.postMessage(value); // send value to worklet
-    webAudioTimeout(ac, () => destroyAudioWorkletNode(o), begin, end);
-    connectToDestination(o); // channels?
+    if (!doughWorklet) {
+      initDoughWorklet();
+    }
+    doughWorklet.port.postMessage(value);
   }, 1);
 };

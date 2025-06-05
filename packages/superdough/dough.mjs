@@ -351,9 +351,8 @@ const defaultDefaultValues = {
 
 let getDefaultValue = (key) => defaultDefaultValues[key];
 
-export class Dough {
-  init(value, sampleRate) {
-
+export class DoughVoice {
+  constructor(value) {
     // params without defaults:
     /*
     bank,
@@ -427,7 +426,7 @@ export class Dough {
     this._lpf = this.cutoff ? new Lpf() : null;
     this._adsr = new ADSR();
 
-    this.piOverSr = Math.PI / sampleRate;
+    this.piOverSr = Math.PI / value.sampleRate;
     this.eighthOverLogHalf = 0.125 / Math.log(0.5);
   }
   // credits to pulu: https://github.com/felixroos/kabelsalat/issues/35
@@ -455,7 +454,76 @@ export class Dough {
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
     s = s * env;
 
-    s = s * this.postgain * .2
+    s = s * this.postgain * 0.2;
     return s;
+  }
+}
+
+// this class is the interface to the "outer world"
+// it handles spawning and despawning of DoughVoice's
+export class Dough {
+  voices = []; // DoughVoice[]
+  vid = 0;
+  q = [];
+  l = 0; // tbd
+  r = 0; // tbd
+  t = 0;
+  // sampleRate: number, currentTime: number (seconds)
+  constructor(sampleRate, currentTime) {
+    this.sampleRate = sampleRate;
+    this.t = Math.floor(currentTime * sampleRate); // samples
+    // console.log('init dough', this.sampleRate, this.t);
+  }
+  scheduleSpawn(value) {
+    const time = value._begin; // set from supradough.mjs
+    this.schedule({ time, type: 'spawn', arg: value });
+  }
+  spawn(value) {
+    value.id = this.vid++;
+    const voice = new DoughVoice(value);
+    this.voices.push(voice);
+    console.log('spawn', voice.id, value._holdDuration, 'voices:', this.voices.length);
+    // schedule removal
+    const endTime = Math.ceil(value._end * this.sampleRate);
+    this.schedule({ time: endTime /* + 48000 */, type: 'despawn', arg: voice.id });
+  }
+  despawn(vid) {
+    this.voices = this.voices.filter((v) => v.id !== vid);
+    console.log('despawn', vid, 'voices:', this.voices.length);
+  }
+  // schedules a function call with a single argument
+  // msg = {time:number,type:string, arg: any}
+  // the Dough method "type" will be called with "arg" at "time"
+  schedule(msg) {
+    if (!this.q.length) {
+      // if empty, just push
+      this.q.push(msg);
+      return;
+    }
+    // not empty
+    // find index where msg.time fits in
+    let i = 0;
+    while (i < this.q.length && this.q[i].time < msg.time) {
+      i++;
+    }
+    // this ensures q stays sorted by time, so we only need to check q[0]
+    this.q.splice(i, 0, msg);
+  }
+  // maybe update should be called once per block instead for perf reasons?
+  update() {
+    // go over q
+    while (this.q.length > 0 && this.q[0].time <= this.t) {
+      // console.log('schedule', this.q[0]);
+      // trigger due messages. q is sorted, so we only need to check q[0]
+      this[this.q[0].type](this.q[0].arg); // type is expected to be a Dough method
+      this.q.shift();
+    }
+    // add active voices
+    let sum = 0;
+    for (let v = 0; v < this.voices.length; v++) {
+      sum += this.voices[v].update(this.t / this.sampleRate);
+    }
+    this.t++;
+    return sum;
   }
 }
