@@ -25,6 +25,7 @@ import {
 
 describe('tonleiter', () => {
   test('Step ', () => {
+    expect(Step.tokenize('b7')).toEqual(['b', 7]);
     expect(Step.tokenize('#11')).toEqual(['#', 11]);
     expect(Step.tokenize('b13')).toEqual(['b', 13]);
     expect(Step.tokenize('bb6')).toEqual(['bb', 6]);
@@ -36,14 +37,25 @@ describe('tonleiter', () => {
     expect(Step.accidentals('#11')).toEqual(1);
   });
   test('Note', () => {
-    expect(Note.tokenize('C##')).toEqual(['C', '##']);
-    expect(Note.tokenize('Bb')).toEqual(['B', 'b']);
+    expect(Note.tokenize('C3')).toEqual(['C', '', 3]);
+    expect(Note.tokenize('C##')).toEqual(['C', '##', undefined]);
+    expect(Note.tokenize('Bb')).toEqual(['B', 'b', undefined]);
     expect(Note.accidentals('C#')).toEqual(1);
     expect(Note.accidentals('C##')).toEqual(2);
     expect(Note.accidentals('Eb')).toEqual(-1);
     expect(Note.accidentals('Bbb')).toEqual(-2);
   });
   test('transpose', () => {
+    expect(transpose('Bb4', '4')).toEqual('Eb5'); // fails -> E###########5
+    expect(transpose('Bb4', '6')).toEqual('G5');
+
+    expect(transpose('D3', 'b7')).toEqual('C4');
+    expect(transpose('C3', 'b7')).toEqual('Bb3');
+
+    expect(transpose('C', 'b7')).toEqual('Bb');
+    expect(transpose('D', 'b7')).toEqual('C');
+    expect(transpose('E', 'b7')).toEqual('D');
+    expect(transpose('E', '7')).toEqual('D#');
     expect(transpose('F#', '3')).toEqual('A#');
     expect(transpose('C', '3')).toEqual('E');
     expect(transpose('D', '3')).toEqual('F#');
