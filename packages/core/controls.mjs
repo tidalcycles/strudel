@@ -612,6 +612,18 @@ export const { cut } = registerControl('cut');
 export const { cutoff, ctf, lpf, lp } = registerControl(['cutoff', 'resonance', 'lpenv'], 'ctf', 'lpf', 'lp');
 
 /**
+ * Sets the lowpass filter lfo modulation depth.
+ * @name lplfo
+ * @param {number | Pattern} modulation depth of the lowpass filter lfo between 0 and _n_
+ * @example
+ * note("c2 e2 f2 g2")
+ * .sound('sawtooth')
+ * .lpf(300)
+ * .lplfo(2)
+ */
+export const { lplfo } = registerControl('lplfo');
+
+/**
  * Sets the lowpass filter envelope modulation depth.
  * @name lpenv
  * @param {number | Pattern} modulation depth of the lowpass filter envelope between 0 and _n_

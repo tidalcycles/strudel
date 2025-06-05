@@ -5235,6 +5235,27 @@ exports[`runs examples > example "lpf" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "lplfo" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:c2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 1/4 → 1/2 | note:e2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 1/2 → 3/4 | note:f2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 3/4 → 1/1 | note:g2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 1/1 → 5/4 | note:c2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 5/4 → 3/2 | note:e2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 3/2 → 7/4 | note:f2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 7/4 → 2/1 | note:g2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 2/1 → 9/4 | note:c2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 9/4 → 5/2 | note:e2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 5/2 → 11/4 | note:f2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 11/4 → 3/1 | note:g2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 3/1 → 13/4 | note:c2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 13/4 → 7/2 | note:e2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 7/2 → 15/4 | note:f2 s:sawtooth cutoff:300 lplfo:2 ]",
+  "[ 15/4 → 4/1 | note:g2 s:sawtooth cutoff:300 lplfo:2 ]",
+]
+`;
+
 exports[`runs examples > example "lpq" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | s:hh cutoff:2000 resonance:0 ]",
