@@ -311,6 +311,7 @@ export const getADSRValues = (params, curve = 'linear', defaultValues) => {
   const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? envmax : envmin;
   return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
 };
+
 let oscillators = {
   sine: SineOsc,
   saw: SawOsc,
@@ -350,6 +351,33 @@ const defaultDefaultValues = {
 };
 
 let getDefaultValue = (key) => defaultDefaultValues[key];
+
+const chromas = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+const accs = { '#': 1, b: -1, s: 1, f: -1 };
+const note2midi = (note, defaultOctave = 3) => {
+  const [pc, acc = '', oct = defaultOctave] =
+    String(note)
+      .match(/^([a-gA-G])([#bsf]*)([0-9]*)$/)
+      ?.slice(1) || [];
+  if (!pc) {
+    throw new Error('not a note: "' + note + '"');
+  }
+  const chroma = chromas[pc.toLowerCase()];
+  const offset = acc?.split('').reduce((o, char) => o + accs[char], 0) || 0;
+  return (Number(oct) + 1) * 12 + chroma + offset;
+};
+const getFrequency = (value) => {
+  let { note, freq } = value;
+  note = note || 36;
+  if (typeof note === 'string') {
+    note = note2midi(note); // e.g. c3 => 48
+  }
+  if (!freq && typeof note === 'number') {
+    freq = Math.pow(2, (note - 69) / 12) * 440;
+  }
+
+  return Number(freq);
+};
 
 export class DoughVoice {
   constructor(value) {
@@ -392,6 +420,7 @@ export class DoughVoice {
     ir,
     analyze,
     */
+    value.freq = getFrequency(value);
     Object.assign(this, value);
     // params with defaults:
     this.s = this.s ?? getDefaultValue('s');
@@ -420,6 +449,9 @@ export class DoughVoice {
       this.sustain,
       this.release,
     ]);
+
+    this._holdEnd = this._begin + this._duration; // needed for gate
+    this._end = this._holdEnd + this.release + 0.01; // needed for despawn
 
     const SourceClass = oscillators[this.s] ?? TriOsc;
     this._sound = new SourceClass();
@@ -482,9 +514,9 @@ export class Dough {
     value.id = this.vid++;
     const voice = new DoughVoice(value);
     this.voices.push(voice);
-    console.log('spawn', voice.id, value._holdDuration, 'voices:', this.voices.length);
+    console.log('spawn', voice.id, 'voices:', this.voices.length);
     // schedule removal
-    const endTime = Math.ceil(value._end * this.sampleRate);
+    const endTime = Math.ceil(voice._end * this.sampleRate);
     this.schedule({ time: endTime /* + 48000 */, type: 'despawn', arg: voice.id });
   }
   despawn(vid) {
