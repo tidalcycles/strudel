@@ -1,0 +1,40 @@
+{
+  "name": "@strudel/shader",
+  "version": "1.0.0",
+  "description": "Helpers for drawing shader",
+  "main": "index.mjs",
+  "type": "module",
+  "publishConfig": {
+    "main": "dist/index.mjs"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "titdalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave",
+    "shader"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@strudel/core": "workspace:*",
+    "picogl": "^0.17.9"
+  },
+  "devDependencies": {
+    "vite": "^5.0.10",
+    "vitest": "^2.1.3"
+  }
+}
