@@ -507,6 +507,12 @@ export class Dough {
     // console.log('init dough', this.sampleRate, this.t);
   }
   scheduleSpawn(value) {
+    if (value._begin === undefined) {
+      throw new Error('[dough]: scheduleSpawn expected _begin to be set');
+    }
+    if (value._duration === undefined) {
+      throw new Error('[dough]: scheduleSpawn expected _duration to be set');
+    }
     const time = value._begin; // set from supradough.mjs
     this.schedule({ time, type: 'spawn', arg: value });
   }
@@ -514,14 +520,14 @@ export class Dough {
     value.id = this.vid++;
     const voice = new DoughVoice(value);
     this.voices.push(voice);
-    console.log('spawn', voice.id, 'voices:', this.voices.length);
+    // console.log('spawn', voice.id, 'voices:', this.voices.length);
     // schedule removal
     const endTime = Math.ceil(voice._end * this.sampleRate);
     this.schedule({ time: endTime /* + 48000 */, type: 'despawn', arg: voice.id });
   }
   despawn(vid) {
     this.voices = this.voices.filter((v) => v.id !== vid);
-    console.log('despawn', vid, 'voices:', this.voices.length);
+    // console.log('despawn', vid, 'voices:', this.voices.length);
   }
   // schedules a function call with a single argument
   // msg = {time:number,type:string, arg: any}
