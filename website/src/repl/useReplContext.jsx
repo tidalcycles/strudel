@@ -10,6 +10,7 @@ import { transpiler } from '@strudel/transpiler';
 import {
   getAudioContextCurrentTime,
   webaudioOutput,
+  webaudioPrepare,
   resetGlobalEffects,
   resetLoadedSounds,
   initAudioOnFirstClick,
@@ -63,6 +64,7 @@ export function useReplContext() {
   const { isSyncEnabled, audioEngineTarget } = useSettings();
   const shouldUseWebaudio = audioEngineTarget !== audioEngineTargets.osc;
   const defaultOutput = shouldUseWebaudio ? webaudioOutput : superdirtOutput;
+  const defaultPrepare = shouldUseWebaudio ? webaudioPrepare : undefined;
   const getTime = shouldUseWebaudio ? getAudioContextCurrentTime : getPerformanceTimeSeconds;
 
   const init = useCallback(() => {
@@ -71,6 +73,7 @@ export function useReplContext() {
     const editor = new StrudelMirror({
       sync: isSyncEnabled,
       defaultOutput,
+      defaultPrepare,
       getTime,
       setInterval,
       clearInterval,

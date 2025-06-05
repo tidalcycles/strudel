@@ -11,6 +11,7 @@ export class Cyclist {
   constructor({
     interval,
     onTrigger,
+    onPrepare,
     onToggle,
     onError,
     getTime,
@@ -18,6 +19,7 @@ export class Cyclist {
     setInterval,
     clearInterval,
     beforeStart,
+    prepareTime = 4,
   }) {
     this.started = false;
     this.beforeStart = beforeStart;
@@ -26,6 +28,8 @@ export class Cyclist {
     this.lastTick = 0; // absolute time when last tick (clock callback) happened
     this.lastBegin = 0; // query begin of last tick
     this.lastEnd = 0; // query end of last tick
+    this.preparedUntil = 0;
+    this.prepareTime = prepareTime;
     this.getTime = getTime; // get absolute time
     this.num_cycles_at_cps_change = 0;
     this.seconds_at_cps_change; // clock phase when cps was changed
@@ -85,6 +89,33 @@ export class Cyclist {
       setInterval,
       clearInterval,
     );
+
+    onPrepare
+      ? (this.prepClock = createClock(
+          getTime,
+          (phase, duration, _, t) => {
+            try {
+              const start = Math.max(t, this.preparedUntil);
+              const end = t + this.prepareTime;
+              this.preparedUntil = end;
+
+              const haps = this.pattern.queryArc(start, end, { _cps: 1 });
+
+              haps.forEach((hap) => {
+                onPrepare?.(hap);
+              });
+            } catch (e) {
+              logger(`[cyclist] error: ${e.message}`);
+              onError?.(e);
+            }
+          },
+          1, // duration of each cycle
+          1,
+          0,
+          setInterval,
+          clearInterval,
+        ))
+      : null;
   }
   now() {
     if (!this.started) {
@@ -106,16 +137,19 @@ export class Cyclist {
     }
     logger('[cyclist] start');
     this.clock.start();
+    this.prepClock?.start();
     this.setStarted(true);
   }
   pause() {
     logger('[cyclist] pause');
     this.clock.pause();
+    this.prepClock?.pause();
     this.setStarted(false);
   }
   stop() {
     logger('[cyclist] stop');
     this.clock.stop();
+    this.prepClock?.stop();
     this.lastEnd = 0;
     this.setStarted(false);
   }
@@ -130,6 +164,7 @@ export class Cyclist {
       return;
     }
     this.cps = cps;
+    this.preparedUntil = 0;
     this.num_ticks_since_cps_change = 0;
   }
   log(begin, end, haps) {
