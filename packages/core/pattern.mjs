@@ -2784,6 +2784,29 @@ export function stepalt(...groups) {
   return result;
 }
 
+export const stepearly = register(
+  'stepearly',
+  function (t, pat) {
+    if (!pat._steps) {
+      return pat;
+    }
+    return pat._late(Fraction(t).div(pat._steps));
+  },
+  true,
+  false,
+  (x) => x.stepJoin(),
+);
+
+export const steplate = register(
+  'steplate',
+  function (t, pat) {
+    return pat._stepearly(Fraction(0).sub(t));
+  },
+  true,
+  false,
+  (x) => x.stepJoin(),
+);
+
 /**
  * *Experimental*
  *
