@@ -60,7 +60,7 @@ export class TriOsc {
   }
 }
 
-export class Lpf {
+export class TwoPoleFilter {
   s0 = 0;
   s1 = 0;
   update(s, cutoff, resonance = 0) {
@@ -70,15 +70,10 @@ export class Lpf {
     var c = Math.pow(0.5, (1 - cutoff) / 0.125);
     var r = Math.pow(0.5, (resonance + 0.125) / 0.125);
     var mrc = 1 - r * c;
-    var v0 = this.s0;
-    var v1 = this.s1;
-    // Apply the filter to the sample
-    v0 = mrc * v0 - c * v1 + c * s;
-    v1 = mrc * v1 + c * v0;
-    s = v1;
-    this.s0 = v0;
-    this.s1 = v1;
-    return s;
+
+    this.s0 = mrc * this.s0 - c * this.s1 + c * s; // bpf
+    this.s1 = mrc * this.s1 + c * this.s0; // lpf
+    return this.s1; // return lpf by default
   }
 }
 
@@ -287,6 +282,7 @@ export class Slew {
   }
 }
 
+// overdrive style distortion (adapted from noisecraft) currently unused
 export function applyDistortion(x, amount) {
   amount = Math.min(Math.max(amount, 0), 1);
   amount -= 0.01;
@@ -329,16 +325,6 @@ export class Crush {
     crush = Math.max(1, crush);
     const x = Math.pow(2, crush - 1);
     return Math.round(input * x) / x;
-  }
-}
-
-// (unused) overdrive-style distortion (adapted from noisecraft)
-export class Overdrive {
-  update(input, amount = 0, postgain = 1) {
-    amount = Math.min(Math.max(amount, 0), 1);
-    amount -= 0.01;
-    const shape = (2 * amount) / (1 - amount);
-    return (((1 + shape) * input) / (1 + shape * Math.abs(input))) * postgain;
   }
 }
 
@@ -394,9 +380,12 @@ const defaultDefaultValues = {
   density: '.03',
   ftype: '12db',
   fanchor: 0,
-  resonance: 1,
-  hresonance: 1,
-  bandq: 1,
+  //resonance: 1, // superdough resonance is scaled differently
+  resonance: 0,
+  //hresonance: 1, // superdough resonance is scaled differently
+  hresonance: 0,
+  // bandq: 1,  // superdough resonance is scaled differently
+  bandq: 0,
   channels: [1, 2],
   phaserdepth: 0.75,
   shapevol: 1,
@@ -470,11 +459,7 @@ export class DoughVoice {
     phaserrate,
     phasersweep,
     phasercenter,
-    coarse,
-    crush,
     shape,
-    distort,
-    pan,
     vowel,
     room,
     roomfade,
@@ -520,7 +505,9 @@ export class DoughVoice {
 
     const SourceClass = oscillators[this.s] ?? TriOsc;
     this._sound = new SourceClass();
-    this._lpf = this.cutoff ? new Lpf() : null;
+    this._lpf = this.cutoff ? new TwoPoleFilter() : null;
+    this._hpf = this.hcutoff ? new TwoPoleFilter() : null;
+    this._bpf = this.bandf ? new TwoPoleFilter() : null;
     this._adsr = new ADSR();
     this._coarse = this.coarse ? new Coarse() : null;
     this._crush = this.crush ? new Crush() : null;
@@ -548,7 +535,20 @@ export class DoughVoice {
     // lpf
     if (this._lpf) {
       const cutoff = this.freq2cutoff(this.cutoff);
-      s = this._lpf.update(s, cutoff, this.resonance);
+      this._lpf.update(s, cutoff, this.resonance);
+      s = this._lpf.s1;
+    }
+    // hpf
+    if (this._hpf) {
+      const cutoff = this.freq2cutoff(this.hcutoff);
+      this._hpf.update(s, cutoff, this.hresonance);
+      s = s - this._hpf.s1;
+    }
+    // bpf
+    if (this._bpf) {
+      const cutoff = this.freq2cutoff(this.bandf);
+      this._bpf.update(s, cutoff, this.bandq);
+      s = this._bpf.s0;
     }
 
     this._coarse && (s = this._coarse.update(s, this.coarse));
