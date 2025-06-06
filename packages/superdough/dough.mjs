@@ -305,6 +305,15 @@ export class Coarse {
   }
 }
 
+// amplitude bit crusher
+export class Crush {
+  update(input, crush) {
+    crush = Math.max(1, crush);
+    const x = Math.pow(2, crush - 1);
+    return Math.round(input * x) / x;
+  }
+}
+
 export function _rangex(sig, min, max) {
   let logmin = Math.log(min);
   let range = Math.log(max) - logmin;
@@ -471,6 +480,7 @@ export class DoughVoice {
     this._lpf = this.cutoff ? new Lpf() : null;
     this._adsr = new ADSR();
     this._coarse = this.coarse ? new Coarse() : null;
+    this._crush = this.crush ? new Crush() : null;
 
     this.piOverSr = Math.PI / value.sampleRate;
     this.eighthOverLogHalf = 0.125 / Math.log(0.5);
@@ -493,6 +503,9 @@ export class DoughVoice {
     }
     if (this._coarse) {
       s = this._coarse.update(s, this.coarse);
+    }
+    if (this._crush) {
+      s = this._crush.update(s, this.crush);
     }
     // not sure if gain is applied here
     s = s * this.gain;
