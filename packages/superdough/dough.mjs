@@ -292,6 +292,19 @@ export class Sequence {
   }
 }
 
+// sample rate bit crusher
+export class Coarse {
+  hold = 0;
+  t = 0;
+  update(input, coarse) {
+    if (this.t++ % coarse === 0) {
+      this.t = 0;
+      this.hold = input;
+    }
+    return this.hold;
+  }
+}
+
 export function _rangex(sig, min, max) {
   let logmin = Math.log(min);
   let range = Math.log(max) - logmin;
@@ -457,6 +470,7 @@ export class DoughVoice {
     this._sound = new SourceClass();
     this._lpf = this.cutoff ? new Lpf() : null;
     this._adsr = new ADSR();
+    this._coarse = this.coarse ? new Coarse() : null;
 
     this.piOverSr = Math.PI / value.sampleRate;
     this.eighthOverLogHalf = 0.125 / Math.log(0.5);
@@ -475,7 +489,10 @@ export class DoughVoice {
     // lpf
     if (this._lpf) {
       const cutoff = this.freq2cutoff(this.cutoff);
-      s = this._lpf ? this._lpf.update(s, cutoff, this.resonance) : s;
+      s = this._lpf.update(s, cutoff, this.resonance);
+    }
+    if (this._coarse) {
+      s = this._coarse.update(s, this.coarse);
     }
     // not sure if gain is applied here
     s = s * this.gain;
