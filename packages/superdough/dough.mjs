@@ -370,6 +370,7 @@ const defaultDefaultValues = {
   velocity: 1,
   fft: 8,
   z: 'triangle',
+  pan: 0.5,
 };
 
 let getDefaultValue = (key) => defaultDefaultValues[key];
@@ -402,6 +403,8 @@ const getFrequency = (value) => {
 };
 
 export class DoughVoice {
+  l = 0;
+  r = 0;
   constructor(value) {
     // params without defaults:
     /*
@@ -464,6 +467,7 @@ export class DoughVoice {
     this.i = this.i ?? getDefaultValue('i');
     this.velocity = this.velocity ?? getDefaultValue('velocity');
     this.fft = this.fft ?? getDefaultValue('fft');
+    this.pan = this.pan ?? getDefaultValue('pan');
 
     [this.attack, this.decay, this.sustain, this.release] = getADSRValues([
       this.attack,
@@ -517,7 +521,15 @@ export class DoughVoice {
     s = s * env;
 
     s = s * this.postgain * 0.2;
-    return s;
+
+    if (this.pan === 0.5) {
+      this.l = this.r = s; // mono
+    } else {
+      // stereo
+      const pos = (this.pan * Math.PI) / 2;
+      this.l = s * Math.cos(pos);
+      this.r = s * Math.sin(pos);
+    }
   }
 }
 
@@ -527,8 +539,7 @@ export class Dough {
   voices = []; // DoughVoice[]
   vid = 0;
   q = [];
-  l = 0; // tbd
-  r = 0; // tbd
+  channels = [0, 0];
   t = 0;
   // sampleRate: number, currentTime: number (seconds)
   constructor(sampleRate = 48000, currentTime = 0) {
@@ -588,11 +599,13 @@ export class Dough {
       this.q.shift();
     }
     // add active voices
-    let sum = 0;
+    this.channels[0] = 0;
+    this.channels[1] = 0;
     for (let v = 0; v < this.voices.length; v++) {
-      sum += this.voices[v].update(this.t / this.sampleRate);
+      this.voices[v].update(this.t / this.sampleRate);
+      this.channels[0] += this.voices[v].l;
+      this.channels[1] += this.voices[v].r;
     }
     this.t++;
-    return sum;
   }
 }
