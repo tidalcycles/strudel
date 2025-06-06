@@ -82,7 +82,25 @@ export class Lpf {
   }
 }
 
-export class PulseOsc {
+class PulseOsc {
+  constructor(phase = 0) {
+    this.phase = phase;
+  }
+  saw(offset, dt) {
+    let phase = (this.phase + offset) % 1;
+    let p = polyBlep(phase, dt);
+    return 2 * phase - 1 - p;
+  }
+  update(freq, pw = 0.5) {
+    const dt = freq / sampleRate;
+    let pulse = this.saw(0, dt) - this.saw(pw, dt);
+    this.phase = (this.phase + dt) % 1;
+    return pulse + pw * 2 - 1;
+  }
+}
+
+// non bandlimited (has aliasing)
+export class PulzeOsc {
   phase = 0;
   update(freq, duty = 0.5) {
     this.phase += ISR * freq;
@@ -343,14 +361,16 @@ let oscillators = {
   tri: TriOsc,
   triangle: TriOsc,
   pulse: PulseOsc,
+  pulze: PulzeOsc,
   dust: Dust,
   impulse: Impulse,
 };
 
 const defaultDefaultValues = {
   s: 'triangle',
-  gain: 0.8,
+  gain: 1,
   postgain: 1,
+  velocity: 1,
   density: '.03',
   ftype: '12db',
   fanchor: 0,
@@ -367,7 +387,6 @@ const defaultDefaultValues = {
   delaytime: 0.25,
   orbit: 1,
   i: 1,
-  velocity: 1,
   fft: 8,
   z: 'triangle',
   pan: 0.5,
@@ -450,6 +469,7 @@ export class DoughVoice {
     // params with defaults:
     this.s = this.s ?? getDefaultValue('s');
     this.gain = this.gain ?? getDefaultValue('gain');
+    this.velocity = this.velocity ?? getDefaultValue('velocity');
     this.postgain = this.postgain ?? getDefaultValue('postgain');
     this.density = this.density ?? getDefaultValue('density');
     this.fanchor = this.fanchor ?? getDefaultValue('fanchor');
@@ -465,7 +485,6 @@ export class DoughVoice {
     this.delaytime = this.delaytime ?? getDefaultValue('delaytime');
     this.orbit = this.orbit ?? getDefaultValue('orbit');
     this.i = this.i ?? getDefaultValue('i');
-    this.velocity = this.velocity ?? getDefaultValue('velocity');
     this.fft = this.fft ?? getDefaultValue('fft');
     this.pan = this.pan ?? getDefaultValue('pan');
 
@@ -498,8 +517,13 @@ export class DoughVoice {
     if (!this._sound) {
       return 0;
     }
+    let s = 0;
     // sound source
-    let s = this._sound.update(this.freq);
+    if (this.s === 'pulse') {
+      s = this._sound.update(this.freq, this.pw ?? 0.5);
+    } else {
+      s = this._sound.update(this.freq);
+    }
     // lpf
     if (this._lpf) {
       const cutoff = this.freq2cutoff(this.cutoff);
@@ -511,8 +535,8 @@ export class DoughVoice {
     if (this._crush) {
       s = this._crush.update(s, this.crush);
     }
-    // not sure if gain is applied here
-    s = s * this.gain;
+    // not sure if gain/velocity is applied here
+    s = s * this.gain * this.velocity;
     // envelope
     let gate = Number(t >= this._begin && t <= this._holdEnd);
 
