@@ -332,6 +332,26 @@ export class Crush {
   }
 }
 
+// (unused) overdrive-style distortion (adapted from noisecraft)
+export class Overdrive {
+  update(input, amount = 0, postgain = 1) {
+    amount = Math.min(Math.max(amount, 0), 1);
+    amount -= 0.01;
+    const shape = (2 * amount) / (1 - amount);
+    return (((1 + shape) * input) / (1 + shape * Math.abs(input))) * postgain;
+  }
+}
+
+// this is the distort from superdough
+export class Distort {
+  update(input, distort = 0, postgain = 1) {
+    postgain = Math.max(0.001, Math.min(1, postgain));
+    const shape = Math.expm1(distort);
+    return (((1 + shape) * input) / (1 + shape * Math.abs(input))) * postgain;
+  }
+}
+// distortion could be expressed as a function, because it's stateless
+
 export function _rangex(sig, min, max) {
   let logmin = Math.log(min);
   let range = Math.log(max) - logmin;
@@ -504,6 +524,7 @@ export class DoughVoice {
     this._adsr = new ADSR();
     this._coarse = this.coarse ? new Coarse() : null;
     this._crush = this.crush ? new Crush() : null;
+    this._distort = this.distort ? new Distort() : null;
 
     this.piOverSr = Math.PI / value.sampleRate;
     this.eighthOverLogHalf = 0.125 / Math.log(0.5);
@@ -529,12 +550,11 @@ export class DoughVoice {
       const cutoff = this.freq2cutoff(this.cutoff);
       s = this._lpf.update(s, cutoff, this.resonance);
     }
-    if (this._coarse) {
-      s = this._coarse.update(s, this.coarse);
-    }
-    if (this._crush) {
-      s = this._crush.update(s, this.crush);
-    }
+
+    this._coarse && (s = this._coarse.update(s, this.coarse));
+    this._crush && (s = this._crush.update(s, this.crush));
+    this._distort && (s = this._distort.update(s, this.distort, this.distortvol));
+
     // not sure if gain/velocity is applied here
     s = s * this.gain * this.velocity;
     // envelope
