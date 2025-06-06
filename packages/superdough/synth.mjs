@@ -12,7 +12,7 @@ import {
 } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
-export const getFrequencyFromValue = (value) => {
+const getFrequencyFromValue = (value) => {
   let { note, freq } = value;
   note = note || 36;
   if (typeof note === 'string') {
@@ -25,7 +25,7 @@ export const getFrequencyFromValue = (value) => {
 
   return Number(freq);
 };
-export function destroyAudioWorkletNode(node) {
+function destroyAudioWorkletNode(node) {
   if (node == null) {
     return;
   }

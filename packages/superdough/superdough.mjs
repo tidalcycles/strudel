@@ -190,11 +190,18 @@ export function getAudioContextCurrentTime() {
   return getAudioContext().currentTime;
 }
 
+let externalWorklets = [];
+export function registerWorklet(url) {
+  externalWorklets.push(url);
+}
+
 let workletsLoading;
 function loadWorklets() {
   if (!workletsLoading) {
     const audioCtx = getAudioContext();
-    workletsLoading = audioCtx.audioWorklet.addModule(workletsUrl);
+    const allWorkletURLs = externalWorklets.concat([workletsUrl]);
+    console.log('allWorkletURLs', allWorkletURLs);
+    workletsLoading = Promise.all(allWorkletURLs.map((workletURL) => audioCtx.audioWorklet.addModule(workletURL)));
   }
 
   return workletsLoading;

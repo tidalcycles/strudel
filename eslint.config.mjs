@@ -42,7 +42,7 @@ export default [
       '**/hydra.mjs',
       '**/jsdoc-synonyms.js',
       'packages/hs2js/src/hs2js.mjs',
-      'packages/superdough/dough-export.mjs',
+      'packages/supradough/dough-export.mjs',
       '**/samples',
     ],
   },
