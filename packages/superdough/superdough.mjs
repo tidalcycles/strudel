@@ -200,7 +200,6 @@ function loadWorklets() {
   if (!workletsLoading) {
     const audioCtx = getAudioContext();
     const allWorkletURLs = externalWorklets.concat([workletsUrl]);
-    console.log('allWorkletURLs', allWorkletURLs);
     workletsLoading = Promise.all(allWorkletURLs.map((workletURL) => audioCtx.audioWorklet.addModule(workletURL)));
   }
 
