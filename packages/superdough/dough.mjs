@@ -505,10 +505,44 @@ export class DoughVoice {
 
     const SourceClass = oscillators[this.s] ?? TriOsc;
     this._sound = new SourceClass();
+
+    // filter setup
     this._lpf = this.cutoff ? new TwoPoleFilter() : null;
+    if (this.lpenv) {
+      this._lpenv = new ADSR();
+      [this.lpattack, this.lpdecay, this.lpsustain, this.lprelease] = getADSRValues([
+        this.lpattack,
+        this.lpdecay,
+        this.lpsustain,
+        this.lprelease,
+      ]);
+    }
+
     this._hpf = this.hcutoff ? new TwoPoleFilter() : null;
+    if (this.hpenv) {
+      this._hpenv = new ADSR();
+      [this.hpattack, this.hpdecay, this.hpsustain, this.hprelease] = getADSRValues([
+        this.hpattack,
+        this.hpdecay,
+        this.hpsustain,
+        this.hprelease,
+      ]);
+    }
     this._bpf = this.bandf ? new TwoPoleFilter() : null;
+    if (this.bpenv) {
+      this._bpenv = new ADSR();
+      [this.bpattack, this.bpdecay, this.bpsustain, this.bprelease] = getADSRValues([
+        this.bpattack,
+        this.bpdecay,
+        this.bpsustain,
+        this.bprelease,
+      ]);
+    }
+
+    // gain envelope
     this._adsr = new ADSR();
+
+    // fx setup
     this._coarse = this.coarse ? new Coarse() : null;
     this._crush = this.crush ? new Crush() : null;
     this._distort = this.distort ? new Distort() : null;
@@ -532,21 +566,36 @@ export class DoughVoice {
     } else {
       s = this._sound.update(this.freq);
     }
+    let gate = Number(t >= this._begin && t <= this._holdEnd);
+    s = s * this.gain * this.velocity;
+
     // lpf
     if (this._lpf) {
-      const cutoff = this.freq2cutoff(this.cutoff);
+      let cutoff = this.freq2cutoff(this.cutoff);
+      if (this._lpenv) {
+        const env = this._lpenv.update(t, gate, this.lpattack, this.lpdecay, this.lpsustain, this.lprelease) ** 2;
+        cutoff = cutoff + env * this.lpenv * cutoff; // todo proper scaling
+      }
       this._lpf.update(s, cutoff, this.resonance);
       s = this._lpf.s1;
     }
     // hpf
     if (this._hpf) {
-      const cutoff = this.freq2cutoff(this.hcutoff);
+      let cutoff = this.freq2cutoff(this.hcutoff);
+      if (this._hpenv) {
+        const env = this._hpenv.update(t, gate, this.hpattack, this.hpdecay, this.hpsustain, this.hprelease) ** 2;
+        cutoff = cutoff + env * this.hpenv * cutoff; // todo proper scaling
+      }
       this._hpf.update(s, cutoff, this.hresonance);
       s = s - this._hpf.s1;
     }
     // bpf
     if (this._bpf) {
-      const cutoff = this.freq2cutoff(this.bandf);
+      let cutoff = this.freq2cutoff(this.bandf);
+      if (this._bpenv) {
+        const env = this._bpenv.update(t, gate, this.bpattack, this.bpdecay, this.bpsustain, this.bprelease) ** 2;
+        cutoff = cutoff + env * this.bpenv * cutoff; // todo proper scaling
+      }
       this._bpf.update(s, cutoff, this.bandq);
       s = this._bpf.s0;
     }
@@ -554,11 +603,6 @@ export class DoughVoice {
     this._coarse && (s = this._coarse.update(s, this.coarse));
     this._crush && (s = this._crush.update(s, this.crush));
     this._distort && (s = this._distort.update(s, this.distort, this.distortvol));
-
-    // not sure if gain/velocity is applied here
-    s = s * this.gain * this.velocity;
-    // envelope
-    let gate = Number(t >= this._begin && t <= this._holdEnd);
 
     /* Math.random() > 0.99 && console.log('gate', gate); */
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
