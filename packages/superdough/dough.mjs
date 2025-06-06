@@ -571,31 +571,34 @@ export class DoughVoice {
 
     // lpf
     if (this._lpf) {
-      let cutoff = this.freq2cutoff(this.cutoff);
+      let cutoff = this.cutoff;
       if (this._lpenv) {
         const env = this._lpenv.update(t, gate, this.lpattack, this.lpdecay, this.lpsustain, this.lprelease) ** 2;
-        cutoff = cutoff + env * this.lpenv * cutoff; // todo proper scaling
+        cutoff = 2 ** this.lpenv * env * cutoff + cutoff;
       }
+      cutoff = this.freq2cutoff(cutoff);
       this._lpf.update(s, cutoff, this.resonance);
       s = this._lpf.s1;
     }
     // hpf
     if (this._hpf) {
-      let cutoff = this.freq2cutoff(this.hcutoff);
+      let cutoff = this.hcutoff;
       if (this._hpenv) {
         const env = this._hpenv.update(t, gate, this.hpattack, this.hpdecay, this.hpsustain, this.hprelease) ** 2;
-        cutoff = cutoff + env * this.hpenv * cutoff; // todo proper scaling
+        cutoff = 2 ** this.hpenv * env * cutoff + cutoff;
       }
+      cutoff = this.freq2cutoff(cutoff);
       this._hpf.update(s, cutoff, this.hresonance);
       s = s - this._hpf.s1;
     }
     // bpf
     if (this._bpf) {
-      let cutoff = this.freq2cutoff(this.bandf);
+      let cutoff = this.bandf;
       if (this._bpenv) {
         const env = this._bpenv.update(t, gate, this.bpattack, this.bpdecay, this.bpsustain, this.bprelease) ** 2;
-        cutoff = cutoff + env * this.bpenv * cutoff; // todo proper scaling
+        cutoff = 2 ** this.bpenv * env * cutoff + cutoff;
       }
+      cutoff = this.freq2cutoff(cutoff);
       this._bpf.update(s, cutoff, this.bandq);
       s = this._bpf.s0;
     }
