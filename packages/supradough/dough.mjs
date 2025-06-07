@@ -450,6 +450,7 @@ const defaultDefaultValues = {
   z: 'triangle',
   pan: 0.5,
   fmh: 1,
+  fmenv: 0, // differs from superdough
 };
 
 let getDefaultValue = (key) => defaultDefaultValues[key];
@@ -540,6 +541,7 @@ export class DoughVoice {
     this.fft = this.fft ?? getDefaultValue('fft');
     this.pan = this.pan ?? getDefaultValue('pan');
     this.orbit = this.orbit ?? getDefaultValue('orbit');
+    this.fmenv = this.fmenv ?? getDefaultValue('fmenv');
 
     [this.attack, this.decay, this.sustain, this.release] = getADSRValues([
       this.attack,
@@ -551,6 +553,9 @@ export class DoughVoice {
     this._holdEnd = this._begin + this._duration; // needed for gate
     this._end = this._holdEnd + this.release + 0.01; // needed for despawn
 
+    if (this.s === 'saw' || this.s === 'sawtooth') {
+      this.s = 'zaw'; // polyblepped saw when fm is applied
+    }
     const SourceClass = oscillators[this.s] ?? TriOsc;
     this._sound = new SourceClass();
 
@@ -638,7 +643,7 @@ export class DoughVoice {
       let fmi = this.fmi;
       if (this._fmenv) {
         const env = this._fmenv.update(t, gate, this.fmattack, this.fmdecay, this.fmsustain, this.fmrelease) ** 2;
-        fmi = /* 2 ** */ this.fmenv * env * fmi; // todo: find good scaling
+        fmi = this.fmenv * env * fmi;
       }
       const modfreq = freq * this.fmh;
       const modgain = modfreq * fmi;
