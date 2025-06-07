@@ -449,6 +449,7 @@ const defaultDefaultValues = {
   fft: 8,
   z: 'triangle',
   pan: 0.5,
+  fmh: 1,
 };
 
 let getDefaultValue = (key) => defaultDefaultValues[key];
@@ -518,6 +519,8 @@ export class DoughVoice {
     roomsize,
     ir,
     analyze,
+    fmh,
+    fmi
     */
     value.freq = getFrequency(value);
     Object.assign(this, value);
@@ -549,6 +552,20 @@ export class DoughVoice {
 
     const SourceClass = oscillators[this.s] ?? TriOsc;
     this._sound = new SourceClass();
+
+    if (this.fmi) {
+      this._fm = new SineOsc();
+      this.fmh = this.fmh ?? getDefaultValue('fmh');
+      if (this.fmenv) {
+        this._fmenv = new ADSR();
+        [this.fmattack, this.fmdecay, this.fmsustain, this.fmrelease] = getADSRValues([
+          this.fmattack,
+          this.fmdecay,
+          this.fmsustain,
+          this.fmrelease,
+        ]);
+      }
+    }
 
     // filter setup
     this._lpf = this.cutoff ? new TwoPoleFilter() : null;
@@ -613,13 +630,26 @@ export class DoughVoice {
       return 0;
     }
     let s = 0;
+    let gate = Number(t >= this._begin && t <= this._holdEnd);
+
+    let freq = this.freq;
+    if (this._fm) {
+      let fmi = this.fmi;
+      if (this._fmenv) {
+        const env = this._fmenv.update(t, gate, this.fmattack, this.fmdecay, this.fmsustain, this.fmrelease) ** 2;
+        fmi = /* 2 ** */ this.fmenv * env * fmi; // todo: find good scaling
+      }
+      const modfreq = freq * this.fmh;
+      const modgain = modfreq * fmi;
+      freq = freq + this._fm.update(modfreq) * modgain;
+    }
+
     // sound source
     if (this.s === 'pulse') {
-      s = this._sound.update(this.freq, this.pw ?? 0.5);
+      s = this._sound.update(freq, this.pw ?? 0.5);
     } else {
-      s = this._sound.update(this.freq);
+      s = this._sound.update(freq);
     }
-    let gate = Number(t >= this._begin && t <= this._holdEnd);
     s = s * this.gain * this.velocity;
 
     // lpf
