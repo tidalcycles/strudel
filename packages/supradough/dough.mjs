@@ -707,6 +707,8 @@ export class Dough {
       if (this.voices[v].delay) {
         this.delaysend[0] += this.voices[v].l * this.voices[v].delay;
         this.delaysend[1] += this.voices[v].r * this.voices[v].delay;
+        this.delaytime = this.voices[v].delaytime; // we trust that these are initialized in the voice
+        this.delayfeedback = this.voices[v].delayfeedback;
       }
     }
     // todo: how to change delaytime / delayfeedback from a voice?
