@@ -457,7 +457,7 @@ let getDefaultValue = (key) => defaultDefaultValues[key];
 const chromas = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
 const accs = { '#': 1, b: -1, s: 1, f: -1 };
 const note2midi = (note, defaultOctave = 3) => {
-  const [pc, acc = '', oct = defaultOctave] =
+  let [pc, acc = '', oct = ''] =
     String(note)
       .match(/^([a-gA-G])([#bsf]*)([0-9]*)$/)
       ?.slice(1) || [];
@@ -466,13 +466,14 @@ const note2midi = (note, defaultOctave = 3) => {
   }
   const chroma = chromas[pc.toLowerCase()];
   const offset = acc?.split('').reduce((o, char) => o + accs[char], 0) || 0;
-  return (Number(oct) + 1) * 12 + chroma + offset;
+  oct = Number(oct || defaultOctave);
+  return (oct + 1) * 12 + chroma + offset;
 };
 const getFrequency = (value) => {
   let { note, freq } = value;
   note = note || 36;
   if (typeof note === 'string') {
-    note = note2midi(note); // e.g. c3 => 48
+    note = note2midi(note, 3); // e.g. c3 => 48
   }
   if (!freq && typeof note === 'number') {
     freq = Math.pow(2, (note - 69) / 12) * 440;
