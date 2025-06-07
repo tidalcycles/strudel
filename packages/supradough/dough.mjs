@@ -412,6 +412,7 @@ let oscillators = {
   tri: TriOsc,
   triangle: TriOsc,
   pulse: PulseOsc,
+  square: PulseOsc,
   pulze: PulzeOsc,
   dust: Dust,
   crackle: Dust,
