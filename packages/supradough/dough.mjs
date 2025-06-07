@@ -229,7 +229,7 @@ const MAX_DELAY_TIME = 10;
 export class Delay {
   writeIdx = 0;
   readIdx = 0;
-  buffer = new Float32Array(MAX_DELAY_TIME * SAMPLE_RATE); // .fill(0)
+  buffer = new Float32Array(MAX_DELAY_TIME * SAMPLE_RATE); //.fill(0)
   write(s, delayTime) {
     this.writeIdx = (this.writeIdx + 1) % this.buffer.length;
     this.buffer[this.writeIdx] = s;
@@ -479,19 +479,13 @@ export class DoughVoice {
     this.density = this.density ?? getDefaultValue('density');
     this.fanchor = this.fanchor ?? getDefaultValue('fanchor');
     this.drive = this.drive ?? 0.69;
-    this.resonance = this.resonance ?? getDefaultValue('resonance');
-    this.hresonance = this.hresonance ?? getDefaultValue('hresonance');
-    this.bandq = this.bandq ?? getDefaultValue('bandq');
     this.phaserdepth = this.phaserdepth ?? getDefaultValue('phaserdepth');
     this.shapevol = this.shapevol ?? getDefaultValue('shapevol');
     this.distortvol = this.distortvol ?? getDefaultValue('distortvol');
-    this.delay = this.delay ?? getDefaultValue('delay');
-    this.delayfeedback = this.delayfeedback ?? getDefaultValue('delayfeedback');
-    this.delaytime = this.delaytime ?? getDefaultValue('delaytime');
-    this.orbit = this.orbit ?? getDefaultValue('orbit');
     this.i = this.i ?? getDefaultValue('i');
     this.fft = this.fft ?? getDefaultValue('fft');
     this.pan = this.pan ?? getDefaultValue('pan');
+    this.orbit = this.orbit ?? getDefaultValue('orbit');
 
     [this.attack, this.decay, this.sustain, this.release] = getADSRValues([
       this.attack,
@@ -508,6 +502,7 @@ export class DoughVoice {
 
     // filter setup
     this._lpf = this.cutoff ? new TwoPoleFilter() : null;
+    this.resonance = this.resonance ?? getDefaultValue('resonance');
     if (this.lpenv) {
       this._lpenv = new ADSR();
       [this.lpattack, this.lpdecay, this.lpsustain, this.lprelease] = getADSRValues([
@@ -519,6 +514,7 @@ export class DoughVoice {
     }
 
     this._hpf = this.hcutoff ? new TwoPoleFilter() : null;
+    this.hresonance = this.hresonance ?? getDefaultValue('hresonance');
     if (this.hpenv) {
       this._hpenv = new ADSR();
       [this.hpattack, this.hpdecay, this.hpsustain, this.hprelease] = getADSRValues([
@@ -529,6 +525,7 @@ export class DoughVoice {
       ]);
     }
     this._bpf = this.bandf ? new TwoPoleFilter() : null;
+    this.bandq = this.bandq ?? getDefaultValue('bandq');
     if (this.bpenv) {
       this._bpenv = new ADSR();
       [this.bpattack, this.bpdecay, this.bpsustain, this.bprelease] = getADSRValues([
@@ -547,6 +544,12 @@ export class DoughVoice {
     this._crush = this.crush ? new Crush() : null;
     this._distort = this.distort ? new Distort() : null;
 
+    // delay
+    this.delay = this.delay ?? getDefaultValue('delay');
+    this.delayfeedback = this.delayfeedback ?? getDefaultValue('delayfeedback');
+    this.delaytime = this.delaytime ?? getDefaultValue('delaytime');
+
+    // precalculated values
     this.piOverSr = Math.PI / value.sampleRate;
     this.eighthOverLogHalf = 0.125 / Math.log(0.5);
   }
@@ -631,12 +634,17 @@ export class Dough {
   vid = 0;
   q = [];
   channels = [0, 0];
+  delaysend = [0, 0];
+  delaytime = getDefaultValue('delaytime');
+  delayfeedback = getDefaultValue('delayfeedback');
   t = 0;
   // sampleRate: number, currentTime: number (seconds)
   constructor(sampleRate = 48000, currentTime = 0) {
     this.sampleRate = sampleRate;
     this.t = Math.floor(currentTime * sampleRate); // samples
     // console.log('init dough', this.sampleRate, this.t);
+    this._delayL = new Delay();
+    this._delayR = new Delay();
   }
   scheduleSpawn(value) {
     if (value._begin === undefined) {
@@ -696,7 +704,18 @@ export class Dough {
       this.voices[v].update(this.t / this.sampleRate);
       this.channels[0] += this.voices[v].l;
       this.channels[1] += this.voices[v].r;
+      if (this.voices[v].delay) {
+        this.delaysend[0] += this.voices[v].l * this.voices[v].delay;
+        this.delaysend[1] += this.voices[v].r * this.voices[v].delay;
+      }
     }
+    // todo: how to change delaytime / delayfeedback from a voice?
+    const delayL = this._delayL.update(this.delaysend[0], this.delaytime);
+    const delayR = this._delayR.update(this.delaysend[1], this.delaytime);
+    this.delaysend[0] = delayL * this.delayfeedback;
+    this.delaysend[1] = delayR * this.delayfeedback;
+    this.channels[0] += delayL;
+    this.channels[1] += delayR;
     this.t++;
   }
 }
