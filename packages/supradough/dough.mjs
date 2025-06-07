@@ -559,6 +559,16 @@ export class DoughVoice {
     const SourceClass = oscillators[this.s] ?? TriOsc;
     this._sound = new SourceClass();
 
+    if (this.penv) {
+      this._penv = new ADSR();
+      [this.pattack, this.pdecay, this.psustain, this.prelease] = getADSRValues([
+        this.pattack,
+        this.pdecay,
+        this.psustain,
+        this.prelease,
+      ]);
+    }
+
     if (this.fmi) {
       this._fm = new SineOsc();
       this.fmh = this.fmh ?? getDefaultValue('fmh');
@@ -648,6 +658,11 @@ export class DoughVoice {
       const modfreq = freq * this.fmh;
       const modgain = modfreq * fmi;
       freq = freq + this._fm.update(modfreq) * modgain;
+    }
+
+    if (this._penv) {
+      const env = this._penv.update(t, gate, this.pattack, this.pdecay, this.psustain, this.prelease) ** 2;
+      freq = freq + env * this.penv;
     }
 
     // sound source
