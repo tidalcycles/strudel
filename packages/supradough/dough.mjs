@@ -214,7 +214,7 @@ export class ADSR {
     this.state = 'off'
     this.startTime = 0;
     this.startVal = 0;
-    this.curve = props.curve ?? 1;
+    this.decayCurve = props.decayCurve ?? 1;
   }
 
   update(curTime, gate, attack, decay, susVal, release) {
@@ -234,11 +234,11 @@ export class ADSR {
           this.startTime = curTime;
           return 1;
         }
-        return lerp(time / attack, this.startVal, 1, this.curve);
+        return lerp(time / attack, this.startVal, 1, 1);
       }
       case 'decay': {
         let time = curTime - this.startTime;
-        let curVal = lerp(time / decay, 1, susVal, -this.curve);
+        let curVal = lerp(time / decay, 1, susVal, -this.decayCurve);
         if (gate <= 0) {
           this.state = 'release';
           this.startTime = curTime;
@@ -267,7 +267,7 @@ export class ADSR {
           this.state = 'off';
           return 0;
         }
-        let curVal = lerp(time / release, this.startVal, 0, -this.curve);
+        let curVal = lerp(time / release, this.startVal, 0, -this.decayCurve);
         if (gate > 0) {
           this.state = 'attack';
           this.startTime = curTime;
@@ -599,7 +599,7 @@ export class DoughVoice {
     }
 
     if (this.penv) {
-      this._penv = new ADSR();
+      this._penv = new ADSR({ decayCurve: 4 });
       [this.pattack, this.pdecay, this.psustain, this.prelease] = getADSRValues([
         this.pattack,
         this.pdecay,
@@ -612,14 +612,14 @@ export class DoughVoice {
       this._fm = new SineOsc();
       this.fmh = this.fmh ?? getDefaultValue('fmh');
       if (this.fmenv) {
-        this._fmenv = new ADSR();
+        this._fmenv = new ADSR({ decayCurve: 2 });
         [this.fmattack, this.fmdecay, this.fmsustain, this.fmrelease] = getADSRValues([
           this.fmattack,
           this.fmdecay,
           this.fmsustain,
           this.fmrelease,
         ]);
-      
+
       }
     }
 
@@ -628,8 +628,8 @@ export class DoughVoice {
     this.resonance = this.resonance ?? getDefaultValue('resonance');
     if (this.lpenv) {
 
-      this._lpenv = new ADSR({curve: 4});
-    
+      this._lpenv = new ADSR({ decayCurve: 4 });
+
       [this.lpattack, this.lpdecay, this.lpsustain, this.lprelease] = getADSRValues([
         this.lpattack,
         this.lpdecay,
@@ -641,8 +641,8 @@ export class DoughVoice {
     this._hpf = this.hcutoff ? new TwoPoleFilter() : null;
     this.hresonance = this.hresonance ?? getDefaultValue('hresonance');
     if (this.hpenv) {
-      this._hpenv = new ADSR();
-    
+      this._hpenv = new ADSR({ decayCurve: 4 });
+
       [this.hpattack, this.hpdecay, this.hpsustain, this.hprelease] = getADSRValues([
         this.hpattack,
         this.hpdecay,
@@ -653,7 +653,7 @@ export class DoughVoice {
     this._bpf = this.bandf ? new TwoPoleFilter() : null;
     this.bandq = this.bandq ?? getDefaultValue('bandq');
     if (this.bpenv) {
-      this._bpenv = new ADSR();
+      this._bpenv = new ADSR({ decayCurve: 4 });
       [this.bpattack, this.bpdecay, this.bpsustain, this.bprelease] = getADSRValues([
         this.bpattack,
         this.bpdecay,
@@ -663,7 +663,7 @@ export class DoughVoice {
     }
 
     // gain envelope
-    this._adsr = new ADSR({curve: 2});
+    this._adsr = new ADSR({ decayCurve: 2 });
 
     // fx setup
     this._coarse = this.coarse ? new Coarse() : null;
@@ -695,7 +695,7 @@ export class DoughVoice {
     if (this._fm) {
       let fmi = this.fmi;
       if (this._fmenv) {
-        const env = this._fmenv.update(t, gate, this.fmattack, this.fmdecay, this.fmsustain, this.fmrelease) ** 2;
+        const env = this._fmenv.update(t, gate, this.fmattack, this.fmdecay, this.fmsustain, this.fmrelease);
         fmi = this.fmenv * env * fmi;
       }
       const modfreq = freq * this.fmh;
@@ -704,7 +704,7 @@ export class DoughVoice {
     }
 
     if (this._penv) {
-      const env = this._penv.update(t, gate, this.pattack, this.pdecay, this.psustain, this.prelease) ** 2;
+      const env = this._penv.update(t, gate, this.pattack, this.pdecay, this.psustain, this.prelease);
       freq = freq + env * this.penv;
     }
 
@@ -722,8 +722,8 @@ export class DoughVoice {
     if (this._lpf) {
       let cutoff = this.cutoff;
       if (this._lpenv) {
-        const env = this._lpenv.update(t, gate, this.lpattack, this.lpdecay, this.lpsustain, this.lprelease) ** 2;
-        cutoff = 2 ** this.lpenv * env * cutoff + cutoff;
+        const env = this._lpenv.update(t, gate, this.lpattack, this.lpdecay, this.lpsustain, this.lprelease);
+        cutoff = this.lpenv * env * cutoff + cutoff;
       }
       cutoff = this.freq2cutoff(cutoff);
       this._lpf.update(s, cutoff, this.resonance);
@@ -733,7 +733,7 @@ export class DoughVoice {
     if (this._hpf) {
       let cutoff = this.hcutoff;
       if (this._hpenv) {
-        const env = this._hpenv.update(t, gate, this.hpattack, this.hpdecay, this.hpsustain, this.hprelease) ** 2;
+        const env = this._hpenv.update(t, gate, this.hpattack, this.hpdecay, this.hpsustain, this.hprelease);
         cutoff = 2 ** this.hpenv * env * cutoff + cutoff;
       }
       cutoff = this.freq2cutoff(cutoff);
@@ -744,7 +744,7 @@ export class DoughVoice {
     if (this._bpf) {
       let cutoff = this.bandf;
       if (this._bpenv) {
-        const env = this._bpenv.update(t, gate, this.bpattack, this.bpdecay, this.bpsustain, this.bprelease) ** 2;
+        const env = this._bpenv.update(t, gate, this.bpattack, this.bpdecay, this.bpsustain, this.bprelease);
         cutoff = 2 ** this.bpenv * env * cutoff + cutoff;
       }
       cutoff = this.freq2cutoff(cutoff);
