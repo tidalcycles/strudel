@@ -211,7 +211,7 @@ function lerp(x, y0, y1, exponent = 1) {
 
 export class ADSR {
   constructor(props = {}) {
-    this.state = 'off'
+    this.state = 'off';
     this.startTime = 0;
     this.startVal = 0;
     this.decayCurve = props.decayCurve ?? 1;
@@ -398,7 +398,7 @@ export class Distort {
 // distortion could be expressed as a function, because it's stateless
 
 export class BufferPlayer {
-  static samples = new Map();
+  static samples = new Map(); // string -> { channels, sampleRate }
   buffer; // { channels: Float32Array, sampleRate: number }
   pos = 0;
   sampleFreq = 261.626; // middle c
@@ -421,7 +421,7 @@ export function _rangex(sig, min, max) {
 }
 
 // duplicate
-export const getADSRValues = (params, curve = 'linear', defaultValues) => {
+export const getADSR = (params, curve = 'linear', defaultValues) => {
   const envmin = curve === 'exponential' ? 0.001 : 0.001;
   const releaseMin = 0.01;
   const envmax = 1;
@@ -517,167 +517,99 @@ export class DoughVoice {
   l = 0;
   r = 0;
   constructor(value) {
-    // params without defaults:
-    /*
-    bank,
-    source,
-    cutoff,
-    lpenv,
-    lpattack,
-    lpdecay,
-    lpsustain,
-    lprelease,
-    hpenv,
-    hcutoff,
-    hpattack,
-    hpdecay,
-    hpsustain,
-    hprelease,
-    bpenv,
-    bandf,
-    bpattack,
-    bpdecay,
-    bpsustain,
-    bprelease,
-    phaserrate,
-    phasersweep,
-    phasercenter,
-    shape,
-    vowel,
-    room,
-    roomfade,
-    roomlp,
-    roomdim,
-    roomsize,
-    ir,
-    analyze,
-    fmh,
-    fmi
-    */
     value.freq = getFrequency(value);
-    Object.assign(this, value);
-    // params with defaults:
-    this.s = this.s ?? getDefaultValue('s');
-    this.gain = this.gain ?? getDefaultValue('gain');
-    this.velocity = this.velocity ?? getDefaultValue('velocity');
-    this.postgain = this.postgain ?? getDefaultValue('postgain');
-    this.density = this.density ?? getDefaultValue('density');
-    this.fanchor = this.fanchor ?? getDefaultValue('fanchor');
-    this.drive = this.drive ?? 0.69;
-    this.phaserdepth = this.phaserdepth ?? getDefaultValue('phaserdepth');
-    this.shapevol = this.shapevol ?? getDefaultValue('shapevol');
-    this.distortvol = this.distortvol ?? getDefaultValue('distortvol');
-    this.i = this.i ?? getDefaultValue('i');
-    this.fft = this.fft ?? getDefaultValue('fft');
-    this.pan = this.pan ?? getDefaultValue('pan');
-    this.orbit = this.orbit ?? getDefaultValue('orbit');
-    this.fmenv = this.fmenv ?? getDefaultValue('fmenv');
+    let $ = this;
+    Object.assign($, value);
+    $.s = $.s ?? getDefaultValue('s');
+    $.gain = $.gain ?? getDefaultValue('gain');
+    $.velocity = $.velocity ?? getDefaultValue('velocity');
+    $.postgain = $.postgain ?? getDefaultValue('postgain');
+    $.density = $.density ?? getDefaultValue('density');
+    $.fanchor = $.fanchor ?? getDefaultValue('fanchor');
+    $.drive = $.drive ?? 0.69;
+    $.phaserdepth = $.phaserdepth ?? getDefaultValue('phaserdepth');
+    $.shapevol = $.shapevol ?? getDefaultValue('shapevol');
+    $.distortvol = $.distortvol ?? getDefaultValue('distortvol');
+    $.i = $.i ?? getDefaultValue('i');
+    $.fft = $.fft ?? getDefaultValue('fft');
+    $.pan = $.pan ?? getDefaultValue('pan');
+    $.orbit = $.orbit ?? getDefaultValue('orbit');
+    $.fmenv = $.fmenv ?? getDefaultValue('fmenv');
+    $.resonance = $.resonance ?? getDefaultValue('resonance');
+    $.hresonance = $.hresonance ?? getDefaultValue('hresonance');
+    $.bandq = $.bandq ?? getDefaultValue('bandq');
 
-    [this.attack, this.decay, this.sustain, this.release] = getADSRValues([
-      this.attack,
-      this.decay,
-      this.sustain,
-      this.release,
-    ]);
+    [$.attack, $.decay, $.sustain, $.release] = getADSR([$.attack, $.decay, $.sustain, $.release]);
 
-    this._holdEnd = this._begin + this._duration; // needed for gate
-    this._end = this._holdEnd + this.release + 0.01; // needed for despawn
+    $._holdEnd = $._begin + $._duration; // needed for gate
+    $._end = $._holdEnd + $.release + 0.01; // needed for despawn
 
-    this.s ??= 'triangle';
-    if (this.s === 'saw' || this.s === 'sawtooth') {
-      this.s = 'zaw'; // polyblepped saw when fm is applied
+    $.s ??= 'triangle';
+    if ($.s === 'saw' || $.s === 'sawtooth') {
+      $.s = 'zaw'; // polyblepped saw when fm is applied
     }
-    if (shapes[this.s]) {
-      const SourceClass = shapes[this.s];
-      this._sound = new SourceClass();
-    } else if (BufferPlayer.samples.has(this.s)) {
-      this._sample = new BufferPlayer();
-      const buffer = BufferPlayer.samples.get(this.s);
-      this._sample.buffer = buffer;
+
+    if (shapes[$.s]) {
+      const SourceClass = shapes[$.s];
+      $._sound = new SourceClass();
+      $._channels = 1;
+    } else if (BufferPlayer.samples.has($.s)) {
+      $._sample = new BufferPlayer();
+      const buffer = BufferPlayer.samples.get($.s);
+      $._sample.buffer = buffer; // {channels,sampleRate}
+      $._channels = $._sample.buffer.channels.length;
     } else {
-      console.warn('sound not found', this.s);
+      console.warn('sound not found', $.s);
     }
 
-    if (this.penv) {
-      this._penv = new ADSR({ decayCurve: 4 });
-      [this.pattack, this.pdecay, this.psustain, this.prelease] = getADSRValues([
-        this.pattack,
-        this.pdecay,
-        this.psustain,
-        this.prelease,
-      ]);
+    if ($.penv) {
+      $._penv = new ADSR({ decayCurve: 4 });
+      [$.pattack, $.pdecay, $.psustain, $.prelease] = getADSR([$.pattack, $.pdecay, $.psustain, $.prelease]);
     }
 
-    if (this.fmi) {
-      this._fm = new SineOsc();
-      this.fmh = this.fmh ?? getDefaultValue('fmh');
-      if (this.fmenv) {
-        this._fmenv = new ADSR({ decayCurve: 2 });
-        [this.fmattack, this.fmdecay, this.fmsustain, this.fmrelease] = getADSRValues([
-          this.fmattack,
-          this.fmdecay,
-          this.fmsustain,
-          this.fmrelease,
-        ]);
-
+    if ($.fmi) {
+      $._fm = new SineOsc();
+      $.fmh = $.fmh ?? getDefaultValue('fmh');
+      if ($.fmenv) {
+        $._fmenv = new ADSR({ decayCurve: 2 });
+        [$.fmattack, $.fmdecay, $.fmsustain, $.fmrelease] = getADSR([$.fmattack, $.fmdecay, $.fmsustain, $.fmrelease]);
       }
     }
 
-    // filter setup
-    this._lpf = this.cutoff ? new TwoPoleFilter() : null;
-    this.resonance = this.resonance ?? getDefaultValue('resonance');
-    if (this.lpenv) {
-
-      this._lpenv = new ADSR({ decayCurve: 4 });
-
-      [this.lpattack, this.lpdecay, this.lpsustain, this.lprelease] = getADSRValues([
-        this.lpattack,
-        this.lpdecay,
-        this.lpsustain,
-        this.lprelease,
-      ]);
-    }
-
-    this._hpf = this.hcutoff ? new TwoPoleFilter() : null;
-    this.hresonance = this.hresonance ?? getDefaultValue('hresonance');
-    if (this.hpenv) {
-      this._hpenv = new ADSR({ decayCurve: 4 });
-
-      [this.hpattack, this.hpdecay, this.hpsustain, this.hprelease] = getADSRValues([
-        this.hpattack,
-        this.hpdecay,
-        this.hpsustain,
-        this.hprelease,
-      ]);
-    }
-    this._bpf = this.bandf ? new TwoPoleFilter() : null;
-    this.bandq = this.bandq ?? getDefaultValue('bandq');
-    if (this.bpenv) {
-      this._bpenv = new ADSR({ decayCurve: 4 });
-      [this.bpattack, this.bpdecay, this.bpsustain, this.bprelease] = getADSRValues([
-        this.bpattack,
-        this.bpdecay,
-        this.bpsustain,
-        this.bprelease,
-      ]);
-    }
-
     // gain envelope
-    this._adsr = new ADSR({ decayCurve: 2 });
-
-    // fx setup
-    this._coarse = this.coarse ? new Coarse() : null;
-    this._crush = this.crush ? new Crush() : null;
-    this._distort = this.distort ? new Distort() : null;
-
+    $._adsr = new ADSR({ decayCurve: 2 });
     // delay
-    this.delay = this.delay ?? getDefaultValue('delay');
-    this.delayfeedback = this.delayfeedback ?? getDefaultValue('delayfeedback');
-    this.delaytime = this.delaytime ?? getDefaultValue('delaytime');
+    $.delay = $.delay ?? getDefaultValue('delay');
+    $.delayfeedback = $.delayfeedback ?? getDefaultValue('delayfeedback');
+    $.delaytime = $.delaytime ?? getDefaultValue('delaytime');
 
     // precalculated values
-    this.piOverSr = Math.PI / value.sampleRate;
-    this.eighthOverLogHalf = 0.125 / Math.log(0.5);
+    $.piOverSr = Math.PI / value.sampleRate;
+    $.eighthOverLogHalf = 0.125 / Math.log(0.5);
+
+    // filter setup
+    if ($.lpenv) {
+      $._lpenv = new ADSR({ decayCurve: 4 });
+      [$.lpattack, $.lpdecay, $.lpsustain, $.lprelease] = getADSR([$.lpattack, $.lpdecay, $.lpsustain, $.lprelease]);
+    }
+    if ($.hpenv) {
+      $._hpenv = new ADSR({ decayCurve: 4 });
+      [$.hpattack, $.hpdecay, $.hpsustain, $.hprelease] = getADSR([$.hpattack, $.hpdecay, $.hpsustain, $.hprelease]);
+    }
+    if ($.bpenv) {
+      $._bpenv = new ADSR({ decayCurve: 4 });
+      [$.bpattack, $.bpdecay, $.bpsustain, $.bprelease] = getADSR([$.bpattack, $.bpdecay, $.bpsustain, $.bprelease]);
+    }
+
+    // 1 per channel::
+    $._lpf = $.cutoff ? new TwoPoleFilter() : null;
+    $._hpf = $.hcutoff ? new TwoPoleFilter() : null;
+    $._bpf = $.bandf ? new TwoPoleFilter() : null;
+
+    // fx setup
+    $._coarse = $.coarse ? new Coarse() : null;
+    $._crush = $.crush ? new Crush() : null;
+    $._distort = $.distort ? new Distort() : null;
   }
   // credits to pulu: https://github.com/felixroos/kabelsalat/issues/35
   freq2cutoff(freq) {
