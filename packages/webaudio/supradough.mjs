@@ -118,7 +118,7 @@ let samples = {
     'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/7.wav',
     'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/8.wav',
   ],
-  piano: ['https://raw.githubusercontent.com/felixroos/dough-samples/refs/heads/main/piano/A3v8.mp3'],
+  piano: ['https://raw.githubusercontent.com/felixroos/dough-samples/refs/heads/main/piano/C3v8.mp3'],
   flute: ['https://raw.githubusercontent.com/felixroos/samples/refs/heads/main/flute/c4.mp3'],
   bd: [
     'https://raw.githubusercontent.com/geikha/tidal-drum-machines/15eac73c5e878550f91d864a4863e014799403f1/machines/RolandTR909/rolandtr909-bd/Bassdrum-01.wav',
@@ -126,7 +126,7 @@ let samples = {
 };
 // for some reason, only piano and flute work.. is it because mp3??
 
-async function loadSampleChannels(url) {
+async function loadSampleChannels(key, url) {
   const buffer = await fetch(url)
     .then((res) => res.arrayBuffer())
     .then((buf) => getAudioContext().decodeAudioData(buf));
@@ -134,7 +134,7 @@ async function loadSampleChannels(url) {
   for (let i = 0; i < buffer.numberOfChannels; i++) {
     channels.push(buffer.getChannelData(i));
   }
-  return channels;
+  return [key, channels, buffer.sampleRate];
 }
 
 let loaded = false;
@@ -147,9 +147,7 @@ export async function doughsample() {
   const sampleMap = await Promise.all(
     Object.entries(samples).map(async ([key, url]) => {
       url = url[0];
-      const channels = await loadSampleChannels(url);
-      // console.log(key, 'url', url, channels);
-      return [key, channels];
+      return loadSampleChannels(key, url);
     }),
   );
   console.log('sampleMap', sampleMap);

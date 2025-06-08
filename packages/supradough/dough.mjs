@@ -385,14 +385,16 @@ export class Distort {
 
 export class BufferPlayer {
   static samples = new Map();
-  channels = [];
+  buffer; // { channels: Float32Array, sampleRate: number }
   pos = 0;
+  sampleFreq = 261.626; // middle c
   update(freq, channel = 0) {
-    if (this.pos >= this.channels[channel].length) {
+    if (this.pos >= this.buffer.channels[channel].length) {
       return 0;
     }
-    let s = this.channels[channel][this.pos];
-    this.pos++;
+    const speed = ((freq / this.sampleFreq) * this.buffer.sampleRate) / SAMPLE_RATE;
+    let s = this.buffer.channels[channel][Math.floor(this.pos)];
+    this.pos = this.pos + speed;
     return s;
   }
 }
@@ -576,7 +578,8 @@ export class DoughVoice {
       this._sound = new SourceClass();
     } else if (BufferPlayer.samples.has(this.s)) {
       this._sample = new BufferPlayer();
-      this._sample.channels = BufferPlayer.samples.get(this.s);
+      const buffer = BufferPlayer.samples.get(this.s);
+      this._sample.buffer = buffer;
     } else {
       console.warn('sound not found', this.s);
     }
@@ -738,7 +741,10 @@ export class DoughVoice {
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
     s = s * env;
 
-    s = s * this.postgain * 0.2;
+    s = s * this.postgain;
+    if (!this._sample) {
+      s = s * 0.2; // turn down waveforms
+    }
 
     if (this.pan === 0.5) {
       this.l = this.r = s; // mono
@@ -770,8 +776,8 @@ export class Dough {
     this._delayL = new Delay();
     this._delayR = new Delay();
   }
-  loadSample(name, channels) {
-    BufferPlayer.samples.set(name, channels);
+  loadSample(name, channels, sampleRate) {
+    BufferPlayer.samples.set(name, { channels, sampleRate });
   }
   scheduleSpawn(value) {
     if (value._begin === undefined) {
