@@ -383,6 +383,19 @@ export class Distort {
 }
 // distortion could be expressed as a function, because it's stateless
 
+export class BufferPlayer {
+  channels = [];
+  pos = 0;
+  update(freq, channel = 0) {
+    if (this.pos >= this.channels[channel].length) {
+      return 0;
+    }
+    let s = this.channels[channel][this.pos];
+    this.pos++;
+    return s;
+  }
+}
+
 export function _rangex(sig, min, max) {
   let logmin = Math.log(min);
   let range = Math.log(max) - logmin;
@@ -403,7 +416,7 @@ export const getADSRValues = (params, curve = 'linear', defaultValues) => {
   return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
 };
 
-let oscillators = {
+let shapes = {
   sine: SineOsc,
   saw: SawOsc,
   zaw: ZawOsc,
@@ -553,11 +566,20 @@ export class DoughVoice {
     this._holdEnd = this._begin + this._duration; // needed for gate
     this._end = this._holdEnd + this.release + 0.01; // needed for despawn
 
+    this.s ??= 'triangle';
     if (this.s === 'saw' || this.s === 'sawtooth') {
       this.s = 'zaw'; // polyblepped saw when fm is applied
     }
-    const SourceClass = oscillators[this.s] ?? TriOsc;
-    this._sound = new SourceClass();
+    if (shapes[this.s]) {
+      const SourceClass = shapes[this.s];
+      this._sound = new SourceClass();
+    } else if (value.samples.has(this.s)) {
+      this._sample = new BufferPlayer();
+      this._sample.channels = value.samples.get(this.s);
+      this._sample.pos = 0;
+    } else {
+      console.warn('sound not found', this.s);
+    }
 
     if (this.penv) {
       this._penv = new ADSR();
@@ -642,7 +664,7 @@ export class DoughVoice {
     return 1 - Math.log(c) * this.eighthOverLogHalf;
   }
   update(t) {
-    if (!this._sound) {
+    if (!this._sound && !this._sample) {
       return 0;
     }
     let s = 0;
@@ -666,10 +688,12 @@ export class DoughVoice {
     }
 
     // sound source
-    if (this.s === 'pulse') {
+    if (this._sound && this.s === 'pulse') {
       s = this._sound.update(freq, this.pw ?? 0.5);
-    } else {
+    } else if (this._sound) {
       s = this._sound.update(freq);
+    } else if (this._sample) {
+      s = this._sample.update(freq, 0); // tbd: stereo samples...
     }
     s = s * this.gain * this.velocity;
 
@@ -738,6 +762,7 @@ export class Dough {
   delaysend = [0, 0];
   delaytime = getDefaultValue('delaytime');
   delayfeedback = getDefaultValue('delayfeedback');
+  samples = new Map();
   t = 0;
   // sampleRate: number, currentTime: number (seconds)
   constructor(sampleRate = 48000, currentTime = 0) {
@@ -746,6 +771,9 @@ export class Dough {
     // console.log('init dough', this.sampleRate, this.t);
     this._delayL = new Delay();
     this._delayR = new Delay();
+  }
+  loadSample(name, channels) {
+    this.samples.set(name, channels);
   }
   scheduleSpawn(value) {
     if (value._begin === undefined) {
@@ -760,6 +788,7 @@ export class Dough {
   }
   spawn(value) {
     value.id = this.vid++;
+    value.samples = this.samples;
     const voice = new DoughVoice(value);
     this.voices.push(voice);
     // console.log('spawn', voice.id, 'voices:', this.voices.length);
