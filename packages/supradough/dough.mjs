@@ -384,6 +384,7 @@ export class Distort {
 // distortion could be expressed as a function, because it's stateless
 
 export class BufferPlayer {
+  static samples = new Map();
   channels = [];
   pos = 0;
   update(freq, channel = 0) {
@@ -573,10 +574,9 @@ export class DoughVoice {
     if (shapes[this.s]) {
       const SourceClass = shapes[this.s];
       this._sound = new SourceClass();
-    } else if (value.samples.has(this.s)) {
+    } else if (BufferPlayer.samples.has(this.s)) {
       this._sample = new BufferPlayer();
-      this._sample.channels = value.samples.get(this.s);
-      this._sample.pos = 0;
+      this._sample.channels = BufferPlayer.samples.get(this.s);
     } else {
       console.warn('sound not found', this.s);
     }
@@ -735,7 +735,6 @@ export class DoughVoice {
     this._crush && (s = this._crush.update(s, this.crush));
     this._distort && (s = this._distort.update(s, this.distort, this.distortvol));
 
-    /* Math.random() > 0.99 && console.log('gate', gate); */
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
     s = s * env;
 
@@ -762,7 +761,6 @@ export class Dough {
   delaysend = [0, 0];
   delaytime = getDefaultValue('delaytime');
   delayfeedback = getDefaultValue('delayfeedback');
-  samples = new Map();
   t = 0;
   // sampleRate: number, currentTime: number (seconds)
   constructor(sampleRate = 48000, currentTime = 0) {
@@ -773,7 +771,7 @@ export class Dough {
     this._delayR = new Delay();
   }
   loadSample(name, channels) {
-    this.samples.set(name, channels);
+    BufferPlayer.samples.set(name, channels);
   }
   scheduleSpawn(value) {
     if (value._begin === undefined) {
@@ -783,12 +781,12 @@ export class Dough {
       throw new Error('[dough]: scheduleSpawn expected _duration to be set');
     }
     value.sampleRate = this.sampleRate;
-    const time = value._begin; // set from supradough.mjs
+    // convert seconds to samples
+    const time = Math.floor(value._begin * this.sampleRate); // set from supradough.mjs
     this.schedule({ time, type: 'spawn', arg: value });
   }
   spawn(value) {
     value.id = this.vid++;
-    value.samples = this.samples;
     const voice = new DoughVoice(value);
     this.voices.push(voice);
     // console.log('spawn', voice.id, 'voices:', this.voices.length);

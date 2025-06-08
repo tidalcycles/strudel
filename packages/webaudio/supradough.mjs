@@ -25,18 +25,6 @@ Pattern.prototype.supradough = function () {
   }, 1);
 };
 
-async function loadSampleChannels(url) {
-  const buffer = await fetch(url)
-    .then((res) => res.arrayBuffer())
-    .then((buf) => getAudioContext().decodeAudioData(buf));
-  // console.log('buffer', buffer, buffer.numberOfChannels);
-  let channels = [];
-  for (let i = 0; i < buffer.numberOfChannels; i++) {
-    channels.push(buffer.getChannelData(i));
-  }
-  return channels;
-}
-
 let samples = {
   casio: [
     'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/casio/high.wav',
@@ -138,6 +126,17 @@ let samples = {
 };
 // for some reason, only piano and flute work.. is it because mp3??
 
+async function loadSampleChannels(url) {
+  const buffer = await fetch(url)
+    .then((res) => res.arrayBuffer())
+    .then((buf) => getAudioContext().decodeAudioData(buf));
+  let channels = [];
+  for (let i = 0; i < buffer.numberOfChannels; i++) {
+    channels.push(buffer.getChannelData(i));
+  }
+  return channels;
+}
+
 let loaded = false;
 export async function doughsample() {
   !doughWorklet && initDoughWorklet();
@@ -148,8 +147,9 @@ export async function doughsample() {
   const sampleMap = await Promise.all(
     Object.entries(samples).map(async ([key, url]) => {
       url = url[0];
-      console.log(key, 'url', url);
-      return [key, await loadSampleChannels(url)];
+      const channels = await loadSampleChannels(url);
+      // console.log(key, 'url', url, channels);
+      return [key, channels];
     }),
   );
   console.log('sampleMap', sampleMap);
