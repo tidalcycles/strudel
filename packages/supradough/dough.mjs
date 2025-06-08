@@ -397,6 +397,22 @@ export class Distort {
 }
 // distortion could be expressed as a function, because it's stateless
 
+export class BufferPlayer {
+  static samples = new Map();
+  buffer; // { channels: Float32Array, sampleRate: number }
+  pos = 0;
+  sampleFreq = 261.626; // middle c
+  update(freq, channel = 0) {
+    if (this.pos >= this.buffer.channels[channel].length) {
+      return 0;
+    }
+    const speed = ((freq / this.sampleFreq) * this.buffer.sampleRate) / SAMPLE_RATE;
+    let s = this.buffer.channels[channel][Math.floor(this.pos)];
+    this.pos = this.pos + speed;
+    return s;
+  }
+}
+
 export function _rangex(sig, min, max) {
   let logmin = Math.log(min);
   let range = Math.log(max) - logmin;
@@ -417,7 +433,7 @@ export const getADSRValues = (params, curve = 'linear', defaultValues) => {
   return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
 };
 
-let oscillators = {
+let shapes = {
   sine: SineOsc,
   saw: SawOsc,
   zaw: ZawOsc,
@@ -464,6 +480,7 @@ const defaultDefaultValues = {
   z: 'triangle',
   pan: 0.5,
   fmh: 1,
+  fmenv: 0, // differs from superdough
 };
 
 let getDefaultValue = (key) => defaultDefaultValues[key];
@@ -471,7 +488,7 @@ let getDefaultValue = (key) => defaultDefaultValues[key];
 const chromas = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
 const accs = { '#': 1, b: -1, s: 1, f: -1 };
 const note2midi = (note, defaultOctave = 3) => {
-  const [pc, acc = '', oct = defaultOctave] =
+  let [pc, acc = '', oct = ''] =
     String(note)
       .match(/^([a-gA-G])([#bsf]*)([0-9]*)$/)
       ?.slice(1) || [];
@@ -480,13 +497,14 @@ const note2midi = (note, defaultOctave = 3) => {
   }
   const chroma = chromas[pc.toLowerCase()];
   const offset = acc?.split('').reduce((o, char) => o + accs[char], 0) || 0;
-  return (Number(oct) + 1) * 12 + chroma + offset;
+  oct = Number(oct || defaultOctave);
+  return (oct + 1) * 12 + chroma + offset;
 };
 const getFrequency = (value) => {
   let { note, freq } = value;
   note = note || 36;
   if (typeof note === 'string') {
-    note = note2midi(note); // e.g. c3 => 48
+    note = note2midi(note, 3); // e.g. c3 => 48
   }
   if (!freq && typeof note === 'number') {
     freq = Math.pow(2, (note - 69) / 12) * 440;
@@ -553,6 +571,7 @@ export class DoughVoice {
     this.fft = this.fft ?? getDefaultValue('fft');
     this.pan = this.pan ?? getDefaultValue('pan');
     this.orbit = this.orbit ?? getDefaultValue('orbit');
+    this.fmenv = this.fmenv ?? getDefaultValue('fmenv');
 
     [this.attack, this.decay, this.sustain, this.release] = getADSRValues([
       this.attack,
@@ -564,8 +583,30 @@ export class DoughVoice {
     this._holdEnd = this._begin + this._duration; // needed for gate
     this._end = this._holdEnd + this.release + 0.01; // needed for despawn
 
-    const SourceClass = oscillators[this.s] ?? TriOsc;
-    this._sound = new SourceClass();
+    this.s ??= 'triangle';
+    if (this.s === 'saw' || this.s === 'sawtooth') {
+      this.s = 'zaw'; // polyblepped saw when fm is applied
+    }
+    if (shapes[this.s]) {
+      const SourceClass = shapes[this.s];
+      this._sound = new SourceClass();
+    } else if (BufferPlayer.samples.has(this.s)) {
+      this._sample = new BufferPlayer();
+      const buffer = BufferPlayer.samples.get(this.s);
+      this._sample.buffer = buffer;
+    } else {
+      console.warn('sound not found', this.s);
+    }
+
+    if (this.penv) {
+      this._penv = new ADSR();
+      [this.pattack, this.pdecay, this.psustain, this.prelease] = getADSRValues([
+        this.pattack,
+        this.pdecay,
+        this.psustain,
+        this.prelease,
+      ]);
+    }
 
     if (this.fmi) {
       this._fm = new SineOsc();
@@ -644,7 +685,7 @@ export class DoughVoice {
     return 1 - Math.log(c) * this.eighthOverLogHalf;
   }
   update(t) {
-    if (!this._sound) {
+    if (!this._sound && !this._sample) {
       return 0;
     }
     let s = 0;
@@ -655,18 +696,25 @@ export class DoughVoice {
       let fmi = this.fmi;
       if (this._fmenv) {
         const env = this._fmenv.update(t, gate, this.fmattack, this.fmdecay, this.fmsustain, this.fmrelease) ** 2;
-        fmi = /* 2 ** */ this.fmenv * env * fmi; // todo: find good scaling
+        fmi = this.fmenv * env * fmi;
       }
       const modfreq = freq * this.fmh;
       const modgain = modfreq * fmi;
       freq = freq + this._fm.update(modfreq) * modgain;
     }
 
+    if (this._penv) {
+      const env = this._penv.update(t, gate, this.pattack, this.pdecay, this.psustain, this.prelease) ** 2;
+      freq = freq + env * this.penv;
+    }
+
     // sound source
-    if (this.s === 'pulse') {
+    if (this._sound && this.s === 'pulse') {
       s = this._sound.update(freq, this.pw ?? 0.5);
-    } else {
+    } else if (this._sound) {
       s = this._sound.update(freq);
+    } else if (this._sample) {
+      s = this._sample.update(freq, 0); // tbd: stereo samples...
     }
     s = s * this.gain * this.velocity;
 
@@ -708,11 +756,13 @@ export class DoughVoice {
     this._crush && (s = this._crush.update(s, this.crush));
     this._distort && (s = this._distort.update(s, this.distort, this.distortvol));
 
-    /* Math.random() > 0.99 && console.log('gate', gate); */
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
     s = s * env;
 
-    s = s * this.postgain * 0.2;
+    s = s * this.postgain;
+    if (!this._sample) {
+      s = s * 0.2; // turn down waveforms
+    }
 
     if (this.pan === 0.5) {
       this.l = this.r = s; // mono
@@ -744,6 +794,9 @@ export class Dough {
     this._delayL = new Delay();
     this._delayR = new Delay();
   }
+  loadSample(name, channels, sampleRate) {
+    BufferPlayer.samples.set(name, { channels, sampleRate });
+  }
   scheduleSpawn(value) {
     if (value._begin === undefined) {
       throw new Error('[dough]: scheduleSpawn expected _begin to be set');
@@ -752,7 +805,8 @@ export class Dough {
       throw new Error('[dough]: scheduleSpawn expected _duration to be set');
     }
     value.sampleRate = this.sampleRate;
-    const time = value._begin; // set from supradough.mjs
+    // convert seconds to samples
+    const time = Math.floor(value._begin * this.sampleRate); // set from supradough.mjs
     this.schedule({ time, type: 'spawn', arg: value });
   }
   spawn(value) {
