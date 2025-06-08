@@ -192,16 +192,30 @@ export class Hold {
   }
 }
 
-function lerp(x, y0, y1) {
+function lerp(x, y0, y1, exponent = 1) {
+  if (x <= 0) return y0;
   if (x >= 1) return y1;
 
-  return y0 + x * (y1 - y0);
+  let curvedX;
+
+  if (exponent === 0) {
+    curvedX = x; // linear
+  } else if (exponent > 0) {
+    curvedX = Math.pow(x, exponent); // ease-in
+  } else {
+    curvedX = 1 - Math.pow(1 - x, -exponent); // ease-out
+  }
+
+  return y0 + (y1 - y0) * curvedX;
 }
 
 export class ADSR {
-  state = 'off';
-  startTime = 0;
-  startVal = 0;
+  constructor(props = {}) {
+    this.state = 'off'
+    this.startTime = 0;
+    this.startVal = 0;
+    this.curve = props.curve ?? 1;
+  }
 
   update(curTime, gate, attack, decay, susVal, release) {
     switch (this.state) {
@@ -220,11 +234,11 @@ export class ADSR {
           this.startTime = curTime;
           return 1;
         }
-        return lerp(time / attack, this.startVal, 1);
+        return lerp(time / attack, this.startVal, 1, this.curve);
       }
       case 'decay': {
         let time = curTime - this.startTime;
-        let curVal = lerp(time / decay, 1, susVal);
+        let curVal = lerp(time / decay, 1, susVal, -this.curve);
         if (gate <= 0) {
           this.state = 'release';
           this.startTime = curTime;
@@ -253,7 +267,7 @@ export class ADSR {
           this.state = 'off';
           return 0;
         }
-        let curVal = lerp(time / release, this.startVal, 0);
+        let curVal = lerp(time / release, this.startVal, 0, -this.curve);
         if (gate > 0) {
           this.state = 'attack';
           this.startTime = curTime;
@@ -564,6 +578,7 @@ export class DoughVoice {
           this.fmsustain,
           this.fmrelease,
         ]);
+      
       }
     }
 
@@ -571,7 +586,9 @@ export class DoughVoice {
     this._lpf = this.cutoff ? new TwoPoleFilter() : null;
     this.resonance = this.resonance ?? getDefaultValue('resonance');
     if (this.lpenv) {
-      this._lpenv = new ADSR();
+
+      this._lpenv = new ADSR({curve: 4});
+    
       [this.lpattack, this.lpdecay, this.lpsustain, this.lprelease] = getADSRValues([
         this.lpattack,
         this.lpdecay,
@@ -584,6 +601,7 @@ export class DoughVoice {
     this.hresonance = this.hresonance ?? getDefaultValue('hresonance');
     if (this.hpenv) {
       this._hpenv = new ADSR();
+    
       [this.hpattack, this.hpdecay, this.hpsustain, this.hprelease] = getADSRValues([
         this.hpattack,
         this.hpdecay,
@@ -604,7 +622,7 @@ export class DoughVoice {
     }
 
     // gain envelope
-    this._adsr = new ADSR();
+    this._adsr = new ADSR({curve: 2});
 
     // fx setup
     this._coarse = this.coarse ? new Coarse() : null;
