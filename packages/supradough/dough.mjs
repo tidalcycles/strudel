@@ -698,7 +698,7 @@ export class DoughVoice {
         this.out[i] = this._lpf[i].s1;
       }
       if (this._hpf) {
-        this._hpf[i].update(this.out[i], hcutoff, this.hresonance);
+        this._hpf[i].update(this.out[i], hpf, this.hresonance);
         this.out[i] = this.out[i] - this._hpf[i].s1;
       }
       if (this._bpf) {
