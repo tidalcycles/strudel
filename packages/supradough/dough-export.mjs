@@ -47,7 +47,8 @@ haps.forEach((hap) => {
 console.log(`render ${seconds}s long buffer...`);
 const buffer = new Float32Array(seconds * sampleRate);
 while (dough.t <= buffer.length) {
-  buffer[dough.t] = dough.update();
+  dough.update();
+  buffer[dough.t] = dough.out[0];
 }
 console.log('done!');
 

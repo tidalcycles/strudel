@@ -150,7 +150,7 @@ class PulseOsc {
     return 2 * phase - 1 - p;
   }
   update(freq, pw = 0.5) {
-    const dt = freq / sampleRate;
+    const dt = freq / SAMPLE_RATE;
     let pulse = this.saw(0, dt) - this.saw(pw, dt);
     this.phase = (this.phase + dt) % 1;
     return pulse + pw * 2 - 1;
