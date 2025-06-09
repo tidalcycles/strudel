@@ -402,7 +402,7 @@ export class BufferPlayer {
   buffer; // Float32Array
   sampleRate;
   pos = 0;
-  sampleFreq = 261.626; // middle c
+  sampleFreq = note2freq();
   constructor(buffer, sampleRate) {
     this.buffer = buffer;
     this.sampleRate = sampleRate;
@@ -411,7 +411,7 @@ export class BufferPlayer {
     if (this.pos >= this.buffer.length) {
       return 0;
     }
-    const speed = ((freq / this.sampleFreq) * this.sampleRate) / SAMPLE_RATE;
+    const speed = ((freq / this.sampleFreq) * SAMPLE_RATE) / this.sampleRate;
     let s = this.buffer[Math.floor(this.pos)];
     this.pos = this.pos + speed;
     return s;
@@ -458,6 +458,7 @@ let shapes = {
 };
 
 const defaultDefaultValues = {
+  note: 48,
   s: 'triangle',
   gain: 1,
   postgain: 1,
@@ -505,23 +506,19 @@ const note2midi = (note, defaultOctave = 3) => {
   oct = Number(oct || defaultOctave);
   return (oct + 1) * 12 + chroma + offset;
 };
-const getFrequency = (value) => {
-  let { note, freq } = value;
-  note = note || 36;
+const midi2freq = (midi) => Math.pow(2, (midi - 69) / 12) * 440;
+const note2freq = (note) => {
+  note = note || getDefaultValue('note');
   if (typeof note === 'string') {
     note = note2midi(note, 3); // e.g. c3 => 48
   }
-  if (!freq && typeof note === 'number') {
-    freq = Math.pow(2, (note - 69) / 12) * 440;
-  }
-
-  return Number(freq);
+  return midi2freq(note);
 };
 
 export class DoughVoice {
   out = [0, 0];
   constructor(value) {
-    value.freq = getFrequency(value);
+    value.freq ??= note2freq(value.note);
     let $ = this;
     Object.assign($, value);
     $.s = $.s ?? getDefaultValue('s');

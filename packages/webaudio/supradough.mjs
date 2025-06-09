@@ -25,105 +25,58 @@ Pattern.prototype.supradough = function () {
   }, 1);
 };
 
-let samples = {
-  casio: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/casio/high.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/casio/low.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/casio/noise.wav',
-  ],
-  crow: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/crow/000_crow.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/crow/001_crow2.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/crow/002_crow3.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/crow/003_crow4.wav',
-  ],
-  insect: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/insect/000_everglades_conehead.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/insect/001_robust_shieldback.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/insect/002_seashore_meadow_katydid.wav',
-  ],
-  wind: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/000_wind1.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/001_wind10.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/002_wind2.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/003_wind3.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/004_wind4.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/005_wind5.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/006_wind6.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/007_wind7.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/008_wind8.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/wind/009_wind9.wav',
-  ],
-  jazz: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/jazz/000_BD.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/jazz/001_CB.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/jazz/002_FX.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/jazz/003_HH.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/jazz/004_OH.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/jazz/005_P1.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/jazz/006_P2.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/jazz/007_SN.wav',
-  ],
-  metal: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/000_0.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/001_1.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/002_2.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/003_3.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/004_4.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/005_5.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/006_6.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/007_7.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/008_8.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/metal/009_9.wav',
-  ],
-  east: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/000_nipon_wood_block.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/001_ohkawa_mute.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/002_ohkawa_open.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/003_shime_hi.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/004_shime_hi_2.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/005_shime_mute.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/006_taiko_1.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/007_taiko_2.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/east/008_taiko_3.wav',
-  ],
-  space: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/000_0.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/001_1.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/002_11.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/003_12.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/004_13.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/005_14.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/006_15.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/007_16.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/008_17.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/009_18.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/010_2.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/011_3.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/012_4.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/013_5.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/014_6.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/015_7.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/016_8.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/space/017_9.wav',
-  ],
-  numbers: [
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/0.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/1.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/2.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/3.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/4.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/5.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/6.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/7.wav',
-    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/numbers/8.wav',
-  ],
-  piano: ['https://raw.githubusercontent.com/felixroos/dough-samples/refs/heads/main/piano/C3v8.mp3'],
-  flute: ['https://raw.githubusercontent.com/felixroos/samples/refs/heads/main/flute/c4.mp3'],
-  bd: [
-    'https://raw.githubusercontent.com/geikha/tidal-drum-machines/15eac73c5e878550f91d864a4863e014799403f1/machines/RolandTR909/rolandtr909-bd/Bassdrum-01.wav',
-  ],
-};
+function githubPath(base, subpath = '') {
+  if (!base.startsWith('github:')) {
+    throw new Error('expected "github:" at the start of pseudoUrl');
+  }
+  let [_, path] = base.split('github:');
+  path = path.endsWith('/') ? path.slice(0, -1) : path;
+  if (path.split('/').length === 2) {
+    // assume main as default branch if none set
+    path += '/main';
+  }
+  return `https://raw.githubusercontent.com/${path}/${subpath}`;
+}
+export async function fetchSampleMap(url) {
+  if (url.startsWith('github:')) {
+    url = githubPath(url, 'strudel.json');
+  }
+  if (url.startsWith('local:')) {
+    url = `http://localhost:5432`;
+  }
+  if (url.startsWith('shabda:')) {
+    let [_, path] = url.split('shabda:');
+    url = `https://shabda.ndre.gr/${path}.json?strudel=1`;
+  }
+  if (url.startsWith('shabda/speech')) {
+    let [_, path] = url.split('shabda/speech');
+    path = path.startsWith('/') ? path.substring(1) : path;
+    let [params, words] = path.split(':');
+    let gender = 'f';
+    let language = 'en-GB';
+    if (params) {
+      [language, gender] = params.split('/');
+    }
+    url = `https://shabda.ndre.gr/speech/${words}.json?gender=${gender}&language=${language}&strudel=1'`;
+  }
+  if (typeof fetch !== 'function') {
+    // not a browser
+    return;
+  }
+  const base = url.split('/').slice(0, -1).join('/');
+  if (typeof fetch === 'undefined') {
+    // skip fetch when in node / testing
+    return;
+  }
+  const json = await fetch(url)
+    .then((res) => res.json())
+    .catch((error) => {
+      console.error(error);
+      throw new Error(`error loading "${url}"`);
+    });
+  return [json, json._base || base];
+}
+
 // for some reason, only piano and flute work.. is it because mp3??
 
 async function loadSampleChannels(key, url) {
@@ -138,18 +91,27 @@ async function loadSampleChannels(key, url) {
 }
 
 let loaded = false;
-export async function doughsample() {
+export async function doughsamples(sampleMap, baseUrl) {
+  if (typeof sampleMap === 'string') {
+    const [json, base] = await fetchSampleMap(sampleMap);
+    // console.log('json', json, 'base', base);
+    return doughsamples(json, base);
+  }
   !doughWorklet && initDoughWorklet();
   if (loaded) {
     return;
   }
   loaded = true;
-  const sampleMap = await Promise.all(
-    Object.entries(samples).map(async ([key, url]) => {
-      url = url[0];
-      return loadSampleChannels(key, url);
-    }),
-  );
-  console.log('sampleMap', sampleMap);
-  doughWorklet.port.postMessage({ samples: sampleMap });
+  const json = (
+    await Promise.all(
+      Object.entries(sampleMap).map(async ([key, url]) => {
+        if (key !== '_base') {
+          url = baseUrl + url[0];
+          return loadSampleChannels(key, url);
+        }
+      }),
+    )
+  ).filter(Boolean);
+  // console.log('sampleMap', json);
+  doughWorklet.port.postMessage({ samples: json });
 }
