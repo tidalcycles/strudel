@@ -46,7 +46,7 @@ function polyBlep(t, dt) {
 }
 export class SawOsc {
   constructor(props = {}) {
-    this.phase = props.phase ?? 0
+    this.phase = props.phase ?? 0;
   }
   update(freq) {
     const dt = freq / SAMPLE_RATE;
@@ -66,7 +66,7 @@ function getUnisonDetune(unison, detune, voiceIndex) {
   }
   const lerp = (a, b, n) => {
     return n * (b - a) + a;
-  }
+  };
   return lerp(-detune * 0.5, detune * 0.5, voiceIndex / (unison - 1));
 }
 function applySemitoneDetuneToFrequency(frequency, detune) {
@@ -76,17 +76,17 @@ export class SupersawOsc {
   constructor(props = {}) {
     //TODO: figure out a good way to pass in these params
     this.voices = props.voices ?? 5;
-    this.freqspread = props.freqspread ?? .2
+    this.freqspread = props.freqspread ?? 0.2;
     this.panspread = props.panspread ?? 0.4;
     this.phase = new Float32Array(this.voices).map(() => Math.random());
   }
   update(freq) {
     const gain1 = Math.sqrt(1 - this.panspread);
     const gain2 = Math.sqrt(this.panspread);
-    let sl = 0
-    let sr = 0
+    let sl = 0;
+    let sr = 0;
     for (let n = 0; n < this.voices; n++) {
-      const freqAdjusted = applySemitoneDetuneToFrequency(freq, getUnisonDetune(this.voices, this.freqspread, n))
+      const freqAdjusted = applySemitoneDetuneToFrequency(freq, getUnisonDetune(this.voices, this.freqspread, n));
       const dt = freqAdjusted / SAMPLE_RATE;
       const isOdd = (n & 1) == 1;
       let gainL = gain1;
@@ -98,8 +98,8 @@ export class SupersawOsc {
       }
       let p = polyBlep(this.phase[n], dt);
       let s = 2 * this.phase[n] - 1 - p;
-      sl = sl + s * gainL
-      sr = sr + s * gainL
+      sl = sl + s * gainL;
+      sr = sr + s * gainL;
 
       this.phase[n] += dt;
       if (this.phase[n] > 1) {
@@ -107,7 +107,7 @@ export class SupersawOsc {
       }
     }
 
-    return sl + sr
+    return sl + sr;
     //TODO: make stereo
     // return [sl, sr];
   }
@@ -466,15 +466,22 @@ export class BufferPlayer {
   sampleRate;
   pos = 0;
   sampleFreq = note2freq();
-  constructor(buffer, sampleRate) {
+  constructor(buffer, sampleRate, normalize) {
     this.buffer = buffer;
     this.sampleRate = sampleRate;
+    this.duration = this.buffer.length / this.sampleRate;
+    this.speed = SAMPLE_RATE / this.sampleRate;
+    if (normalize) {
+      // this will make the buffer last 1s if freq = sampleFreq
+      // it's useful to loop samples (e.g. fit function)
+      this.speed *= this.duration;
+    }
   }
   update(freq) {
     if (this.pos >= this.buffer.length) {
       return 0;
     }
-    const speed = ((freq / this.sampleFreq) * SAMPLE_RATE) / this.sampleRate;
+    const speed = (freq / this.sampleFreq) * this.speed;
     let s = this.buffer[Math.floor(this.pos)];
     this.pos = this.pos + speed;
     return s;
@@ -551,6 +558,7 @@ const defaultDefaultValues = {
   pan: 0.5,
   fmh: 1,
   fmenv: 0, // differs from superdough
+  speed: 1,
 };
 
 let getDefaultValue = (key) => defaultDefaultValues[key];
@@ -603,6 +611,7 @@ export class DoughVoice {
     $.resonance = $.resonance ?? getDefaultValue('resonance');
     $.hresonance = $.hresonance ?? getDefaultValue('hresonance');
     $.bandq = $.bandq ?? getDefaultValue('bandq');
+    $.speed = $.speed ?? getDefaultValue('speed');
 
     [$.attack, $.decay, $.sustain, $.release] = getADSR([$.attack, $.decay, $.sustain, $.release]);
 
@@ -623,7 +632,7 @@ export class DoughVoice {
       $._buffers = [];
       $._channels = sample.channels.length;
       for (let i = 0; i < $._channels; i++) {
-        $._buffers.push(new BufferPlayer(sample.channels[i], sample.sampleRate));
+        $._buffers.push(new BufferPlayer(sample.channels[i], sample.sampleRate, $.unit === 'c')); // tbd unit === 'c'
       }
     } else {
       console.warn('sound not found', $.s);
@@ -695,7 +704,7 @@ export class DoughVoice {
     }
     let gate = Number(t >= this._begin && t <= this._holdEnd);
 
-    let freq = this.freq;
+    let freq = this.freq * this.speed;
     // frequency modulation
     if (this._fm) {
       let fmi = this.fmi;
