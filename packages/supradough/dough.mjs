@@ -1,6 +1,15 @@
 // this is dough, the superdough without dependencies
 const SAMPLE_RATE = typeof sampleRate !== 'undefined' ? sampleRate : 48000;
 const ISR = 1 / SAMPLE_RATE;
+
+let gainCurveFunc = (val) => Math.pow(val, 2);
+
+function applyGainCurve(val) {
+  return gainCurveFunc(val);
+}
+// function setGainCurve(newGainCurveFunc) {
+//   gainCurveFunc = newGainCurveFunc;
+// }
 // https://garten.salat.dev/audio-DSP/oscillators.html
 export class SineOsc {
   phase = 0;
@@ -522,15 +531,15 @@ export class DoughVoice {
     let $ = this;
     Object.assign($, value);
     $.s = $.s ?? getDefaultValue('s');
-    $.gain = $.gain ?? getDefaultValue('gain');
-    $.velocity = $.velocity ?? getDefaultValue('velocity');
-    $.postgain = $.postgain ?? getDefaultValue('postgain');
+    $.gain = applyGainCurve($.gain ?? getDefaultValue('gain'));
+    $.velocity = applyGainCurve($.velocity ?? getDefaultValue('velocity'));
+    $.postgain = applyGainCurve($.postgain ?? getDefaultValue('postgain'));
     $.density = $.density ?? getDefaultValue('density');
     $.fanchor = $.fanchor ?? getDefaultValue('fanchor');
     $.drive = $.drive ?? 0.69;
     $.phaserdepth = $.phaserdepth ?? getDefaultValue('phaserdepth');
-    $.shapevol = $.shapevol ?? getDefaultValue('shapevol');
-    $.distortvol = $.distortvol ?? getDefaultValue('distortvol');
+    $.shapevol = applyGainCurve($.shapevol ?? getDefaultValue('shapevol'));
+    $.distortvol = applyGainCurve($.distortvol ?? getDefaultValue('distortvol'));
     $.i = $.i ?? getDefaultValue('i');
     $.fft = $.fft ?? getDefaultValue('fft');
     $.pan = $.pan ?? getDefaultValue('pan');
@@ -582,7 +591,7 @@ export class DoughVoice {
     // gain envelope
     $._adsr = new ADSR({ decayCurve: 2 });
     // delay
-    $.delay = $.delay ?? getDefaultValue('delay');
+    $.delay = applyGainCurve($.delay ?? getDefaultValue('delay'));
     $.delayfeedback = $.delayfeedback ?? getDefaultValue('delayfeedback');
     $.delaytime = $.delaytime ?? getDefaultValue('delaytime');
 
