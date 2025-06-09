@@ -10,6 +10,7 @@ paper
 pnpm-lock.yaml
 pnpm-workspace.yaml
 **/dev-dist
+superdough-wasm
 website/.astro
 !tidal-drum-machines.json
 !tidal-drum-machines-alias.json
