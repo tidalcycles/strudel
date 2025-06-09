@@ -90,18 +90,12 @@ async function loadSampleChannels(key, url) {
   return [key, channels, buffer.sampleRate];
 }
 
-let loaded = false;
 export async function doughsamples(sampleMap, baseUrl) {
   if (typeof sampleMap === 'string') {
     const [json, base] = await fetchSampleMap(sampleMap);
     // console.log('json', json, 'base', base);
     return doughsamples(json, base);
   }
-  !doughWorklet && initDoughWorklet();
-  if (loaded) {
-    return;
-  }
-  loaded = true;
   const json = (
     await Promise.all(
       Object.entries(sampleMap).map(async ([key, url]) => {
@@ -113,5 +107,6 @@ export async function doughsamples(sampleMap, baseUrl) {
     )
   ).filter(Boolean);
   // console.log('sampleMap', json);
+  !doughWorklet && initDoughWorklet();
   doughWorklet.port.postMessage({ samples: json });
 }
