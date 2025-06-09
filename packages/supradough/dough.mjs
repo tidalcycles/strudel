@@ -643,6 +643,11 @@ export class DoughVoice {
       [$.pattack, $.pdecay, $.psustain, $.prelease] = getADSR([$.pattack, $.pdecay, $.psustain, $.prelease]);
     }
 
+    if ($.vib) {
+      $._vib = new SineOsc();
+      $.vibmod = $.vibmod ?? getDefaultValue('vibmod');
+    }
+
     if ($.fmi) {
       $._fm = new SineOsc();
       $.fmh = $.fmh ?? getDefaultValue('fmh');
@@ -705,6 +710,7 @@ export class DoughVoice {
     let gate = Number(t >= this._begin && t <= this._holdEnd);
 
     let freq = this.freq * this.speed;
+
     // frequency modulation
     if (this._fm) {
       let fmi = this.fmi;
@@ -715,6 +721,11 @@ export class DoughVoice {
       const modfreq = freq * this.fmh;
       const modgain = modfreq * fmi;
       freq = freq + this._fm.update(modfreq) * modgain;
+    }
+
+    // vibrato
+    if (this._vib) {
+      freq = freq * 2 ** ((this._vib.update(this.vib) * this.vibmod) / 12);
     }
 
     // pitch envelope
