@@ -45,8 +45,9 @@ function polyBlep(t, dt) {
   return 0;
 }
 export class SawOsc {
-  //phase = Math.random();
-  phase = 0;
+  constructor(props = {}) {
+    this.phase = props.phase ?? 0
+  }
   update(freq) {
     const dt = freq / SAMPLE_RATE;
     let p = polyBlep(this.phase, dt);
@@ -56,6 +57,59 @@ export class SawOsc {
       this.phase -= 1;
     }
     return s;
+  }
+}
+
+function getUnisonDetune(unison, detune, voiceIndex) {
+  if (unison < 2) {
+    return 0;
+  }
+  const lerp = (a, b, n) => {
+    return n * (b - a) + a;
+  }
+  return lerp(-detune * 0.5, detune * 0.5, voiceIndex / (unison - 1));
+}
+function applySemitoneDetuneToFrequency(frequency, detune) {
+  return frequency * Math.pow(2, detune / 12);
+}
+export class SupersawOsc {
+  constructor(props = {}) {
+    //TODO: figure out a good way to pass in these params
+    this.voices = props.voices ?? 5;
+    this.freqspread = props.freqspread ?? .2
+    this.panspread = props.panspread ?? 0.4;
+    this.phase = new Float32Array(this.voices).map(() => Math.random());
+  }
+  update(freq) {
+    const gain1 = Math.sqrt(1 - this.panspread);
+    const gain2 = Math.sqrt(this.panspread);
+    let sl = 0
+    let sr = 0
+    for (let n = 0; n < this.voices; n++) {
+      const freqAdjusted = applySemitoneDetuneToFrequency(freq, getUnisonDetune(this.voices, this.freqspread, n))
+      const dt = freqAdjusted / SAMPLE_RATE;
+      const isOdd = (n & 1) == 1;
+      let gainL = gain1;
+      let gainR = gain2;
+      // invert right and left gain
+      if (isOdd) {
+        gainL = gain2;
+        gainR = gain1;
+      }
+      let p = polyBlep(this.phase[n], dt);
+      let s = 2 * this.phase[n] - 1 - p;
+      sl = sl + s * gainL
+      sr = sr + s * gainL
+
+      this.phase[n] += dt;
+      if (this.phase[n] > 1) {
+        this.phase[n] -= 1;
+      }
+    }
+
+    return sl + sr
+    //TODO: make stereo
+    // return [sl, sr];
   }
 }
 
@@ -453,6 +507,7 @@ let shapes = {
   zaw: ZawOsc,
   sawtooth: SawOsc,
   zawtooth: ZawOsc,
+  supersaw: SupersawOsc,
   tri: TriOsc,
   triangle: TriOsc,
   pulse: PulseOsc,
