@@ -163,6 +163,12 @@ The last section could be written as:
 }
 ```
 
+Please note that browsers will often cache `strudel.json` on first load, and keep using the cached
+version even if the orginal has been updated. If this bites you (for example while developing a new
+sample pack), you can force the browser to download a new copy by i.e. changing capitalization of one
+character in the URL, or by removing it from cache (deleting cache in browser Privacy settings, or from
+the dev console if you're technically minded, or by using a cache deleting extension).
+
 ## Github Shortcut
 
 Because loading samples from github is common, there is a shortcut:
