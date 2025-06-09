@@ -127,6 +127,12 @@ registerWidget('_scope', (id, options = {}, pat) => {
   return pat.tag(id).scope({ ...options, ctx, id });
 });
 
+registerWidget('_claviature', (id, options = {}, pat) => {
+  options = { height: 75, width: 640, ...options };
+  const ctx = getCanvasWidget(id, options).getContext('2d');
+  return pat.tag(id).claviature({ ...options, ctx, id });
+});
+
 registerWidget('_pitchwheel', (id, options = {}, pat) => {
   let _size = options.size || 200;
   options = { width: _size, height: _size, ...options, size: _size / 5 };
