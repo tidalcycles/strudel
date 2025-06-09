@@ -399,15 +399,20 @@ export class Distort {
 
 export class BufferPlayer {
   static samples = new Map(); // string -> { channels, sampleRate }
-  buffer; // { channels: Float32Array, sampleRate: number }
+  buffer; // Float32Array
+  sampleRate;
   pos = 0;
   sampleFreq = 261.626; // middle c
-  update(freq, channel = 0) {
-    if (this.pos >= this.buffer.channels[channel].length) {
+  constructor(buffer, sampleRate) {
+    this.buffer = buffer;
+    this.sampleRate = sampleRate;
+  }
+  update(freq) {
+    if (this.pos >= this.buffer.length) {
       return 0;
     }
-    const speed = ((freq / this.sampleFreq) * this.buffer.sampleRate) / SAMPLE_RATE;
-    let s = this.buffer.channels[channel][Math.floor(this.pos)];
+    const speed = ((freq / this.sampleFreq) * this.sampleRate) / SAMPLE_RATE;
+    let s = this.buffer[Math.floor(this.pos)];
     this.pos = this.pos + speed;
     return s;
   }
@@ -514,8 +519,7 @@ const getFrequency = (value) => {
 };
 
 export class DoughVoice {
-  l = 0;
-  r = 0;
+  out = [0, 0];
   constructor(value) {
     value.freq = getFrequency(value);
     let $ = this;
@@ -554,10 +558,12 @@ export class DoughVoice {
       $._sound = new SourceClass();
       $._channels = 1;
     } else if (BufferPlayer.samples.has($.s)) {
-      $._sample = new BufferPlayer();
-      const buffer = BufferPlayer.samples.get($.s);
-      $._sample.buffer = buffer; // {channels,sampleRate}
-      $._channels = $._sample.buffer.channels.length;
+      const sample = BufferPlayer.samples.get($.s);
+      $._buffers = [];
+      $._channels = sample.channels.length;
+      for (let i = 0; i < $._channels; i++) {
+        $._buffers.push(new BufferPlayer(sample.channels[i], sample.sampleRate));
+      }
     } else {
       console.warn('sound not found', $.s);
     }
@@ -601,15 +607,21 @@ export class DoughVoice {
       [$.bpattack, $.bpdecay, $.bpsustain, $.bprelease] = getADSR([$.bpattack, $.bpdecay, $.bpsustain, $.bprelease]);
     }
 
-    // 1 per channel::
-    $._lpf = $.cutoff ? new TwoPoleFilter() : null;
-    $._hpf = $.hcutoff ? new TwoPoleFilter() : null;
-    $._bpf = $.bandf ? new TwoPoleFilter() : null;
-
-    // fx setup
-    $._coarse = $.coarse ? new Coarse() : null;
-    $._crush = $.crush ? new Crush() : null;
-    $._distort = $.distort ? new Distort() : null;
+    // channelwise effects setup
+    $._lpf = $.cutoff ? [] : null;
+    $._hpf = $.hcutoff ? [] : null;
+    $._bpf = $.bandf ? [] : null;
+    $._coarse = $.coarse ? [] : null;
+    $._crush = $.crush ? [] : null;
+    $._distort = $.distort ? [] : null;
+    for (let i = 0; i < this._channels; i++) {
+      $._lpf?.push(new TwoPoleFilter());
+      $._hpf?.push(new TwoPoleFilter());
+      $._bpf?.push(new TwoPoleFilter());
+      $._coarse?.push(new Coarse());
+      $._crush?.push(new Crush());
+      $._distort?.push(new Distort());
+    }
   }
   // credits to pulu: https://github.com/felixroos/kabelsalat/issues/35
   freq2cutoff(freq) {
@@ -617,13 +629,13 @@ export class DoughVoice {
     return 1 - Math.log(c) * this.eighthOverLogHalf;
   }
   update(t) {
-    if (!this._sound && !this._sample) {
+    if (!this._sound && !this._buffers) {
       return 0;
     }
-    let s = 0;
     let gate = Number(t >= this._begin && t <= this._holdEnd);
 
     let freq = this.freq;
+    // frequency modulation
     if (this._fm) {
       let fmi = this.fmi;
       if (this._fmenv) {
@@ -635,74 +647,86 @@ export class DoughVoice {
       freq = freq + this._fm.update(modfreq) * modgain;
     }
 
+    // pitch envelope
     if (this._penv) {
       const env = this._penv.update(t, gate, this.pattack, this.pdecay, this.psustain, this.prelease);
       freq = freq + env * this.penv;
     }
 
-    // sound source
-    if (this._sound && this.s === 'pulse') {
-      s = this._sound.update(freq, this.pw ?? 0.5);
-    } else if (this._sound) {
-      s = this._sound.update(freq);
-    } else if (this._sample) {
-      s = this._sample.update(freq, 0); // tbd: stereo samples...
-    }
-    s = s * this.gain * this.velocity;
-
-    // lpf
+    // filters
+    let lpf = this.cutoff;
     if (this._lpf) {
-      let cutoff = this.cutoff;
       if (this._lpenv) {
         const env = this._lpenv.update(t, gate, this.lpattack, this.lpdecay, this.lpsustain, this.lprelease);
-        cutoff = this.lpenv * env * cutoff + cutoff;
+        lpf = this.lpenv * env * lpf + lpf;
       }
-      cutoff = this.freq2cutoff(cutoff);
-      this._lpf.update(s, cutoff, this.resonance);
-      s = this._lpf.s1;
+      lpf = this.freq2cutoff(lpf);
     }
-    // hpf
+    let hpf = this.hcutoff;
     if (this._hpf) {
-      let cutoff = this.hcutoff;
       if (this._hpenv) {
         const env = this._hpenv.update(t, gate, this.hpattack, this.hpdecay, this.hpsustain, this.hprelease);
-        cutoff = 2 ** this.hpenv * env * cutoff + cutoff;
+        hpf = 2 ** this.hpenv * env * hpf + hpf;
       }
-      cutoff = this.freq2cutoff(cutoff);
-      this._hpf.update(s, cutoff, this.hresonance);
-      s = s - this._hpf.s1;
+      hpf = this.freq2cutoff(hpf);
     }
-    // bpf
+    let bpf = this.bandf;
     if (this._bpf) {
-      let cutoff = this.bandf;
       if (this._bpenv) {
         const env = this._bpenv.update(t, gate, this.bpattack, this.bpdecay, this.bpsustain, this.bprelease);
-        cutoff = 2 ** this.bpenv * env * cutoff + cutoff;
+        bpf = 2 ** this.bpenv * env * bpf + bpf;
       }
-      cutoff = this.freq2cutoff(cutoff);
-      this._bpf.update(s, cutoff, this.bandq);
-      s = this._bpf.s0;
+      bpf = this.freq2cutoff(bpf);
     }
-
-    this._coarse && (s = this._coarse.update(s, this.coarse));
-    this._crush && (s = this._crush.update(s, this.crush));
-    this._distort && (s = this._distort.update(s, this.distort, this.distortvol));
-
+    // gain envelope
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
-    s = s * env;
 
-    s = s * this.postgain;
-    if (!this._sample) {
-      s = s * 0.2; // turn down waveforms
+    // channelwise dsp
+    for (let i = 0; i < this._channels; i++) {
+      // sound source
+      if (this._sound && this.s === 'pulse') {
+        this.out[i] = this._sound.update(freq, this.pw ?? 0.5);
+      } else if (this._sound) {
+        this.out[i] = this._sound.update(freq);
+      } else if (this._buffers) {
+        this.out[i] = this._buffers[i].update(freq);
+      }
+      this.out[i] = this.out[i] * this.gain * this.velocity;
+
+      if (this._lpf) {
+        this._lpf[i].update(this.out[i], lpf, this.resonance);
+        this.out[i] = this._lpf[i].s1;
+      }
+      if (this._hpf) {
+        this._hpf[i].update(this.out[i], hcutoff, this.hresonance);
+        this.out[i] = this.out[i] - this._hpf[i].s1;
+      }
+      if (this._bpf) {
+        this._bpf[i].update(this.out[i], bpf, this.bandq);
+        this.out[i] = this._bpf[i].s0;
+      }
+      if (this._coarse) {
+        this.out[i] = this._coarse[i].update(this.out[i], this.coarse);
+      }
+      if (this._crush) {
+        this.out[i] = this._crush[i].update(this.out[i], this.crush);
+      }
+      if (this._distort) {
+        this.out[i] = this._distort[i].update(this.out[i], this.distort, this.distortvol);
+      }
+      this.out[i] = this.out[i] * env;
+      this.out[i] = this.out[i] * this.postgain;
+      if (!this._buffers) {
+        this.out[i] = this.out[i] * 0.2; // turn down waveform
+      }
     }
-
-    if (this.pan === 0.5) {
-      this.l = this.r = s; // mono
-    } else {
-      // stereo
-      const pos = (this.pan * Math.PI) / 2;
-      this.l = s * Math.cos(pos);
-      this.r = s * Math.sin(pos);
+    if (this._channels === 1) {
+      this.out[1] = this.out[0];
+    }
+    if (this.pan !== 0.5) {
+      const panpos = (this.pan * Math.PI) / 2;
+      this.out[0] = this.out[0] * Math.cos(panpos);
+      this.out[1] = this.out[1] * Math.sin(panpos);
     }
   }
 }
@@ -713,7 +737,7 @@ export class Dough {
   voices = []; // DoughVoice[]
   vid = 0;
   q = [];
-  channels = [0, 0];
+  out = [0, 0];
   delaysend = [0, 0];
   delaytime = getDefaultValue('delaytime');
   delayfeedback = getDefaultValue('delayfeedback');
@@ -782,15 +806,15 @@ export class Dough {
       this.q.shift();
     }
     // add active voices
-    this.channels[0] = 0;
-    this.channels[1] = 0;
+    this.out[0] = 0;
+    this.out[1] = 0;
     for (let v = 0; v < this.voices.length; v++) {
       this.voices[v].update(this.t / this.sampleRate);
-      this.channels[0] += this.voices[v].l;
-      this.channels[1] += this.voices[v].r;
+      this.out[0] += this.voices[v].out[0];
+      this.out[1] += this.voices[v].out[1];
       if (this.voices[v].delay) {
-        this.delaysend[0] += this.voices[v].l * this.voices[v].delay;
-        this.delaysend[1] += this.voices[v].r * this.voices[v].delay;
+        this.delaysend[0] += this.voices[v].out[0] * this.voices[v].delay;
+        this.delaysend[1] += this.voices[v].out[1] * this.voices[v].delay;
         this.delaytime = this.voices[v].delaytime; // we trust that these are initialized in the voice
         this.delayfeedback = this.voices[v].delayfeedback;
       }
@@ -800,8 +824,8 @@ export class Dough {
     const delayR = this._delayR.update(this.delaysend[1], this.delaytime);
     this.delaysend[0] = delayL * this.delayfeedback;
     this.delaysend[1] = delayR * this.delayfeedback;
-    this.channels[0] += delayL;
-    this.channels[1] += delayR;
+    this.out[0] += delayL;
+    this.out[1] += delayR;
     this.t++;
   }
 }

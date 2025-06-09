@@ -29,7 +29,7 @@ class DoughProcessor extends AudioWorkletProcessor {
       this.dough.update();
       for (let c = 0; c < output.length; c++) {
         //prevent speaker blowout via clipping if threshold exceeds
-        output[c][i] = clamp(this.dough.channels[c], -1, 1);
+        output[c][i] = clamp(this.dough.out[c], -1, 1);
       }
     }
     return true; // keep the audio processing going
