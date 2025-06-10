@@ -285,6 +285,17 @@ export const { fmvelocity } = registerControl('fmvelocity');
  */
 export const { bank } = registerControl('bank');
 
+/**
+ * mix control for the chorus effect
+ *
+ * @name chorus
+ * @param {string | Pattern} chorus mix amount between 0 and 1
+ * @example
+ * note("d d a# a").s("sawtooth").chorus(.5)
+ *
+ */
+export const { chorus } = registerControl('chorus');
+
 // analyser node send amount 0 - 1 (used by scope)
 export const { analyze } = registerControl('analyze');
 // fftSize of analyser

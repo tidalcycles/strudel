@@ -7,6 +7,22 @@ let gainCurveFunc = (val) => Math.pow(val, 2);
 function applyGainCurve(val) {
   return gainCurveFunc(val);
 }
+
+/**
+ * Equal Power Crossfade function.
+ * Smoothly transitions between signals A and B, maintaining consistent perceived loudness.
+ *
+ * @param {number} a - Signal A (can be a single value or an array value in buffer processing).
+ * @param {number} b - Signal B (can be a single value or an array value in buffer processing).
+ * @param {number} m - Crossfade parameter (0.0 = all A, 1.0 = all B, 0.5 = equal mix).
+ * @returns {number} Crossfaded output value.
+ */
+function crossfade(a, b, m) {
+  const aGain = Math.sin((1 - m) * 0.5 * Math.PI);
+  const bGain = Math.sin(m * 0.5 * Math.PI);
+  return a * aGain + b * bGain;
+}
+
 // function setGainCurve(newGainCurveFunc) {
 //   gainCurveFunc = newGainCurveFunc;
 // }
@@ -349,7 +365,8 @@ export class ADSR {
 .add(x=>x.delay(.1).mul(.8))
 .out()*/
 const MAX_DELAY_TIME = 10;
-export class Delay {
+export class PitchDelay {
+  lpf = new TwoPoleFilter();
   constructor(_props = {}) {
     this.buffer = new Float32Array(MAX_DELAY_TIME * SAMPLE_RATE);
     this.writeIdx = 0;
@@ -374,7 +391,38 @@ export class Delay {
     } else {
       index = Math.floor(this.readIdx * speed) % this.numSamples;
     }
-    return this.buffer[index];
+    const s = this.lpf.update(this.buffer[index], 0.9, 0);
+
+    return s;
+  }
+}
+
+export class Delay {
+  writeIdx = 0;
+  readIdx = 0;
+  buffer = new Float32Array(MAX_DELAY_TIME * SAMPLE_RATE); //.fill(0)
+  write(s, delayTime) {
+    this.writeIdx = (this.writeIdx + 1) % this.buffer.length;
+    this.buffer[this.writeIdx] = s;
+    // Calculate how far in the past to read
+    let numSamples = Math.min(Math.floor(SAMPLE_RATE * delayTime), this.buffer.length - 1);
+    this.readIdx = this.writeIdx - numSamples;
+    // If past the start of the buffer, wrap around
+    if (this.readIdx < 0) this.readIdx += this.buffer.length;
+  }
+  update(input, delayTime) {
+    this.write(input, delayTime);
+    return this.buffer[this.readIdx];
+  }
+}
+//TODO: Figure out why clicking at the start off the buffer
+export class Chorus {
+  delay = new Delay();
+  modulator = new TriOsc();
+  update(input, mix, delayTime, modulationFreq, modulationDepth) {
+    const m = this.modulator.update(modulationFreq) * modulationDepth;
+    const c = this.delay.update(input, delayTime * (1 + m));
+    return crossfade(input, c, mix);
   }
 }
 
@@ -540,6 +588,7 @@ let shapes = {
 };
 
 const defaultDefaultValues = {
+  chorus: 0,
   note: 48,
   s: 'triangle',
   gain: 1,
@@ -616,6 +665,7 @@ export class DoughVoice {
     $.shapevol = applyGainCurve($.shapevol ?? getDefaultValue('shapevol'));
     $.distortvol = applyGainCurve($.distortvol ?? getDefaultValue('distortvol'));
     $.i = $.i ?? getDefaultValue('i');
+    $.chorus = $.chorus ?? getDefaultValue('chorus');
     $.fft = $.fft ?? getDefaultValue('fft');
     $.pan = $.pan ?? getDefaultValue('pan');
     $.orbit = $.orbit ?? getDefaultValue('orbit');
@@ -696,6 +746,7 @@ export class DoughVoice {
     }
 
     // channelwise effects setup
+    $._chorus = $.chorus ? [] : null;
     $._lpf = $.cutoff ? [] : null;
     $._hpf = $.hcutoff ? [] : null;
     $._bpf = $.bandf ? [] : null;
@@ -706,6 +757,7 @@ export class DoughVoice {
       $._lpf?.push(new TwoPoleFilter());
       $._hpf?.push(new TwoPoleFilter());
       $._bpf?.push(new TwoPoleFilter());
+      $._chorus?.push(new Chorus());
       $._coarse?.push(new Coarse());
       $._crush?.push(new Crush());
       $._distort?.push(new Distort());
@@ -786,6 +838,10 @@ export class DoughVoice {
         this.out[i] = this._buffers[i].update(freq);
       }
       this.out[i] = this.out[i] * this.gain * this.velocity;
+      if (this._chorus) {
+        const c = this._chorus[i].update(this.out[i], this.chorus, 0.03 + 0.05 * i, 1, 0.11);
+        this.out[i] = c + this.out[i];
+      }
 
       if (this._lpf) {
         this._lpf[i].update(this.out[i], lpf, this.resonance);
@@ -842,8 +898,8 @@ export class Dough {
     this.sampleRate = sampleRate;
     this.t = Math.floor(currentTime * sampleRate); // samples
     // console.log('init dough', this.sampleRate, this.t);
-    this._delayL = new Delay();
-    this._delayR = new Delay();
+    this._delayL = new PitchDelay();
+    this._delayR = new PitchDelay();
   }
   loadSample(name, channels, sampleRate) {
     BufferPlayer.samples.set(name, { channels, sampleRate });
