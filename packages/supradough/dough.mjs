@@ -44,6 +44,7 @@ function polyBlep(t, dt) {
   // 0 otherwise
   return 0;
 }
+
 export class SawOsc {
   constructor(props = {}) {
     this.phase = props.phase ?? 0;
@@ -349,21 +350,31 @@ export class ADSR {
 .out()*/
 const MAX_DELAY_TIME = 10;
 export class Delay {
-  writeIdx = 0;
-  readIdx = 0;
-  buffer = new Float32Array(MAX_DELAY_TIME * SAMPLE_RATE); //.fill(0)
-  write(s, delayTime) {
-    this.writeIdx = (this.writeIdx + 1) % this.buffer.length;
-    this.buffer[this.writeIdx] = s;
-    // Calculate how far in the past to read
-    let numSamples = Math.min(Math.floor(SAMPLE_RATE * delayTime), this.buffer.length - 1);
-    this.readIdx = this.writeIdx - numSamples;
-    // If past the start of the buffer, wrap around
-    if (this.readIdx < 0) this.readIdx += this.buffer.length;
+  constructor(_props = {}) {
+    this.buffer = new Float32Array(MAX_DELAY_TIME * SAMPLE_RATE);
+    this.writeIdx = 0;
+    this.readIdx = 0;
+    this.numSamples = 0;
   }
-  update(input, delayTime) {
+  write(s, delayTime) {
+    // Calculate how far in the past to read
+    this.numSamples = Math.min(Math.floor(SAMPLE_RATE * delayTime), this.buffer.length - 1);
+    this.writeIdx = (this.writeIdx + 1) % this.numSamples;
+    this.buffer[this.writeIdx] = s;
+    this.readIdx = this.writeIdx - this.numSamples + 1;
+
+    // If past the start of the buffer, wrap around (Q: is this possible?)
+    if (this.readIdx < 0) this.readIdx += this.numSamples;
+  }
+  update(input, delayTime, speed = 1) {
     this.write(input, delayTime);
-    return this.buffer[this.readIdx];
+    let index = this.readIdx;
+    if (speed < 0) {
+      index = this.numSamples - Math.floor(Math.abs(this.readIdx * speed) % this.numSamples);
+    } else {
+      index = Math.floor(this.readIdx * speed) % this.numSamples;
+    }
+    return this.buffer[index];
   }
 }
 
@@ -550,6 +561,7 @@ const defaultDefaultValues = {
   delay: 0,
   byteBeatExpression: '0',
   delayfeedback: 0.5,
+  delayspeed: 1,
   delaytime: 0.25,
   orbit: 1,
   i: 1,
@@ -662,6 +674,7 @@ export class DoughVoice {
     // delay
     $.delay = applyGainCurve($.delay ?? getDefaultValue('delay'));
     $.delayfeedback = $.delayfeedback ?? getDefaultValue('delayfeedback');
+    $.delayspeed = $.delayspeed ?? getDefaultValue('delayspeed');
     $.delaytime = $.delaytime ?? getDefaultValue('delaytime');
 
     // precalculated values
@@ -822,6 +835,7 @@ export class Dough {
   delaysend = [0, 0];
   delaytime = getDefaultValue('delaytime');
   delayfeedback = getDefaultValue('delayfeedback');
+  delayspeed = getDefaultValue('delayspeed');
   t = 0;
   // sampleRate: number, currentTime: number (seconds)
   constructor(sampleRate = 48000, currentTime = 0) {
@@ -897,12 +911,13 @@ export class Dough {
         this.delaysend[0] += this.voices[v].out[0] * this.voices[v].delay;
         this.delaysend[1] += this.voices[v].out[1] * this.voices[v].delay;
         this.delaytime = this.voices[v].delaytime; // we trust that these are initialized in the voice
+        this.delayspeed = this.voices[v].delayspeed; // we trust that these are initialized in the voice
         this.delayfeedback = this.voices[v].delayfeedback;
       }
     }
     // todo: how to change delaytime / delayfeedback from a voice?
-    const delayL = this._delayL.update(this.delaysend[0], this.delaytime);
-    const delayR = this._delayR.update(this.delaysend[1], this.delaytime);
+    const delayL = this._delayL.update(this.delaysend[0], this.delaytime, this.delayspeed);
+    const delayR = this._delayR.update(this.delaysend[1], this.delaytime, this.delayspeed);
     this.delaysend[0] = delayL * this.delayfeedback;
     this.delaysend[1] = delayR * this.delayfeedback;
     this.out[0] += delayL;

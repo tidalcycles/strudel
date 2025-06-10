@@ -964,14 +964,27 @@ export const { delay } = registerControl(['delay', 'delaytime', 'delayfeedback']
  *
  */
 export const { delayfeedback, delayfb, dfb } = registerControl('delayfeedback', 'delayfb', 'dfb');
+
+/**
+ * Sets the level of the signal that is fed back into the delay.
+ * Caution: Values >= 1 will result in a signal that gets louder and louder! Don't do it
+ *
+ * @name delayfeedback
+ * @param {number | Pattern} feedback between 0 and 1
+ * @synonyms delayfb, dfb
+ * @example
+ * s("bd").delay(.25).delayfeedback("<.25 .5 .75 1>")
+ *
+ */
+export const { delayspeed } = registerControl('delayspeed');
 /**
  * Sets the time of the delay effect.
  *
- * @name delaytime
- * @param {number | Pattern} seconds between 0 and Infinity
+ * @name delayspeed
+ * @param {number | Pattern} delayspeed controls the pitch of the delay feedback
  * @synonyms delayt, dt
  * @example
- * s("bd bd").delay(.25).delaytime("<.125 .25 .5 1>")
+ * note("d d a# a".fast(2)).s("sawtooth").delay(.8).delaytime(1/2).delayspeed("<2 .5 -1 -2>")
  *
  */
 export const { delaytime, delayt, dt } = registerControl('delaytime', 'delayt', 'dt');
