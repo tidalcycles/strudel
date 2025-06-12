@@ -16,11 +16,35 @@ function initDoughWorklet() {
   connectToDestination(doughWorklet); // channels?
 }
 
+const soundMap = new Map();
+const loadedSounds = new Map();
+
 Pattern.prototype.supradough = function () {
   return this.onTrigger((_, hap, __, cps, begin) => {
     hap.value._begin = begin;
     hap.value._duration = hap.duration / cps;
     !doughWorklet && initDoughWorklet();
+    const s = (hap.value.bank ? hap.value.bank + '_' : '') + hap.value.s;
+    const n = hap.value.n ?? 0;
+    const soundKey = `${s}:${n}`;
+    if (soundMap.has(s)) {
+      hap.value.s = soundKey; // dough.mjs is unaware of bank and n (only maps keys to buffers)
+    }
+    if (soundMap.has(s) && !loadedSounds.has(soundKey)) {
+      const urls = soundMap.get(s);
+      const url = urls[n % urls.length];
+      console.log(`load ${soundKey} from ${url}`);
+      const loadSample = fetchSample(url);
+      loadedSounds.set(soundKey, loadSample);
+      loadSample.then(({ channels, sampleRate }) =>
+        doughWorklet.port.postMessage({
+          sample: soundKey,
+          channels,
+          sampleRate,
+        }),
+      );
+    }
+
     doughWorklet.port.postMessage({ spawn: hap.value });
   }, 1);
 };
@@ -79,7 +103,7 @@ export async function fetchSampleMap(url) {
 
 // for some reason, only piano and flute work.. is it because mp3??
 
-async function loadSampleChannels(key, url) {
+async function fetchSample(url) {
   const buffer = await fetch(url)
     .then((res) => res.arrayBuffer())
     .then((buf) => getAudioContext().decodeAudioData(buf));
@@ -87,7 +111,7 @@ async function loadSampleChannels(key, url) {
   for (let i = 0; i < buffer.numberOfChannels; i++) {
     channels.push(buffer.getChannelData(i));
   }
-  return [key, channels, buffer.sampleRate];
+  return { channels, sampleRate: buffer.sampleRate };
 }
 
 export async function doughsamples(sampleMap, baseUrl) {
@@ -96,17 +120,11 @@ export async function doughsamples(sampleMap, baseUrl) {
     // console.log('json', json, 'base', base);
     return doughsamples(json, base);
   }
-  const json = (
-    await Promise.all(
-      Object.entries(sampleMap).map(async ([key, url]) => {
-        if (key !== '_base') {
-          url = baseUrl + url[0];
-          return loadSampleChannels(key, url);
-        }
-      }),
-    )
-  ).filter(Boolean);
-  // console.log('sampleMap', json);
-  !doughWorklet && initDoughWorklet();
-  doughWorklet.port.postMessage({ samples: json });
+  Object.entries(sampleMap).map(async ([key, urls]) => {
+    if (key !== '_base') {
+      urls = urls.map((url) => baseUrl + url);
+      // console.log('set', key, urls);
+      soundMap.set(key, urls);
+    }
+  });
 }
