@@ -59,6 +59,8 @@ async function getModule(name) {
   return modules.find((m) => m.packageName === name);
 }
 
+const initialCode = `$: s("[bd <hh oh>]*2").bank("tr909").dec(.4)`;
+
 export function useReplContext() {
   const { isSyncEnabled, audioEngineTarget } = useSettings();
   const shouldUseWebaudio = audioEngineTarget !== audioEngineTargets.osc;
@@ -77,7 +79,7 @@ export function useReplContext() {
       transpiler,
       autodraw: false,
       root: containerRef.current,
-      initialCode: '// LOADING',
+      initialCode,
       pattern: silence,
       drawTime,
       drawContext,
