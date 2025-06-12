@@ -90,7 +90,7 @@ const dough = new Dough(sampleRate);
 console.log('spawn voices...');
 haps.forEach((hap) => {
   hap.value._begin = Number(hap.whole.begin);
-  hap.value._duration = hap.duration/*  / cps */;
+  hap.value._duration = hap.duration /*  / cps */;
   dough.scheduleSpawn(hap.value);
 });
 console.log(`render ${seconds}s long buffer, each dot is 1 second:`);
