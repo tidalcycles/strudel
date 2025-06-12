@@ -1,5 +1,6 @@
 // this is dough, the superdough without dependencies
 const SAMPLE_RATE = typeof sampleRate !== 'undefined' ? sampleRate : 48000;
+const PI_DIV_SR = Math.PI / SAMPLE_RATE;
 const ISR = 1 / SAMPLE_RATE;
 
 let gainCurveFunc = (val) => Math.pow(val, 2);
@@ -145,11 +146,13 @@ export class TwoPoleFilter {
   s1 = 0;
   update(s, cutoff, resonance = 0) {
     // Out of bound values can produce NaNs
-    cutoff = Math.min(cutoff, 1);
     resonance = Math.max(resonance, 0);
-    var c = Math.pow(0.5, (1 - cutoff) / 0.125);
-    var r = Math.pow(0.5, (resonance + 0.125) / 0.125);
-    var mrc = 1 - r * c;
+
+    cutoff = Math.min(cutoff, 20000);
+    const c = 2 * Math.sin(cutoff * PI_DIV_SR);
+
+    const r = Math.pow(0.5, (resonance + 0.125) / 0.125);
+    const mrc = 1 - r * c;
 
     this.s0 = mrc * this.s0 - c * this.s1 + c * s; // bpf
     this.s1 = mrc * this.s1 + c * this.s0; // lpf
@@ -591,6 +594,7 @@ const defaultDefaultValues = {
   chorus: 0,
   note: 48,
   s: 'triangle',
+  bank: '',
   gain: 1,
   postgain: 1,
   velocity: 1,
@@ -620,6 +624,7 @@ const defaultDefaultValues = {
   fmh: 1,
   fmenv: 0, // differs from superdough
   speed: 1,
+  pw: 0.5,
 };
 
 let getDefaultValue = (key) => defaultDefaultValues[key];
@@ -674,14 +679,14 @@ export class DoughVoice {
     $.hresonance = $.hresonance ?? getDefaultValue('hresonance');
     $.bandq = $.bandq ?? getDefaultValue('bandq');
     $.speed = $.speed ?? getDefaultValue('speed');
+    $.pw = $.pw ?? getDefaultValue('pw');
 
     [$.attack, $.decay, $.sustain, $.release] = getADSR([$.attack, $.decay, $.sustain, $.release]);
 
     $._holdEnd = $._begin + $._duration; // needed for gate
     $._end = $._holdEnd + $.release + 0.01; // needed for despawn
 
-    $.s ??= 'triangle';
-    if ($.s === 'saw' || $.s === 'sawtooth') {
+    if ($.fmi && ($.s === 'saw' || $.s === 'sawtooth')) {
       $.s = 'zaw'; // polyblepped saw when fm is applied
     }
 
@@ -697,7 +702,7 @@ export class DoughVoice {
         $._buffers.push(new BufferPlayer(sample.channels[i], sample.sampleRate, $.unit === 'c')); // tbd unit === 'c'
       }
     } else {
-      console.warn('sound not found', $.s);
+      console.warn('sound not loaded', $.s);
     }
 
     if ($.penv) {
@@ -726,10 +731,6 @@ export class DoughVoice {
     $.delayfeedback = $.delayfeedback ?? getDefaultValue('delayfeedback');
     $.delayspeed = $.delayspeed ?? getDefaultValue('delayspeed');
     $.delaytime = $.delaytime ?? getDefaultValue('delaytime');
-
-    // precalculated values
-    $.piOverSr = Math.PI / value.sampleRate;
-    $.eighthOverLogHalf = 0.125 / Math.log(0.5);
 
     // filter setup
     if ($.lpenv) {
@@ -762,11 +763,6 @@ export class DoughVoice {
       $._crush?.push(new Crush());
       $._distort?.push(new Distort());
     }
-  }
-  // credits to pulu: https://github.com/felixroos/kabelsalat/issues/35
-  freq2cutoff(freq) {
-    const c = 2 * Math.sin(freq * this.piOverSr);
-    return 1 - Math.log(c) * this.eighthOverLogHalf;
   }
   update(t) {
     if (!this._sound && !this._buffers) {
@@ -806,7 +802,6 @@ export class DoughVoice {
         const env = this._lpenv.update(t, gate, this.lpattack, this.lpdecay, this.lpsustain, this.lprelease);
         lpf = this.lpenv * env * lpf + lpf;
       }
-      lpf = this.freq2cutoff(lpf);
     }
     let hpf = this.hcutoff;
     if (this._hpf) {
@@ -814,7 +809,6 @@ export class DoughVoice {
         const env = this._hpenv.update(t, gate, this.hpattack, this.hpdecay, this.hpsustain, this.hprelease);
         hpf = 2 ** this.hpenv * env * hpf + hpf;
       }
-      hpf = this.freq2cutoff(hpf);
     }
     let bpf = this.bandf;
     if (this._bpf) {
@@ -822,7 +816,6 @@ export class DoughVoice {
         const env = this._bpenv.update(t, gate, this.bpattack, this.bpdecay, this.bpsustain, this.bprelease);
         bpf = 2 ** this.bpenv * env * bpf + bpf;
       }
-      bpf = this.freq2cutoff(bpf);
     }
     // gain envelope
     const env = this._adsr.update(t, gate, this.attack, this.decay, this.sustain, this.release);
@@ -831,7 +824,7 @@ export class DoughVoice {
     for (let i = 0; i < this._channels; i++) {
       // sound source
       if (this._sound && this.s === 'pulse') {
-        this.out[i] = this._sound.update(freq, this.pw ?? 0.5);
+        this.out[i] = this._sound.update(freq, this.pw);
       } else if (this._sound) {
         this.out[i] = this._sound.update(freq);
       } else if (this._buffers) {
