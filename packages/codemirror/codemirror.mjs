@@ -24,6 +24,7 @@ import { initTheme, activateTheme, theme } from './themes.mjs';
 import { sliderPlugin, updateSliderWidgets } from './slider.mjs';
 import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
+import { dragDropPlugin } from './dragdrop.mjs';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -78,6 +79,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       javascript(),
       sliderPlugin,
       widgetPlugin,
+      dragDropPlugin,
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
       syntaxHighlighting(defaultHighlightStyle),
