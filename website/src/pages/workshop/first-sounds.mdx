@@ -270,16 +270,17 @@ This is shorter and more readable than:
 Now we've learned the basics of the so called Mini-Notation, the rhythm language of Tidal.
 This is what we've learned so far:
 
-| Concept           | Syntax   | Example                                                                 |
-| ----------------- | -------- | ----------------------------------------------------------------------- |
-| Sequence          | space    | <MiniRepl client:visible tune={`sound("bd bd sd hh")`} />               |
-| Sample Number     | :x       | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />       |
-| Rests             | - or ~   | <MiniRepl client:visible tune={`sound("metal - jazz jazz:1")`} />       |
+| Concept           | Syntax   | Description                               | Example                                                                 |
+| ----------------- | -------- | ----------------------------------------- | ----------------------------------------------------------------------- |
+| Sequence          | space    | Play sounds one after another             | <MiniRepl client:visible tune={`sound("bd bd sd hh bd cp sd hh")`} />   |
+| Sample Number     | :x       | Select a specific sample from a sound     | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />       |
+| Rests             | - or ~   | Add silence into the sequence             | <MiniRepl client:visible tune={`sound("metal ~ jazz jazz:1")`} />       |
 | Alternate         | \<\>     | <MiniRepl client:visible tune={`sound("<bd hh rim oh bd rim>")`} />     |
-| Sub-Sequences     | \[\]     | <MiniRepl client:visible tune={`sound("bd wind [metal jazz] hh")`} />   |
-| Sub-Sub-Sequences | \[\[\]\] | <MiniRepl client:visible tune={`sound("bd [metal [jazz [sd cp]]]")`} /> |
-| Speed up          | \*       | <MiniRepl client:visible tune={`sound("bd sd*2 cp*3")`} />              |
-| Parallel          | ,        | <MiniRepl client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />        |
+| Sub-Sequences     | \[\]     | Group elements, squished into their space | <MiniRepl client:visible tune={`sound("bd wind [metal jazz] hh")`} />   |
+| Sub-Sub-Sequences | \[\[\]\] | Nest groups within groups                 | <MiniRepl client:visible tune={`sound("bd [metal [jazz sd]]")`} />      |
+| Speed up          | \*       | Make elements play faster                 | <MiniRepl client:visible tune={`sound("bd sd*2 cp*3")`} />              |
+| Parallel          | ,        | Play multiple sequences at the same time  | <MiniRepl client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />       |
+| Multiple-Lines    | \`\`     | Write sequences across multiple lines     | <MiniRepl client:visible tune={'sound(`bd*2, \n hh*4`)'} />            |
 
 The Mini-Notation is usually used inside some function. These are the functions we've seen so far:
 

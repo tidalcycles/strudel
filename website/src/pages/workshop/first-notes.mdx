@@ -305,12 +305,14 @@ What's the difference?
 
 Let's recap what we've learned in this chapter:
 
-| Concept   | Syntax | Example                                                  |
-| --------- | ------ | -------------------------------------------------------- |
-| Slow down | \/     | <MiniRepl client:visible tune={`note("[c a f e]/2")`} /> |
-| Alternate | \<\>   | <MiniRepl client:visible tune={`note("c a f <e g>")`} /> |
-| Elongate  | @      | <MiniRepl client:visible tune={`note("c@3 e")`} />       |
-| Replicate | !      | <MiniRepl client:visible tune={`note("c!3 e")`} />       |
+| Concept         | Syntax | Description                                    | Example                                                                    |
+| --------------- | ------ | ---------------------------------------------- | -------------------------------------------------------------------------- |
+| Slow down       | /      | Divide a sequence over multiple cycles         | <MiniRepl client:visible tune={`note("[c a f e]/2")`} />                  |
+| Alternate       | \<\>   | Play one element per cycle from a sequence     | <MiniRepl client:visible tune={`note("c a f <e g>")`} />                  |
+| Elongate        | @      | Extend the duration of an element              | <MiniRepl client:visible tune={`note("c@3 e")`} />                        |
+| Replicate       | !      | Repeat an element multiple times               | <MiniRepl client:visible tune={`note("c!3 e")`} />                        |
+| Switch sounds   | space  | Cycle through sounds within the `sound` func   | <MiniRepl client:visible tune={`note("c e").sound("piano sawtooth")`} />       |
+| Stack sounds    | ,      | Play multiple sounds together in `sound` func  | <MiniRepl client:visible tune={`note("c e").sound("piano, sawtooth")`} />      |
 
 New functions:
 
