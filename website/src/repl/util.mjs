@@ -7,7 +7,7 @@ import './Repl.css';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { $featuredPatterns, loadDBPatterns } from '@src/user_pattern_utils.mjs';
+import { $featuredPatterns /* , loadDBPatterns */ } from '@src/user_pattern_utils.mjs';
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(
@@ -16,9 +16,9 @@ export const supabase = createClient(
 );
 
 let dbLoaded;
-if (typeof window !== 'undefined') {
+/* if (typeof window !== 'undefined') {
   dbLoaded = loadDBPatterns();
-}
+} */
 
 export async function initCode() {
   // load code from url hash (either short hash from database or decode long hash)

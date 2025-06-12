@@ -59,6 +59,8 @@ async function getModule(name) {
   return modules.find((m) => m.packageName === name);
 }
 
+const initialCode = `// LOADING`;
+
 export function useReplContext() {
   const { isSyncEnabled, audioEngineTarget } = useSettings();
   const shouldUseWebaudio = audioEngineTarget !== audioEngineTargets.osc;
@@ -77,7 +79,7 @@ export function useReplContext() {
       transpiler,
       autodraw: false,
       root: containerRef.current,
-      initialCode: '// LOADING',
+      initialCode,
       pattern: silence,
       drawTime,
       drawContext,
@@ -133,9 +135,10 @@ export function useReplContext() {
         code = latestCode;
         msg = `Your last session has been loaded!`;
       } else {
-        const { code: randomTune, name } = await getRandomTune();
-        code = randomTune;
-        msg = `A random code snippet named "${name}" has been loaded!`;
+        /* const { code: randomTune, name } = await getRandomTune();
+        code = randomTune; */
+        code = '$: s("[bd <hh oh>]*2").bank("tr909").dec(.4)';
+        msg = `Default code has been loaded`;
       }
       editor.setCode(code);
       setDocumentTitle(code);
