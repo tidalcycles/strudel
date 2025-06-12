@@ -32,6 +32,7 @@ export const defaultSettings = {
   panelPosition: 'right',
   isPanelPinned: false,
   isPanelOpen: true,
+  panelWidth: 400,
   togglePanelTrigger: 'click', //click | hover
   userPatterns: '{}',
   audioEngineTarget: audioEngineTargets.webaudio,
@@ -89,6 +90,7 @@ export function useSettings() {
 export const setActiveFooter = (tab) => settingsMap.setKey('activeFooter', tab);
 export const setPanelPinned = (bool) => settingsMap.setKey('isPanelPinned', bool);
 export const setIsPanelOpened = (bool) => settingsMap.setKey('isPanelOpen', bool);
+export const setPanelWidth = (width) => settingsMap.setKey('panelWidth', width);
 
 export const setIsZen = (active) => settingsMap.setKey('isZen', !!active);
 

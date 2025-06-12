@@ -6,7 +6,7 @@ import { Reference } from './Reference';
 import { SettingsTab } from './SettingsTab';
 import { SoundsTab } from './SoundsTab';
 import { useLogger } from '../useLogger';
-import { WelcomeTab } from './WelcomeTab';
+import { AIChatTab } from './AIChatTab';
 import { PatternsTab } from './PatternsTab';
 import { ChevronLeftIcon, XMarkIcon } from '@heroicons/react/16/solid';
 
@@ -40,12 +40,13 @@ export function HorizontalPanel({ context }) {
 
 export function VerticalPanel({ context }) {
   const settings = useSettings();
-  const { activeFooter: tab, isPanelOpen } = settings;
+  const { activeFooter: tab, isPanelOpen, panelWidth } = settings;
 
   return (
     <PanelNav
       settings={settings}
-      className={cx(isPanelOpen ? `min-w-[min(600px,80vw)] max-w-[min(600px,80vw)]` : 'min-w-12 max-w-12')}
+      className={cx(isPanelOpen ? '' : 'min-w-12 max-w-12')}
+      style={isPanelOpen ? { width: `${panelWidth}px`, minWidth: `${panelWidth}px`, maxWidth: `${panelWidth}px` } : undefined}
     >
       {isPanelOpen ? (
         <div className={cx('flex flex-col h-full')}>
@@ -76,7 +77,7 @@ export function VerticalPanel({ context }) {
 }
 
 const tabNames = {
-  welcome: 'intro',
+  chat: 'AI',
   patterns: 'patterns',
   sounds: 'sounds',
   reference: 'reference',
@@ -87,7 +88,7 @@ if (TAURI) {
   tabNames.files = 'files';
 }
 
-function PanelNav({ children, className, settings, ...props }) {
+function PanelNav({ children, className, settings, style, ...props }) {
   const isHoverBehavior = settings.togglePanelTrigger === 'hover';
   return (
     <nav
@@ -108,6 +109,7 @@ function PanelNav({ children, className, settings, ...props }) {
       }}
       aria-label="Menu Panel"
       className={cx('bg-lineHighlight group overflow-x-auto', className)}
+      style={style}
       {...props}
     >
       {children}
@@ -131,7 +133,7 @@ function PanelContent({ context, tab }) {
     case tabNames.files:
       return <FilesTab />;
     default:
-      return <WelcomeTab context={context} />;
+      return <AIChatTab context={context} />;
   }
 }
 
