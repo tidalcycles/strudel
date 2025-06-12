@@ -15,17 +15,18 @@ export function WelcomeTab({ context }) {
         <br />
         <span className="underline">1. hit play</span> - <span className="underline">2. change something</span> -{' '}
         <span className="underline">3. hit update</span>
-        <br />
-        If you don't like what you hear, try <span className="underline">shuffle</span>!
+        {/* <br />
+        If you don't like what you hear, try <span className="underline">shuffle</span>! */}
       </p>
       <p>
-        To learn more about what this all means, check out the{' '}
+        {/* To learn more about what this all means, check out the{' '} */}
+        To get started, check out the
         <a href={`${baseNoTrailing}/workshop/getting-started/`} target="_blank">
           interactive tutorial
         </a>
         . Also feel free to join the{' '}
         <a href="https://discord.com/invite/HGEdXmRkzT" target="_blank">
-          tidalcycles discord channel
+          discord channel
         </a>{' '}
         to ask any questions, give feedback or just say hello.
       </p>
