@@ -102,7 +102,7 @@ export function Header({ context, embedded = false }) {
               <span> shuffle</span>
             </button>
           ) */}
-          {/* !isEmbedded && (
+          {!isEmbedded && (
             <button
               title="share"
               className={cx(
@@ -113,7 +113,7 @@ export function Header({ context, embedded = false }) {
             >
               <span>share</span>
             </button>
-          ) */}
+          )}
           {!isEmbedded && (
             <a
               title="learn"

@@ -109,38 +109,56 @@ export function confirmDialog(msg) {
 }
 
 let lastShared;
-export async function shareCode(codeToShare) {
-  // const codeToShare = activeCode || code;
-  if (lastShared === codeToShare) {
-    logger(`Link already generated!`, 'error');
-    return;
-  }
 
-  confirmDialog(
-    'Do you want your pattern to be public? If no, press cancel and you will get just a private link.',
-  ).then(async (isPublic) => {
-    const hash = nanoid(12);
-    const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
-    const { error } = await supabase.from('code_v1').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
-    if (!error) {
-      lastShared = codeToShare;
-      // copy shareUrl to clipboard
-      if (isTauri()) {
-        await writeText(shareUrl);
-      } else {
-        await navigator.clipboard.writeText(shareUrl);
-      }
-      const message = `Link copied to clipboard: ${shareUrl}`;
-      alert(message);
-      // alert(message);
-      logger(message, 'highlight');
+//RIP due to SPAM
+// export async function shareCode(codeToShare) {
+//   // const codeToShare = activeCode || code;
+//   if (lastShared === codeToShare) {
+//     logger(`Link already generated!`, 'error');
+//     return;
+//   }
+
+//   confirmDialog(
+//     'Do you want your pattern to be public? If no, press cancel and you will get just a private link.',
+//   ).then(async (isPublic) => {
+//     const hash = nanoid(12);
+//     const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
+//     const { error } = await supabase.from('code_v1').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
+//     if (!error) {
+//       lastShared = codeToShare;
+//       // copy shareUrl to clipboard
+//       if (isTauri()) {
+//         await writeText(shareUrl);
+//       } else {
+//         await navigator.clipboard.writeText(shareUrl);
+//       }
+//       const message = `Link copied to clipboard: ${shareUrl}`;
+//       alert(message);
+//       // alert(message);
+//       logger(message, 'highlight');
+//     } else {
+//       console.log('error', error);
+//       const message = `Error: ${error.message}`;
+//       // alert(message);
+//       logger(message);
+//     }
+//   });
+// }
+
+export async function shareCode() {
+  try {
+    const shareUrl = window.location.href;
+    if (isTauri()) {
+      await writeText(shareUrl);
     } else {
-      console.log('error', error);
-      const message = `Error: ${error.message}`;
-      // alert(message);
-      logger(message);
+      await navigator.clipboard.writeText(shareUrl);
     }
-  });
+    const message = `Link copied to clipboard!`;
+    alert(message);
+    logger(message, 'highlight');
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export const isIframe = () => window.location !== window.parent.location;
