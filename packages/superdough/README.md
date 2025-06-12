@@ -92,6 +92,29 @@ superdough({ s: 'bd', delay: 0.5 }, 0, 1);
 - `deadline`: seconds until the sound should play (0 = immediate)
 - `duration`: seconds the sound should last. optional for one shot samples, required for synth sounds
 
+### prepare(value)
+
+Informs superdough that a sound will be needed in the future.
+If the sound is a sample that is not loaded yet, it will be fetched.
+Otherwise does nothing.
+`value` has a syntax identical to the one used `superdough()`.
+
+```js
+prepare({ s: 'bd', delay: 0.5 });
+
+// some time later
+
+superdough({ s: 'bd', delay: 0.5 }, 0, 1);
+```
+
+Can be awaited to ensure that a given sound is ready to play.
+
+```js
+const sound = { s: 'hh' };
+await prepare(sound);
+superdough(sound, 0, 1);
+```
+
 ### registerSynthSounds()
 
 Loads the default waveforms `sawtooth`, `square`, `triangle` and `sine`. Use them like this:

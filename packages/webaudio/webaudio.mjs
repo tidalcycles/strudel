@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as strudel from '@strudel/core';
-import { superdough, getAudioContext, setLogger, doughTrigger } from 'superdough';
+import { superdough, prepare, getAudioContext, setLogger, doughTrigger } from 'superdough';
 const { Pattern, logger, repl } = strudel;
 
 setLogger(logger);
@@ -20,6 +20,8 @@ export const webaudioOutputTrigger = (t, hap, ct, cps) => superdough(hap2value(h
 export const webaudioOutput = (hap, deadline, hapDuration, cps, t) =>
   superdough(hap2value(hap), t ? `=${t}` : deadline, hapDuration);
 
+export const webaudioPrepare = (hap) => prepare(hap2value(hap));
+
 Pattern.prototype.webaudio = function () {
   return this.onTrigger(webaudioOutputTrigger);
 };
@@ -28,6 +30,7 @@ export function webaudioRepl(options = {}) {
   options = {
     getTime: () => getAudioContext().currentTime,
     defaultOutput: webaudioOutput,
+    defaultPrepare: webaudioPrepare,
     ...options,
   };
   return repl(options);
