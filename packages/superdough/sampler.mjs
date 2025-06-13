@@ -196,6 +196,52 @@ function getSamplesPrefixHandler(url) {
   return;
 }
 
+export async function fetchSampleMap(url) {
+  // check if custom prefix handler
+  const handler = getSamplesPrefixHandler(url);
+  if (handler) {
+    return handler(url);
+  }
+  url = resolveSpecialPaths(url);
+  if (url.startsWith('github:')) {
+    url = githubPath(url, 'strudel.json');
+  }
+  if (url.startsWith('local:')) {
+    url = `http://localhost:5432`;
+  }
+  if (url.startsWith('shabda:')) {
+    let [_, path] = url.split('shabda:');
+    url = `https://shabda.ndre.gr/${path}.json?strudel=1`;
+  }
+  if (url.startsWith('shabda/speech')) {
+    let [_, path] = url.split('shabda/speech');
+    path = path.startsWith('/') ? path.substring(1) : path;
+    let [params, words] = path.split(':');
+    let gender = 'f';
+    let language = 'en-GB';
+    if (params) {
+      [language, gender] = params.split('/');
+    }
+    url = `https://shabda.ndre.gr/speech/${words}.json?gender=${gender}&language=${language}&strudel=1'`;
+  }
+  if (typeof fetch !== 'function') {
+    // not a browser
+    return;
+  }
+  const base = url.split('/').slice(0, -1).join('/');
+  if (typeof fetch === 'undefined') {
+    // skip fetch when in node / testing
+    return;
+  }
+  const json = await fetch(url)
+    .then((res) => res.json())
+    .catch((error) => {
+      console.error(error);
+      throw new Error(`error loading "${url}"`);
+    });
+  return [json, json._base || base];
+}
+
 /**
  * Loads a collection of samples to use with `s`
  * @example
@@ -217,49 +263,8 @@ function getSamplesPrefixHandler(url) {
 
 export const samples = async (sampleMap, baseUrl = sampleMap._base || '', options = {}) => {
   if (typeof sampleMap === 'string') {
-    // check if custom prefix handler
-    const handler = getSamplesPrefixHandler(sampleMap);
-    if (handler) {
-      return handler(sampleMap);
-    }
-    sampleMap = resolveSpecialPaths(sampleMap);
-    if (sampleMap.startsWith('github:')) {
-      sampleMap = githubPath(sampleMap, 'strudel.json');
-    }
-    if (sampleMap.startsWith('local:')) {
-      sampleMap = `http://localhost:5432`;
-    }
-    if (sampleMap.startsWith('shabda:')) {
-      let [_, path] = sampleMap.split('shabda:');
-      sampleMap = `https://shabda.ndre.gr/${path}.json?strudel=1`;
-    }
-    if (sampleMap.startsWith('shabda/speech')) {
-      let [_, path] = sampleMap.split('shabda/speech');
-      path = path.startsWith('/') ? path.substring(1) : path;
-      let [params, words] = path.split(':');
-      let gender = 'f';
-      let language = 'en-GB';
-      if (params) {
-        [language, gender] = params.split('/');
-      }
-      sampleMap = `https://shabda.ndre.gr/speech/${words}.json?gender=${gender}&language=${language}&strudel=1'`;
-    }
-    if (typeof fetch !== 'function') {
-      // not a browser
-      return;
-    }
-    const base = sampleMap.split('/').slice(0, -1).join('/');
-    if (typeof fetch === 'undefined') {
-      // skip fetch when in node / testing
-      return;
-    }
-    return fetch(sampleMap)
-      .then((res) => res.json())
-      .then((json) => samples(json, baseUrl || json._base || base, options))
-      .catch((error) => {
-        console.error(error);
-        throw new Error(`error loading "${sampleMap}"`);
-      });
+    const [json, base] = await fetchSampleMap(sampleMap);
+    return samples(json, baseUrl || base, options);
   }
   const { prebake, tag } = options;
   processSampleMap(

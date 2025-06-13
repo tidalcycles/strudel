@@ -486,6 +486,18 @@ importers:
         specifier: workspace:*
         version: link:../vite-plugin-bundle-audioworklet
 
+  packages/supradough:
+    devDependencies:
+      vite:
+        specifier: ^6.0.11
+        version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite-plugin-bundle-audioworklet:
+        specifier: workspace:*
+        version: link:../vite-plugin-bundle-audioworklet
+      wav-encoder:
+        specifier: ^1.3.0
+        version: 1.3.0
+
   packages/tidal:
     dependencies:
       '@strudel/core':
@@ -594,6 +606,9 @@ importers:
       superdough:
         specifier: workspace:*
         version: link:../superdough
+      supradough:
+        specifier: workspace:*
+        version: link:../supradough
     devDependencies:
       vite:
         specifier: ^6.0.11
@@ -7463,6 +7478,9 @@ packages:
 
   walk-up-path@3.0.1:
     resolution: {integrity: sha512-9YlCL/ynK3CTlrSRrDxZvUauLzAswPCrsaCgilqFevUYpeEW0/3ScEjaa3kbW/T0ghhkEr7mv+fpjqn1Y1YuTA==}
+
+  wav-encoder@1.3.0:
+    resolution: {integrity: sha512-FXJdEu2qDOI+wbVYZpu21CS1vPEg5NaxNskBr4SaULpOJMrLE6xkH8dECa7PiS+ZoeyvP7GllWUAxPN3AvFSEw==}
 
   wav@1.0.2:
     resolution: {integrity: sha512-viHtz3cDd/Tcr/HbNqzQCofKdF6kWUymH9LGDdskfWFoIy/HJ+RTihgjEcHfnsy1PO4e9B+y4HwgTwMrByquhg==}
@@ -15838,6 +15856,8 @@ snapshots:
   w3c-keyname@2.2.8: {}
 
   walk-up-path@3.0.1: {}
+
+  wav-encoder@1.3.0: {}
 
   wav@1.0.2:
     dependencies:
