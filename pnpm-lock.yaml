@@ -451,6 +451,22 @@ importers:
         specifier: ^6.0.11
         version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
 
+  packages/shader:
+    dependencies:
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
+      picogl:
+        specifier: ^0.17.9
+        version: 0.17.9
+    devDependencies:
+      vite:
+        specifier: ^5.0.10
+        version: 5.4.9(@types/node@22.7.6)(terser@5.36.0)
+      vitest:
+        specifier: ^2.1.3
+        version: 2.1.3(@types/node@22.7.6)(@vitest/ui@2.1.3)(terser@5.36.0)
+
   packages/soundfonts:
     dependencies:
       '@strudel/core':
@@ -695,6 +711,9 @@ importers:
       '@strudel/serial':
         specifier: workspace:*
         version: link:../packages/serial
+      '@strudel/shader':
+        specifier: workspace:*
+        version: link:../packages/shader
       '@strudel/soundfonts':
         specifier: workspace:*
         version: link:../packages/soundfonts
@@ -6027,6 +6046,9 @@ packages:
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
+  picogl@0.17.9:
+    resolution: {integrity: sha512-TfqB7jlD5FTO4a/Rp9wnMhVjPA0XZ/xbtLS2f8eHtOmVtIOhFD7Wf0jUL6kDjww3bgF/REEV9oPreBeGvWFlUQ==}
+
   picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
@@ -7582,6 +7604,7 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -14218,6 +14241,8 @@ snapshots:
   performance-now@2.1.0: {}
 
   picocolors@1.1.1: {}
+
+  picogl@0.17.9: {}
 
   picomatch@2.3.1: {}
 
