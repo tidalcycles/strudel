@@ -124,7 +124,7 @@ export const getAudioDevices = async () => {
 
 const defaultDefaultValues = {
   s: 'triangle',
-  gain: 0.8,
+  gain: 1,
   postgain: 1,
   density: '.03',
   ftype: '12db',
