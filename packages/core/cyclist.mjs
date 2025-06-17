@@ -23,6 +23,8 @@ export class Cyclist {
     this.beforeStart = beforeStart;
     this.cps = 0.5;
     this.num_ticks_since_cps_change = 0;
+    this.loopStart = 0;
+    this.loopLength = 0;
     this.lastTick = 0; // absolute time when last tick (clock callback) happened
     this.lastBegin = 0; // query begin of last tick
     this.lastEnd = 0; // query end of last tick
@@ -48,6 +50,10 @@ export class Cyclist {
           this.lastBegin = begin;
           const end = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
           this.lastEnd = end;
+          if (this.loopLength > 0 && this.lastEnd >= this.loopStart + this.loopLength) {
+            this.lastEnd = this.loopStart + (this.lastEnd % 1);
+            this.num_ticks_since_cps_change = 0;
+          }
           this.lastTick = phase;
 
           if (phase < t) {
@@ -116,7 +122,7 @@ export class Cyclist {
   stop() {
     logger('[cyclist] stop');
     this.clock.stop();
-    this.lastEnd = 0;
+    this.lastEnd = this.loopStart;
     this.setStarted(false);
   }
   async setPattern(pat, autostart = false) {
@@ -131,6 +137,19 @@ export class Cyclist {
     }
     this.cps = cps;
     this.num_ticks_since_cps_change = 0;
+  }
+  setLoop(start = 0, length = 0) {
+    if (start >= 0 && length >= 0) {
+      start = Math.floor(start);
+      length = Math.floor(length);
+
+      if (start != this.loopStart || length != this.loopLength) {
+        this.loopStart = Math.floor(start);
+        this.loopLength = Math.floor(length);
+        this.lastEnd = this.loopStart + (this.lastEnd % 1);
+        this.num_ticks_since_cps_change = 0;
+      }
+    }
   }
   log(begin, end, haps) {
     const onsets = haps.filter((h) => h.hasOnset());
