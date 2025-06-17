@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import * as _WebMidi from 'webmidi';
 import { Pattern, getEventOffsetMs, isPattern, logger, ref } from '@strudel/core';
-import { noteToMidi, getControlName } from '@strudel/core';
+import { noteToMidi, hasControlName, getControlName, registerControl } from '@strudel/core';
 import { Note } from 'webmidi';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -100,10 +100,34 @@ export const midicontrolMap = new Map();
 function unifyMapping(mapping) {
   return Object.fromEntries(
     Object.entries(mapping).map(([key, mapping]) => {
+      // Convert number to object with ccn property
       if (typeof mapping === 'number') {
         mapping = { ccn: mapping };
       }
-      return [getControlName(key), mapping];
+
+      // Get the non-aliased control name from the key
+      const controlName = getControlName(key);
+
+      // Check if the key or controlName already exists in the controlAlias map
+      if (hasControlName(key) || hasControlName(controlName)) {
+        // Show warning and carry on.
+        logger(`[midimap] '[${key}, ${controlName}]' overwrites a Strudel API.`);
+
+        // Throw error to stop the music
+        //throw new Error(`[midimap] '${key}' overwrites a Strudel API.`);
+      }
+
+      // Register the control in the midicontrolMap if it doesn't exist
+      if (!midicontrolMap.has(controlName)) {
+        try {
+          registerControl(controlName);
+        } catch (err) {
+          throw new Error(`[midimap] Failed to register midimap control '${controlName}': ${err.message}`);
+        }
+      } else {
+        logger(`[midimap] '${controlName}' already registered as a midimap control. Skipping registration.`);
+      }
+      return [controlName, mapping];
     }),
   );
 }
@@ -162,7 +186,14 @@ export async function midimaps(map) {
     map = await loadCache[map];
   }
   if (typeof map === 'object') {
-    Object.entries(map).forEach(([name, mapping]) => midicontrolMap.set(name, unifyMapping(mapping)));
+    Object.entries(map).forEach(([name, mapping]) => {
+      try {
+        midicontrolMap.set(name, unifyMapping(mapping));
+      } catch (err) {
+        logger(`[midi] Error setting midimap '${name}': ${err.message}`);
+        throw err;
+      }
+    });
   }
 }
 
@@ -324,18 +355,18 @@ Pattern.prototype.midi = function (midiport, options = {}) {
       const device = getDevice(midiConfig.midiport, outputs);
       const otherOutputs = outputs.filter((o) => o.name !== device.name);
       logger(
-        `Midi enabled! Using "${device.name}". ${
+        `[midi] Midi enabled! Using "${device.name}". ${
           otherOutputs?.length ? `Also available: ${getMidiDeviceNamesString(otherOutputs)}` : ''
         }`,
       );
     },
     onDisconnected: ({ outputs }) =>
-      logger(`Midi device disconnected! Available: ${getMidiDeviceNamesString(outputs)}`),
+      logger(`[midi] Midi device disconnected! Available: ${getMidiDeviceNamesString(outputs)}`),
   });
 
   return this.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     if (!WebMidi.enabled) {
-      logger('Midi not enabled');
+      logger('[midi] Midi not enabled');
       return;
     }
     hap.ensureObjectValue();
@@ -383,7 +414,9 @@ Pattern.prototype.midi = function (midiport, options = {}) {
       ccs.forEach(({ ccn, ccv }) => sendCC(ccn, ccv, device, midichan, timeOffsetString));
     } else if (midimap !== 'default') {
       // Add warning when a non-existent midimap is specified
-      logger(`[midi] midimap "${midimap}" not found! Available maps: ${[...midicontrolMap.keys()].join(', ')}`);
+      throw new Error(
+        `[midimap] midimap "${midimap}" not found! Available maps: ${[...midicontrolMap.keys()].join(', ')}`,
+      );
     }
 
     // Handle note

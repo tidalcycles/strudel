@@ -1816,6 +1816,23 @@ export const { miditouch } = registerControl('miditouch');
 // TODO: what is this?
 export const { polyTouch } = registerControl('polyTouch');
 
+/**
+ * Checks if a control name exists in the controlAlias map.
+ * @name hasControlName
+ * @param {string} alias The control name to check
+ * @returns {boolean} True if the control name exists, false otherwise
+ */
+export const hasControlName = (alias) => {
+  // Check if the name exists as a key (alias) or value (main control name)
+  return controlAlias.has(alias) || Array.from(controlAlias.values()).includes(alias);
+};
+
+/**
+ * Gets the control name from the controlAlias map.
+ * @name getControlName
+ * @param {string} alias The control name to get
+ * @returns {string} The control name
+ */
 export const getControlName = (alias) => {
   if (controlAlias.has(alias)) {
     return controlAlias.get(alias);
