@@ -10267,6 +10267,279 @@ exports[`runs examples > example "vib" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "vibDuration" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibDuration:200 ]",
+  "[ 1/4 → 1/2 | s:hh vibDuration:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibDuration:100 ]",
+  "[ 3/4 → 1/1 | s:hh vibDuration:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibDuration:200 ]",
+  "[ 5/4 → 3/2 | s:hh vibDuration:0 ]",
+  "[ 3/2 → 7/4 | s:sd vibDuration:100 ]",
+  "[ 7/4 → 2/1 | s:hh vibDuration:0 ]",
+  "[ 2/1 → 9/4 | s:bd vibDuration:200 ]",
+  "[ 9/4 → 5/2 | s:hh vibDuration:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibDuration:100 ]",
+  "[ 11/4 → 3/1 | s:hh vibDuration:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibDuration:200 ]",
+  "[ 13/4 → 7/2 | s:hh vibDuration:0 ]",
+  "[ 7/2 → 15/4 | s:sd vibDuration:100 ]",
+  "[ 15/4 → 4/1 | s:hh vibDuration:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibDuration" example index 0 2`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibDuration:200 ]",
+  "[ 1/4 → 1/2 | s:hh vibDuration:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibDuration:100 ]",
+  "[ 3/4 → 1/1 | s:hh vibDuration:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibDuration:200 ]",
+  "[ 5/4 → 3/2 | s:hh vibDuration:0 ]",
+  "[ 3/2 → 7/4 | s:sd vibDuration:100 ]",
+  "[ 7/4 → 2/1 | s:hh vibDuration:0 ]",
+  "[ 2/1 → 9/4 | s:bd vibDuration:200 ]",
+  "[ 9/4 → 5/2 | s:hh vibDuration:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibDuration:100 ]",
+  "[ 11/4 → 3/1 | s:hh vibDuration:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibDuration:200 ]",
+  "[ 13/4 → 7/2 | s:hh vibDuration:0 ]",
+  "[ 7/2 → 15/4 | s:sd vibDuration:100 ]",
+  "[ 15/4 → 4/1 | s:hh vibDuration:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibEnable" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibEnable:1 ]",
+  "[ 1/4 → 1/2 | s:hh vibEnable:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibEnable:1 ]",
+  "[ 3/4 → 1/1 | s:hh vibEnable:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibEnable:1 ]",
+  "[ 5/4 → 3/2 | s:hh vibEnable:0 ]",
+  "[ 3/2 → 7/4 | s:sd vibEnable:1 ]",
+  "[ 7/4 → 2/1 | s:hh vibEnable:0 ]",
+  "[ 2/1 → 9/4 | s:bd vibEnable:1 ]",
+  "[ 9/4 → 5/2 | s:hh vibEnable:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibEnable:1 ]",
+  "[ 11/4 → 3/1 | s:hh vibEnable:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibEnable:1 ]",
+  "[ 13/4 → 7/2 | s:hh vibEnable:0 ]",
+  "[ 7/2 → 15/4 | s:sd vibEnable:1 ]",
+  "[ 15/4 → 4/1 | s:hh vibEnable:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibEnable" example index 0 2`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibEnable:1 ]",
+  "[ 1/4 → 1/2 | s:hh vibEnable:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibEnable:1 ]",
+  "[ 3/4 → 1/1 | s:hh vibEnable:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibEnable:1 ]",
+  "[ 5/4 → 3/2 | s:hh vibEnable:0 ]",
+  "[ 3/2 → 7/4 | s:sd vibEnable:1 ]",
+  "[ 7/4 → 2/1 | s:hh vibEnable:0 ]",
+  "[ 2/1 → 9/4 | s:bd vibEnable:1 ]",
+  "[ 9/4 → 5/2 | s:hh vibEnable:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibEnable:1 ]",
+  "[ 11/4 → 3/1 | s:hh vibEnable:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibEnable:1 ]",
+  "[ 13/4 → 7/2 | s:hh vibEnable:0 ]",
+  "[ 7/2 → 15/4 | s:sd vibEnable:1 ]",
+  "[ 15/4 → 4/1 | s:hh vibEnable:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibGamepad" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibGamepad:0 ]",
+  "[ 1/4 → 1/2 | s:hh vibGamepad:1 ]",
+  "[ 1/2 → 3/4 | s:sd vibGamepad:0 ]",
+  "[ 3/4 → 1/1 | s:hh vibGamepad:1 ]",
+  "[ 1/1 → 5/4 | s:bd vibGamepad:0 ]",
+  "[ 5/4 → 3/2 | s:hh vibGamepad:1 ]",
+  "[ 3/2 → 7/4 | s:sd vibGamepad:0 ]",
+  "[ 7/4 → 2/1 | s:hh vibGamepad:1 ]",
+  "[ 2/1 → 9/4 | s:bd vibGamepad:0 ]",
+  "[ 9/4 → 5/2 | s:hh vibGamepad:1 ]",
+  "[ 5/2 → 11/4 | s:sd vibGamepad:0 ]",
+  "[ 11/4 → 3/1 | s:hh vibGamepad:1 ]",
+  "[ 3/1 → 13/4 | s:bd vibGamepad:0 ]",
+  "[ 13/4 → 7/2 | s:hh vibGamepad:1 ]",
+  "[ 7/2 → 15/4 | s:sd vibGamepad:0 ]",
+  "[ 15/4 → 4/1 | s:hh vibGamepad:1 ]",
+]
+`;
+
+exports[`runs examples > example "vibGamepad" example index 0 2`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibGamepad:0 ]",
+  "[ 1/4 → 1/2 | s:hh vibGamepad:1 ]",
+  "[ 1/2 → 3/4 | s:sd vibGamepad:0 ]",
+  "[ 3/4 → 1/1 | s:hh vibGamepad:1 ]",
+  "[ 1/1 → 5/4 | s:bd vibGamepad:0 ]",
+  "[ 5/4 → 3/2 | s:hh vibGamepad:1 ]",
+  "[ 3/2 → 7/4 | s:sd vibGamepad:0 ]",
+  "[ 7/4 → 2/1 | s:hh vibGamepad:1 ]",
+  "[ 2/1 → 9/4 | s:bd vibGamepad:0 ]",
+  "[ 9/4 → 5/2 | s:hh vibGamepad:1 ]",
+  "[ 5/2 → 11/4 | s:sd vibGamepad:0 ]",
+  "[ 11/4 → 3/1 | s:hh vibGamepad:1 ]",
+  "[ 3/1 → 13/4 | s:bd vibGamepad:0 ]",
+  "[ 13/4 → 7/2 | s:hh vibGamepad:1 ]",
+  "[ 7/2 → 15/4 | s:sd vibGamepad:0 ]",
+  "[ 15/4 → 4/1 | s:hh vibGamepad:1 ]",
+]
+`;
+
+exports[`runs examples > example "vibGamepadIndex" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 1/4 → 1/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 1/2 → 3/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 3/4 → 1/1 | s:hh vibGamepadIndex:1 ]",
+  "[ 1/1 → 5/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 5/4 → 3/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 3/2 → 7/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 7/4 → 2/1 | s:hh vibGamepadIndex:1 ]",
+  "[ 2/1 → 9/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 9/4 → 5/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 5/2 → 11/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 11/4 → 3/1 | s:hh vibGamepadIndex:1 ]",
+  "[ 3/1 → 13/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 13/4 → 7/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 7/2 → 15/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 15/4 → 4/1 | s:hh vibGamepadIndex:1 ]",
+]
+`;
+
+exports[`runs examples > example "vibIntensity" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 1/4 → 1/2 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 1/2 → 3/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 3/4 → 1/1 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 1/1 → 5/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 5/4 → 3/2 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 3/2 → 7/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 7/4 → 2/1 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 2/1 → 9/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 9/4 → 5/2 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 5/2 → 11/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 11/4 → 3/1 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 3/1 → 13/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 13/4 → 7/2 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 7/2 → 15/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 15/4 → 4/1 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+]
+`;
+
+exports[`runs examples > example "vibIntensity" example index 0 2`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 1/4 → 1/2 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 1/2 → 3/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 3/4 → 1/1 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 1/1 → 5/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 5/4 → 3/2 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 3/2 → 7/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 7/4 → 2/1 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 2/1 → 9/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 9/4 → 5/2 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 5/2 → 11/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 11/4 → 3/1 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 3/1 → 13/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 13/4 → 7/2 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 7/2 → 15/4 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+  "[ 15/4 → 4/1 | s:bd vibStrong:0.4999999999999999 vibWeak:0.4999999999999999 ]",
+]
+`;
+
+exports[`runs examples > example "vibStrong" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibStrong:1 ]",
+  "[ 1/4 → 1/2 | s:hh vibStrong:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibStrong:0.5 ]",
+  "[ 3/4 → 1/1 | s:hh vibStrong:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibStrong:1 ]",
+  "[ 5/4 → 3/2 | s:hh vibStrong:0 ]",
+  "[ 3/2 → 7/4 | s:sd vibStrong:0.5 ]",
+  "[ 7/4 → 2/1 | s:hh vibStrong:0 ]",
+  "[ 2/1 → 9/4 | s:bd vibStrong:1 ]",
+  "[ 9/4 → 5/2 | s:hh vibStrong:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibStrong:0.5 ]",
+  "[ 11/4 → 3/1 | s:hh vibStrong:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibStrong:1 ]",
+  "[ 13/4 → 7/2 | s:hh vibStrong:0 ]",
+  "[ 7/2 → 15/4 | s:sd vibStrong:0.5 ]",
+  "[ 15/4 → 4/1 | s:hh vibStrong:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibStrong" example index 0 2`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibStrong:1 ]",
+  "[ 1/4 → 1/2 | s:hh vibStrong:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibStrong:0.5 ]",
+  "[ 3/4 → 1/1 | s:hh vibStrong:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibStrong:1 ]",
+  "[ 5/4 → 3/2 | s:hh vibStrong:0 ]",
+  "[ 3/2 → 7/4 | s:sd vibStrong:0.5 ]",
+  "[ 7/4 → 2/1 | s:hh vibStrong:0 ]",
+  "[ 2/1 → 9/4 | s:bd vibStrong:1 ]",
+  "[ 9/4 → 5/2 | s:hh vibStrong:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibStrong:0.5 ]",
+  "[ 11/4 → 3/1 | s:hh vibStrong:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibStrong:1 ]",
+  "[ 13/4 → 7/2 | s:hh vibStrong:0 ]",
+  "[ 7/2 → 15/4 | s:sd vibStrong:0.5 ]",
+  "[ 15/4 → 4/1 | s:hh vibStrong:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibWeak" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibWeak:0.5 ]",
+  "[ 1/4 → 1/2 | s:hh vibWeak:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibWeak:0.8 ]",
+  "[ 3/4 → 1/1 | s:hh vibWeak:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibWeak:0.5 ]",
+  "[ 5/4 → 3/2 | s:hh vibWeak:0 ]",
+  "[ 3/2 → 7/4 | s:sd vibWeak:0.8 ]",
+  "[ 7/4 → 2/1 | s:hh vibWeak:0 ]",
+  "[ 2/1 → 9/4 | s:bd vibWeak:0.5 ]",
+  "[ 9/4 → 5/2 | s:hh vibWeak:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibWeak:0.8 ]",
+  "[ 11/4 → 3/1 | s:hh vibWeak:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibWeak:0.5 ]",
+  "[ 13/4 → 7/2 | s:hh vibWeak:0 ]",
+  "[ 7/2 → 15/4 | s:sd vibWeak:0.8 ]",
+  "[ 15/4 → 4/1 | s:hh vibWeak:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibWeak" example index 0 2`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibWeak:0.5 ]",
+  "[ 1/4 → 1/2 | s:hh vibWeak:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibWeak:0.8 ]",
+  "[ 3/4 → 1/1 | s:hh vibWeak:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibWeak:0.5 ]",
+  "[ 5/4 → 3/2 | s:hh vibWeak:0 ]",
+  "[ 3/2 → 7/4 | s:sd vibWeak:0.8 ]",
+  "[ 7/4 → 2/1 | s:hh vibWeak:0 ]",
+  "[ 2/1 → 9/4 | s:bd vibWeak:0.5 ]",
+  "[ 9/4 → 5/2 | s:hh vibWeak:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibWeak:0.8 ]",
+  "[ 11/4 → 3/1 | s:hh vibWeak:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibWeak:0.5 ]",
+  "[ 13/4 → 7/2 | s:hh vibWeak:0 ]",
+  "[ 7/2 → 15/4 | s:sd vibWeak:0.8 ]",
+  "[ 15/4 → 4/1 | s:hh vibWeak:0 ]",
+]
+`;
+
 exports[`runs examples > example "vibmod" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | note:a vib:4 vibmod:0.25 ]",
@@ -10290,6 +10563,198 @@ exports[`runs examples > example "vibmod" example index 1 1`] = `
   "[ 5/2 → 3/1 | note:e vibmod:1 vib:8 ]",
   "[ 3/1 → 7/2 | note:a vibmod:2 vib:8 ]",
   "[ 7/2 → 4/1 | note:e vibmod:2 vib:8 ]",
+]
+`;
+
+exports[`runs examples > example "vibrate" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd ]",
+  "[ 1/4 → 1/2 | s:hh ]",
+  "[ 1/2 → 3/4 | s:sd ]",
+  "[ 3/4 → 1/1 | s:hh ]",
+  "[ 1/1 → 5/4 | s:bd ]",
+  "[ 5/4 → 3/2 | s:hh ]",
+  "[ 3/2 → 7/4 | s:sd ]",
+  "[ 7/4 → 2/1 | s:hh ]",
+  "[ 2/1 → 9/4 | s:bd ]",
+  "[ 9/4 → 5/2 | s:hh ]",
+  "[ 5/2 → 11/4 | s:sd ]",
+  "[ 11/4 → 3/1 | s:hh ]",
+  "[ 3/1 → 13/4 | s:bd ]",
+  "[ 13/4 → 7/2 | s:hh ]",
+  "[ 7/2 → 15/4 | s:sd ]",
+  "[ 15/4 → 4/1 | s:hh ]",
+]
+`;
+
+exports[`runs examples > example "vibrate" example index 1 1`] = `
+[
+  "[ 0/1 → 1/1 | s:bd vibStrong:1 vibWeak:0.5 ]",
+  "[ 1/1 → 2/1 | s:hh vibStrong:0.1 vibWeak:0 ]",
+  "[ 2/1 → 3/1 | s:sd vibStrong:0.5 vibWeak:0.8 ]",
+  "[ 3/1 → 4/1 | s:hh vibStrong:0 vibWeak:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibrate" example index 2 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd ]",
+  "[ 1/4 → 1/2 | s:bd ]",
+  "[ 1/2 → 3/4 | s:bd ]",
+  "[ 3/4 → 1/1 | s:bd ]",
+  "[ 1/1 → 5/4 | s:bd ]",
+  "[ 5/4 → 3/2 | s:bd ]",
+  "[ 3/2 → 7/4 | s:bd ]",
+  "[ 7/4 → 2/1 | s:bd ]",
+  "[ 2/1 → 9/4 | s:bd ]",
+  "[ 9/4 → 5/2 | s:bd ]",
+  "[ 5/2 → 11/4 | s:bd ]",
+  "[ 11/4 → 3/1 | s:bd ]",
+  "[ 3/1 → 13/4 | s:bd ]",
+  "[ 13/4 → 7/2 | s:bd ]",
+  "[ 7/2 → 15/4 | s:bd ]",
+  "[ 15/4 → 4/1 | s:bd ]",
+]
+`;
+
+exports[`runs examples > example "vibrate" example index 4 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 1/4 → 1/2 | s:hh vibGamepadIndex:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 3/4 → 1/1 | s:hh vibGamepadIndex:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibGamepadIndex:1 ]",
+  "[ 5/4 → 3/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 3/2 → 7/4 | s:sd vibGamepadIndex:1 ]",
+  "[ 7/4 → 2/1 | s:hh vibGamepadIndex:1 ]",
+  "[ 2/1 → 9/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 9/4 → 5/2 | s:hh vibGamepadIndex:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibGamepadIndex:0 ]",
+  "[ 11/4 → 3/1 | s:hh vibGamepadIndex:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibGamepadIndex:1 ]",
+  "[ 13/4 → 7/2 | s:hh vibGamepadIndex:1 ]",
+  "[ 7/2 → 15/4 | s:sd vibGamepadIndex:1 ]",
+  "[ 15/4 → 4/1 | s:hh vibGamepadIndex:1 ]",
+]
+`;
+
+exports[`runs examples > example "vibrate" example index 5 1`] = `
+[
+  "[ 0/1 → 1/8 | s:bd vibGamepadIndex:0 ]",
+  "[ 1/8 → 1/4 | s:bd vibGamepadIndex:1 ]",
+  "[ 1/4 → 3/8 | s:bd vibGamepadIndex:0 ]",
+  "[ (3/8 → 7/16) ⇝ 1/2 | s:bd vibGamepadIndex:1 ]",
+  "[ 3/8 ⇜ (7/16 → 1/2) | s:bd vibGamepadIndex:0 ]",
+  "[ 1/2 → 5/8 | s:bd vibGamepadIndex:1 ]",
+  "[ 5/8 → 3/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 3/4 → 7/8 | s:bd vibGamepadIndex:1 ]",
+  "[ 7/8 → 1/1 | s:bd vibGamepadIndex:0 ]",
+  "[ 1/1 → 9/8 | s:bd vibGamepadIndex:0 ]",
+  "[ 9/8 → 5/4 | s:bd vibGamepadIndex:1 ]",
+  "[ 5/4 → 11/8 | s:bd vibGamepadIndex:0 ]",
+  "[ (11/8 → 23/16) ⇝ 3/2 | s:bd vibGamepadIndex:1 ]",
+  "[ 11/8 ⇜ (23/16 → 3/2) | s:bd vibGamepadIndex:0 ]",
+  "[ 3/2 → 13/8 | s:bd vibGamepadIndex:1 ]",
+  "[ 13/8 → 7/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 7/4 → 15/8 | s:bd vibGamepadIndex:1 ]",
+  "[ 15/8 → 2/1 | s:bd vibGamepadIndex:0 ]",
+  "[ 2/1 → 17/8 | s:bd vibGamepadIndex:0 ]",
+  "[ 17/8 → 9/4 | s:bd vibGamepadIndex:1 ]",
+  "[ 9/4 → 19/8 | s:bd vibGamepadIndex:0 ]",
+  "[ (19/8 → 39/16) ⇝ 5/2 | s:bd vibGamepadIndex:1 ]",
+  "[ 19/8 ⇜ (39/16 → 5/2) | s:bd vibGamepadIndex:0 ]",
+  "[ 5/2 → 21/8 | s:bd vibGamepadIndex:1 ]",
+  "[ 21/8 → 11/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 11/4 → 23/8 | s:bd vibGamepadIndex:1 ]",
+  "[ 23/8 → 3/1 | s:bd vibGamepadIndex:0 ]",
+  "[ 3/1 → 25/8 | s:bd vibGamepadIndex:0 ]",
+  "[ 25/8 → 13/4 | s:bd vibGamepadIndex:1 ]",
+  "[ 13/4 → 27/8 | s:bd vibGamepadIndex:0 ]",
+  "[ (27/8 → 55/16) ⇝ 7/2 | s:bd vibGamepadIndex:1 ]",
+  "[ 27/8 ⇜ (55/16 → 7/2) | s:bd vibGamepadIndex:0 ]",
+  "[ 7/2 → 29/8 | s:bd vibGamepadIndex:1 ]",
+  "[ 29/8 → 15/4 | s:bd vibGamepadIndex:0 ]",
+  "[ 15/4 → 31/8 | s:bd vibGamepadIndex:1 ]",
+  "[ 31/8 → 4/1 | s:bd vibGamepadIndex:0 ]",
+]
+`;
+
+exports[`runs examples > example "vibrate" example index 6 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibGamepad:0 ]",
+  "[ 1/4 → 1/2 | s:hh vibGamepad:0 ]",
+  "[ 1/2 → 3/4 | s:sd vibGamepad:0 ]",
+  "[ 3/4 → 1/1 | s:hh vibGamepad:0 ]",
+  "[ 1/1 → 5/4 | s:bd vibGamepad:1 ]",
+  "[ 5/4 → 3/2 | s:hh vibGamepad:1 ]",
+  "[ 3/2 → 7/4 | s:sd vibGamepad:1 ]",
+  "[ 7/4 → 2/1 | s:hh vibGamepad:1 ]",
+  "[ 2/1 → 9/4 | s:bd vibGamepad:0 ]",
+  "[ 9/4 → 5/2 | s:hh vibGamepad:0 ]",
+  "[ 5/2 → 11/4 | s:sd vibGamepad:0 ]",
+  "[ 11/4 → 3/1 | s:hh vibGamepad:0 ]",
+  "[ 3/1 → 13/4 | s:bd vibGamepad:1 ]",
+  "[ 13/4 → 7/2 | s:hh vibGamepad:1 ]",
+  "[ 7/2 → 15/4 | s:sd vibGamepad:1 ]",
+  "[ 15/4 → 4/1 | s:hh vibGamepad:1 ]",
+]
+`;
+
+exports[`runs examples > example "vibrate" example index 7 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd vibGamepadIndex:[0 1 0.5 200] ]",
+  "[ 1/4 → 1/2 | s:hh vibGamepadIndex:[0 1 0.5 200] ]",
+  "[ 1/2 → 3/4 | s:sd vibGamepadIndex:[1 0.8 0.3 150] ]",
+  "[ 3/4 → 1/1 | s:hh vibGamepadIndex:[1 0.8 0.3 150] ]",
+  "[ 1/1 → 5/4 | s:bd vibGamepadIndex:[0 1 0.5 200] ]",
+  "[ 5/4 → 3/2 | s:hh vibGamepadIndex:[0 1 0.5 200] ]",
+  "[ 3/2 → 7/4 | s:sd vibGamepadIndex:[1 0.8 0.3 150] ]",
+  "[ 7/4 → 2/1 | s:hh vibGamepadIndex:[1 0.8 0.3 150] ]",
+  "[ 2/1 → 9/4 | s:bd vibGamepadIndex:[0 1 0.5 200] ]",
+  "[ 9/4 → 5/2 | s:hh vibGamepadIndex:[0 1 0.5 200] ]",
+  "[ 5/2 → 11/4 | s:sd vibGamepadIndex:[1 0.8 0.3 150] ]",
+  "[ 11/4 → 3/1 | s:hh vibGamepadIndex:[1 0.8 0.3 150] ]",
+  "[ 3/1 → 13/4 | s:bd vibGamepadIndex:[0 1 0.5 200] ]",
+  "[ 13/4 → 7/2 | s:hh vibGamepadIndex:[0 1 0.5 200] ]",
+  "[ 7/2 → 15/4 | s:sd vibGamepadIndex:[1 0.8 0.3 150] ]",
+  "[ 15/4 → 4/1 | s:hh vibGamepadIndex:[1 0.8 0.3 150] ]",
+]
+`;
+
+exports[`runs examples > example "vibrate" example index 8 1`] = `
+[
+  "[ 0/1 → 1/8 | s:bd vibGamepadIndex:[0 0.2 0.4 100] ]",
+  "[ 1/8 → 1/4 | s:bd vibGamepadIndex:[0 0.2 0.4 100] ]",
+  "[ 1/4 → 3/8 | s:bd vibGamepadIndex:[0 0.2 1 100] ]",
+  "[ 3/8 → 1/2 | s:bd vibGamepadIndex:[0 0.2 1 100] ]",
+  "[ 1/2 → 5/8 | s:bd vibGamepadIndex:[1 1 0.5 200] ]",
+  "[ 5/8 → 3/4 | s:bd vibGamepadIndex:[1 1 0.5 200] ]",
+  "[ 3/4 → 7/8 | s:bd vibGamepadIndex:[1 0.5 1 150] ]",
+  "[ 7/8 → 1/1 | s:bd vibGamepadIndex:[1 0.5 1 150] ]",
+  "[ 1/1 → 9/8 | s:bd vibGamepadIndex:[0 0.2 0.4 100] ]",
+  "[ 9/8 → 5/4 | s:bd vibGamepadIndex:[0 0.2 0.4 100] ]",
+  "[ 5/4 → 11/8 | s:bd vibGamepadIndex:[0 0.2 1 100] ]",
+  "[ 11/8 → 3/2 | s:bd vibGamepadIndex:[0 0.2 1 100] ]",
+  "[ 3/2 → 13/8 | s:bd vibGamepadIndex:[1 1 0.5 200] ]",
+  "[ 13/8 → 7/4 | s:bd vibGamepadIndex:[1 1 0.5 200] ]",
+  "[ 7/4 → 15/8 | s:bd vibGamepadIndex:[1 0.5 1 150] ]",
+  "[ 15/8 → 2/1 | s:bd vibGamepadIndex:[1 0.5 1 150] ]",
+  "[ 2/1 → 17/8 | s:bd vibGamepadIndex:[0 0.2 0.4 100] ]",
+  "[ 17/8 → 9/4 | s:bd vibGamepadIndex:[0 0.2 0.4 100] ]",
+  "[ 9/4 → 19/8 | s:bd vibGamepadIndex:[0 0.2 1 100] ]",
+  "[ 19/8 → 5/2 | s:bd vibGamepadIndex:[0 0.2 1 100] ]",
+  "[ 5/2 → 21/8 | s:bd vibGamepadIndex:[1 1 0.5 200] ]",
+  "[ 21/8 → 11/4 | s:bd vibGamepadIndex:[1 1 0.5 200] ]",
+  "[ 11/4 → 23/8 | s:bd vibGamepadIndex:[1 0.5 1 150] ]",
+  "[ 23/8 → 3/1 | s:bd vibGamepadIndex:[1 0.5 1 150] ]",
+  "[ 3/1 → 25/8 | s:bd vibGamepadIndex:[0 0.2 0.4 100] ]",
+  "[ 25/8 → 13/4 | s:bd vibGamepadIndex:[0 0.2 0.4 100] ]",
+  "[ 13/4 → 27/8 | s:bd vibGamepadIndex:[0 0.2 1 100] ]",
+  "[ 27/8 → 7/2 | s:bd vibGamepadIndex:[0 0.2 1 100] ]",
+  "[ 7/2 → 29/8 | s:bd vibGamepadIndex:[1 1 0.5 200] ]",
+  "[ 29/8 → 15/4 | s:bd vibGamepadIndex:[1 1 0.5 200] ]",
+  "[ 15/4 → 31/8 | s:bd vibGamepadIndex:[1 0.5 1 150] ]",
+  "[ 31/8 → 4/1 | s:bd vibGamepadIndex:[1 0.5 1 150] ]",
 ]
 `;
 
