@@ -490,6 +490,7 @@ export const superdough = async (value, t, hapDuration, cps) => {
     lpdecay,
     lpsustain,
     lprelease,
+    lplfo,
     resonance = getDefaultValue('resonance'),
     // high pass
     hpenv,
@@ -631,6 +632,7 @@ export const superdough = async (value, t, hapDuration, cps) => {
         fanchor,
         ftype,
         drive,
+        lplfo,
       );
     chain.push(lp());
     if (ftype === '24db') {
