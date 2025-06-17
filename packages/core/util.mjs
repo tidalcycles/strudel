@@ -466,6 +466,16 @@ export function getCurrentKeyboardState() {
   return { ...keyState }; // Return a shallow copy of the key state object
 }
 
+export function listifyOp(op) {
+  return function (a, b) {
+    if (!Array.isArray(a)) {
+      return op(a, Array.isArray(b) ? b[0] : b);
+    }
+    b = Array.isArray(b) ? b : [b];
+    return a.map((x, i) => (i < b.length ? op(x, b[i]) : x));
+  };
+}
+
 // Floating point versions, see Fraction for rational versions
 // // greatest common divisor
 // export const gcd = function (x, y, ...z) {
