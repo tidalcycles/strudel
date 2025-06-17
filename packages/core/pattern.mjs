@@ -3144,6 +3144,7 @@ export const striate = register('striate', function (n, pat) {
 /**
  * Makes the sample fit the given number of cycles by changing the speed.
  * @name loopAt
+ * @synonyms loopat
  * @memberof Pattern
  * @returns Pattern
  * @example
@@ -3276,6 +3277,7 @@ export const fit = register('fit', (pat) =>
  * given by a global clock and this function will be
  * deprecated/removed.
  * @name loopAtCps
+ * @synonyms loopatcps
  * @memberof Pattern
  * @returns Pattern
  * @example

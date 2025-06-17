@@ -10,11 +10,27 @@ import Fraction from './fraction.mjs';
 
 import { id, keyAlias, getCurrentKeyboardState } from './util.mjs';
 
+/**
+ * A `signal` consisting of a constant value. Similar to `pure`, except that function
+ * creates a pattern with one event per cycle, whereas this pattern doesn't have an intrinsic
+ * structure.
+ *
+ * @param {*} value The constant value of the resulting pattern
+ * @returns Pattern
+ */
 export function steady(value) {
   // A continuous value
   return new Pattern((state) => [new Hap(undefined, state.span, value)]);
 }
 
+/**
+ * Creates a "signal", an unstructured pattern consisting of a single value that changes
+ * over time.
+ *
+ *
+ * @param {*} func
+ * @returns Pattern
+ */
 export const signal = (func) => {
   const query = (state) => [new Hap(undefined, state.span, func(state.span.begin))];
   return new Pattern(query);
@@ -23,7 +39,7 @@ export const signal = (func) => {
 /**
  *  A sawtooth signal between 0 and 1.
  *
- * @return {Pattern}
+ * @type {Pattern}
  * @example
  * note("<c3 [eb3,g3] g2 [g3,bb3]>*8")
  * .clip(saw.slow(2))
@@ -159,6 +175,7 @@ export const time = signal(id);
 /**
  *  The mouse's x position value ranges from 0 to 1.
  * @name mousex
+ * @synonyms mouseX
  * @return {Pattern}
  * @example
  * n(mousex.segment(4).range(0,7)).scale("C:minor")
@@ -168,6 +185,7 @@ export const time = signal(id);
 /**
  *  The mouse's y position value ranges from 0 to 1.
  * @name mousey
+ * @synonyms mouseY
  * @return {Pattern}
  * @example
  * n(mousey.segment(4).range(0,7)).scale("C:minor")
@@ -216,10 +234,6 @@ const timeToRandsPrime = (seed, n) => {
 };
 
 const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
-
-/**
- *
- */
 
 /**
  * A discrete pattern of numbers from 0 to n-1

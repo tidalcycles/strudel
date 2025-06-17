@@ -10,7 +10,7 @@ function getExports(code) {
   let ast;
   try {
     ast = parse(code, {
-      ecmaVersion: 11,
+      ecmaVersion: 'latest',
       sourceType: 'module',
     });
   } catch (err) {
@@ -49,9 +49,7 @@ function getExports(code) {
 }
 
 function isDocumented(name, docs) {
-  return docs.find(
-    (d) => d.name === name || d.tags?.find((t) => t.title === 'synonyms' && t.value.split(', ').includes(name)),
-  );
+  return docs.find((d) => d.name === name || d.synonyms?.includes(name));
 }
 
 async function getUndocumented(path, docs) {
